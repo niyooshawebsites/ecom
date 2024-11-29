@@ -1,5 +1,7 @@
+import Layout from "../comps/Layout";
+
 const Cart = () => {
-  return <div>Cart</div>;
+  return <Layout>cart</Layout>;
 };
 
 export default Cart;

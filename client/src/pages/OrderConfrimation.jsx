@@ -1,5 +1,7 @@
+import Layout from "../comps/Layout";
+
 const OrderConfrimation = () => {
-  return <div>Order Confrimation</div>;
+  return <Layout>Order Confrimation</Layout>;
 };
 
 export default OrderConfrimation;

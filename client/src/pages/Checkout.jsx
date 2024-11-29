@@ -1,5 +1,7 @@
+import Layout from "../comps/Layout";
+
 const Checkout = () => {
-  return <div>Checkout</div>;
+  return <Layout>Checkout</Layout>;
 };
 
 export default Checkout;
