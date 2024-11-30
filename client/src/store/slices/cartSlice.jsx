@@ -2,23 +2,32 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const cartSlice = createSlice({
   name: "cart_Slice",
+
   initialState: {
-    productName: "",
-    productPrice: "",
-    productCategory: "",
-    productQuantity: "",
+    cartProduct: {
+      productName: "",
+      productPrice: "",
+      productCategory: "",
+      productQuantity: "",
+    },
+    cartProductList: [],
   },
 
   reducers: {
-    populateCart: (state, action) => {
-      state.productName = action.payload.productName;
-      state.productPrice = action.payload.productPrice;
-      state.productCategory = action.payload.productCategory;
-      state.productQuantity = action.payload.productQuantity;
+    populateCartProduct: (state, action) => {
+      state.cartProduct.productName = action.payload.productName;
+      state.cartProduct.productPrice = action.payload.productPrice;
+      state.cartProduct.productCategory = action.payload.productCategory;
+      state.cartProduct.productQuantity = action.payload.productQuantity;
+    },
+
+    populateCartList: (state, action) => {
+      state.cartProductList = action.payload.cartProductList;
     },
   },
 });
 
 export const cartSliceActions = cartSlice.actions;
+
 const cartSliceReducers = cartSlice.reducer;
 export default cartSliceReducers;

@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Header = () => {
-  const { productQuantity } = useSelector((state) => state.cart_Slice);
+  const { cartProductList } = useSelector((state) => state.cart_Slice);
+
+  console.log(cartProductList);
 
   return (
     <header className="bg-blue-700 text-white">
@@ -25,7 +27,9 @@ const Header = () => {
             <li>Login</li>
           </Link>
           <Link to="/cart">
-            <li>Cart ({productQuantity == "" ? productQuantity : 15})</li>
+            <li>
+              Cart ({cartProductList.length != "" ? cartProductList.length : 0})
+            </li>
           </Link>
         </ul>
       </nav>

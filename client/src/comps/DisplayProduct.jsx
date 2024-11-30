@@ -6,21 +6,32 @@ const DisplayProduct = () => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
 
+  const [product] = useState({
+    productName: "Wooden watch",
+    productPrice: 200,
+    productCategory: "Watches",
+    productQuantity: count,
+  });
+
+  const [cartProducts, setCartProducts] = useState([]);
+
   const increatement = () => {
     setCount((prevCount) => prevCount + 1);
   };
 
   const decreament = () => {
     setCount((prevCount) => prevCount - 1);
+    if (count == 0) {
+      setCount(0);
+    }
   };
 
   const addToCart = () => {
+    dispatch(cartSliceActions.populateCartProduct(product));
+    setCartProducts([...cartProducts, product]);
     dispatch(
-      cartSliceActions.populateCart({
-        productName: "Wooden watch",
-        productPrice: 200,
-        productCategory: "Watches",
-        productQuantity: { count },
+      cartSliceActions.populateCartList({
+        cartProductList: cartProducts,
       })
     );
   };
