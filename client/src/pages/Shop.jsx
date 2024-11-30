@@ -13,6 +13,7 @@ const Shop = () => {
             return (
               <Card
                 key={product.uid}
+                pid={product.uid}
                 name={product.name}
                 price={product.price}
                 img={product.img}

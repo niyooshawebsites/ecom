@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { cartSliceActions } from "../store/slices/cartSlice";
 import { useDispatch } from "react-redux";
+import productsData from "../data/products";
 
 const DisplayProduct = () => {
   const [count, setCount] = useState(0);
