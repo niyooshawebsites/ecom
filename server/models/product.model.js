@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import slugigy from "";
+import slugigy from "slugify";
 
 const productSchema = new mongoose.Schema(
   {
@@ -12,6 +12,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      default: slugigy(name),
     },
     price: {
       type: Number,
@@ -22,6 +23,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      default: "",
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -39,14 +41,20 @@ const productSchema = new mongoose.Schema(
       require: true,
       trim: true,
     },
-    ratings: {
-      type: String,
-      required: true,
-    },
-    reviews: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "review",
-    },
+    ratings: [
+      {
+        type: String,
+        required: true,
+        default: [],
+      },
+    ],
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "review",
+        default: [],
+      },
+    ],
   },
   {
     timestamps: true,

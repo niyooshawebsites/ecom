@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import cookieParser from "cookie-parser";
 import colors from "colors";
 import morgan from "morgan";
 import cors from "cors";
@@ -14,7 +15,13 @@ const BASE_URL = process.env.BASE_URL;
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 app.use(morgan());
 
 // routes

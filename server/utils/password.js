@@ -1,8 +1,20 @@
 import bcryptjs from "bcryptjs";
 
 const encryptPassword = async (password) => {
-  const salt = await bcryptjs.genSalt(10);
-  return await bcryptjs.hash(password, salt);
+  try {
+    const salt = await bcryptjs.genSalt(10);
+    return await bcryptjs.hash(password, salt);
+  } catch (err) {
+    console.error(err.message);
+  }
 };
 
-export { encryptPassword };
+const decryptPassword = async (password, encryptedPassword) => {
+  try {
+    return await bcryptjs.compare(password, encryptedPassword);
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+export { encryptPassword, decryptPassword };
