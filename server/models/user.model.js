@@ -6,37 +6,44 @@ const contactSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
+    default: "",
   },
   address: {
     houseNo: {
       type: String,
       required: true,
       trim: true,
+      default: "",
     },
     streetNo: {
       type: String,
       required: true,
       trim: true,
+      default: "",
     },
     locality: {
       type: String,
       required: true,
       trim: true,
+      default: "",
     },
     district: {
       type: String,
       required: true,
       trim: true,
+      default: "",
     },
     state: {
       type: String,
       required: true,
       trim: true,
+      default: "",
     },
     pincode: {
       type: Number,
       required: true,
       trim: true,
+      default: null,
     },
   },
 });
@@ -54,6 +61,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      match: [
+        /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+        "Please enter a valid email address",
+      ], // Regex for email validation
     },
     password: {
       type: String,
@@ -72,10 +83,13 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     contactDetails: contactSchema,
-    orders: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "order",
-    },
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "order",
+        default: [],
+      },
+    ],
   },
   {
     timestamps: true,
