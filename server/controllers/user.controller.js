@@ -8,12 +8,16 @@ const registerController = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password)
-      response(false, "Please fill out all the details");
+      response(res, false, "Please fill out all the details");
+
+    console.log("Everything received");
 
     // check for existing user
-    const user = await User.findOne({ $or: [{ username }, { email }] });
+    // const user = await User.findOne({ $or: [{ username }, { email }] });
+    const user = await User.findOne({ email });
+    if (!user) console.log("not connected");
 
-    if (user) response(false, "Account already exists!");
+    if (user) response(res, false, "Account already exists!");
 
     const mailOptions = {
       from: "info@woodcart.com",
@@ -30,10 +34,10 @@ const registerController = async (req, res) => {
       password: await encryptPassword(password),
     }).save();
 
-    return response(true, "Registration successful");
+    return response(res, true, "Registration successful");
   } catch (err) {
     console.error(err.message);
-    return response(false, "Internal server error!");
+    return response(res, false, "Internal server error!");
   }
 };
 
