@@ -10,6 +10,18 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    status: {
+      type: String,
+      enum: [
+        "Pending",
+        "On hold",
+        "Complete",
+        "Cancelled",
+        "Cancelled & Refunded",
+      ],
+      default: "Pending",
+      required: true,
+    },
   },
   {
     timestamps: true,

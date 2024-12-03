@@ -23,3 +23,5 @@ const auth = async (req, res, next) => {
     console.log(err.message);
   }
 };
+
+export default auth;

@@ -6,6 +6,8 @@ import colors from "colors";
 import morgan from "morgan";
 import cors from "cors";
 import userRouter from "./routes/user.route.js";
+import productRouter from "./routes/product.route.js";
+import categoryRouter from "./routes/category.route.js";
 
 dotenv.config();
 connectDB();
@@ -26,6 +28,8 @@ app.use(morgan());
 
 // routes
 app.use(BASE_URL, userRouter);
+app.use(BASE_URL, productRouter);
+app.use(BASE_URL, categoryRouter);
 
 app.listen(PORT, () =>
   console.log(

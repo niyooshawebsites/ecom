@@ -10,12 +10,12 @@ const registerController = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password)
-      return response(res, false, "Please fill out all the details");
+      return response(res, 400, false, "Please fill out all the details");
 
     // check for existing user
     const user = await User.findOne({ $or: [{ username }, { email }] });
 
-    if (user) return response(res, false, "Account already exists!");
+    if (user) return response(res, 409, false, "Account already exists!");
 
     const authToken = await createToken({ userId: "New user id" }, "1d");
 
@@ -35,28 +35,27 @@ const registerController = async (req, res) => {
       password: await encryptPassword(password),
     }).save();
 
-    return response(res, true, "Registration successful");
+    return response(res, 201, true, "Registration successful");
   } catch (err) {
     console.error(err.message);
-    return response(res, false, "Internal server error!");
+    return response(res, 500, false, "Internal server error!");
   }
 };
 
 const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password)
-      return response(res, false, "Please fill out all the details!");
+      return response(res, 400, false, "Please fill out all the details!");
 
     const user = await User.findOne({ email });
-    if (!user) return response(res, false, "Invalid email or password");
+    if (!user) return response(res, 404, false, "Invalid email or password");
 
     const validPassword = await decryptPassword(password, user.password);
 
     if (!validPassword)
-      return response(res, false, "Invalid email or password");
+      return response(res, 403, false, "Invalid email or password");
 
     const authToken = await createToken({ userId: user._id }, "1d");
 
@@ -68,10 +67,10 @@ const loginController = async (req, res) => {
       path: "/",
     });
 
-    return response(res, true, "Login successful");
+    return response(res, 200, true, "Login successful");
   } catch (err) {
     console.error(err.message);
-    return response(res, false, "Internal server error!");
+    return response(res, 500, false, "Internal server error!");
   }
 };
 

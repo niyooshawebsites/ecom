@@ -1,9 +1,17 @@
-const response = (res, success, msg, data = {}) => {
+const response = (
+  res,
+  statusCode,
+  success,
+  msg,
+  data = null,
+  totalPagesCount = null
+) => {
   try {
-    return res.status(500).json({
+    return res.status(statusCode).json({
       success,
       msg,
       data,
+      totalPagesCount,
     });
   } catch (err) {
     console.error(err.message);
