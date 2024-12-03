@@ -11,9 +11,9 @@ import {
 const productRouter = express.Router();
 
 productRouter.post("/create-product", auth, createProductController);
-productRouter.post("/update-product/:pid", auth, updateProductController);
-productRouter.post("/delete-product/:pid", auth, deleteProductController);
-productRouter.post("/fetch-all-products", fetchAllProductsController);
-productRouter.post("/fetch-product/:pid", fetchProductController);
+productRouter.patch("/update-product/:pid", auth, updateProductController);
+productRouter.delete("/delete-product/:pid", auth, deleteProductController);
+productRouter.get("/fetch-all-products", fetchAllProductsController);
+productRouter.get("/fetch-product/:pid", fetchProductController);
 
 export default productRouter;

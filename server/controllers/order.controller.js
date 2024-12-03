@@ -54,6 +54,50 @@ const deleteOrderController = async (req, res) => {
   }
 };
 
-const fetchAllOrders = async (req, res) => {};
+const fetchAllOrdersController = async (req, res) => {
+  try {
+    const { pageNo } = req.params;
+    const currentPageNo = parseInt(pageNo);
+    const limit = 20;
+    const skip = (currentPageNo - 1) * limit;
 
-export { createOrderController, updateOrderController, deleteOrderController };
+    const orders = await Order.find().skip(skip).limit(limit);
+    const totalOrdersCount = await Order.countDocuments();
+    const totalPagesCount = totalOrdersCount / limit;
+
+    return response(
+      res,
+      200,
+      true,
+      "All orders fetched",
+      orders,
+      totalPagesCount
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchOrderController = async (req, res) => {
+  try {
+    const { oid } = req.params;
+    if (!oid) return response(res, 400, false, "No oid. No order details");
+
+    const order = await Order.findById(oid);
+
+    if (!order) return response(res, 404, false, "No order found");
+
+    return response(res, 200, true, "Order fetched", order);
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+export {
+  createOrderController,
+  updateOrderController,
+  deleteOrderController,
+  fetchAllOrdersController,
+  fetchOrderController,
+};

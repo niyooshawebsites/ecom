@@ -8,6 +8,8 @@ import cors from "cors";
 import userRouter from "./routes/user.route.js";
 import productRouter from "./routes/product.route.js";
 import categoryRouter from "./routes/category.route.js";
+import orderRouter from "./routes/order.route.js";
+import reviewRouter from "./routes/review.route.js";
 
 dotenv.config();
 connectDB();
@@ -30,6 +32,8 @@ app.use(morgan());
 app.use(BASE_URL, userRouter);
 app.use(BASE_URL, productRouter);
 app.use(BASE_URL, categoryRouter);
+app.use(BASE_URL, orderRouter);
+app.use(BASE_URL, reviewRouter);
 
 app.listen(PORT, () =>
   console.log(
