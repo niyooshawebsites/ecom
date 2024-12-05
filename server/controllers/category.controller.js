@@ -29,14 +29,25 @@ const updateCategoryController = async (req, res) => {
     const { cid } = req.params;
     const { name } = req.body;
     if (!cid) return response(res, 400, false, "No cid. No updation");
+    if (!name) return response(res, 400, false, "Category name is missing");
 
-    const category = await Category.findByIdAndUpdate(
+    const updatedCategory = await Category.findByIdAndUpdate(
       cid,
       { name },
       { new: true }
     );
 
-    return response(res, 201, true, "Category updated successfully", category);
+    if (!updatedCategory) {
+      return response(res, 404, false, "Category not found.");
+    }
+
+    return response(
+      res,
+      201,
+      true,
+      "Category updated successfully",
+      updatedCategory
+    );
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");

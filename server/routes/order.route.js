@@ -6,6 +6,7 @@ import {
   fetchAllOrdersController,
   fetchOrderController,
 } from "../controllers/order.controller.js";
+import auth from "../middlewares/auth.middeware.js";
 
 const orderRouter = express.Router();
 

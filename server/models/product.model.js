@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import slugigy from "slugify";
+import slugify from "slugify";
 
 const productSchema = new mongoose.Schema(
   {
@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      default: slugigy(name),
+      default: "",
     },
     price: {
       type: Number,
@@ -60,6 +60,14 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// pre save hook to generate the slug based on the name field
+productSchema.pre("save", function (next) {
+  if (this.isModified("name") || this.isNew) {
+    this.slug = slugify(this.name, { lower: true, strict: true });
+    next();
+  }
+});
 
 const Product = mongoose.model("product", productSchema);
 

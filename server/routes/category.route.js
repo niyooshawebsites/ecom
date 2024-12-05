@@ -5,7 +5,7 @@ import {
   deleteCategoryController,
   fetchAllCategoriesController,
   fetchCategoryController,
-} from "../controllers/category.controller";
+} from "../controllers/category.controller.js";
 import auth from "../middlewares/auth.middeware.js";
 
 const categoryRouter = express.Router();
