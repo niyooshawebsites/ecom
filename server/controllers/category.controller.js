@@ -33,7 +33,7 @@ const updateCategoryController = async (req, res) => {
 
     const updatedCategory = await Category.findByIdAndUpdate(
       cid,
-      { name },
+      { name, slug: name },
       { new: true }
     );
 
