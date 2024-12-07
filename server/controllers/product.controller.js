@@ -11,7 +11,10 @@ const createProductController = async (req, res) => {
     const product = await Product.findOne({ name });
     if (product) return response(res, 409, false, "Product already exists");
 
-    const newProduct = await new Product(req.body).save();
+    const newProduct = await new Product({
+      ...req.body,
+      img: "https://www.tibertaber.com/cdn/shop/files/Tiber_Taber_Girls_Devi_Lehenga_Set_TTG24_033_Red_Mood_1_4b80dfdd-8258-4419-82f6-0c3d664fab7b.jpg?v=1727693111&width=493",
+    }).save();
     return response(res, 201, true, "Product created successfully", newProduct);
   } catch (err) {
     console.error(err.message);
