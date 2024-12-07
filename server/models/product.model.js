@@ -10,7 +10,6 @@ const productSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
       trim: true,
       default: "",
     },
