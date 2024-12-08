@@ -10,12 +10,18 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    quantity: {
+      type: Number,
+    },
+    amount: {
+      type: Number,
+    },
     status: {
       type: String,
       enum: [
         "Pending",
         "On hold",
-        "Complete",
+        "Completed",
         "Cancelled",
         "Cancelled & Refunded",
       ],
@@ -27,6 +33,14 @@ const orderSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+orderSchema.pre("save", function (next) {
+  if (this.new) {
+    this.amount = this.product.price * this.quantity;
+  }
+
+  next();
+});
 
 const Order = mongoose.model("order", orderSchema);
 export default Order;

@@ -10,7 +10,7 @@ import auth from "../middlewares/auth.middeware.js";
 
 const orderRouter = express.Router();
 
-orderRouter.post("/create-order", createOrderController);
+orderRouter.post("/create-order/:pid", createOrderController);
 orderRouter.patch("/update-order/:oid", auth, updateOrderController);
 orderRouter.delete("/delete-order/:oid", auth, deleteOrderController);
 orderRouter.get("/fetch-all-orders/:oid", auth, fetchAllOrdersController);
