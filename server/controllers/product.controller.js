@@ -81,7 +81,7 @@ const fetchAllProductsController = async (req, res) => {
       .populate("category");
 
     const totalProductsCount = await Product.countDocuments();
-    const totalPagesCount = totalProductsCount / limit;
+    const totalPagesCount = Math.ceil(totalProductsCount / limit);
 
     return response(
       res,

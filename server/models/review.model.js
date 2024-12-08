@@ -6,6 +6,11 @@ const reviewSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "product",
     },
+    rating: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5],
+      required: true,
+    },
     review: {
       type: String,
       required: true,

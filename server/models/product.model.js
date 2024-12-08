@@ -40,20 +40,6 @@ const productSchema = new mongoose.Schema(
       require: true,
       trim: true,
     },
-    ratings: [
-      {
-        type: String,
-        required: true,
-        default: [],
-      },
-    ],
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "review",
-        default: [],
-      },
-    ],
   },
   {
     timestamps: true,

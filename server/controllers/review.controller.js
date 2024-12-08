@@ -4,13 +4,15 @@ import response from "../utils/response.js";
 const createReviewController = async (req, res) => {
   try {
     const { pid } = req.params;
-    const { review } = req.body;
+    const { rating, review } = req.body;
 
     if (!pid) return response(res, 400, false, "No pid. No review");
+    if (!rating) return response(res, 400, false, "Rating missing");
     if (!review) return response(res, 400, false, "Review missing");
 
     const newReview = await new Review({
       product: pid,
+      rating,
       review,
     }).save();
 

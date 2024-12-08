@@ -12,6 +12,7 @@ const createOrderController = async (req, res) => {
     const order = await new Order({
       product: pid,
       customer: uid,
+      quantity,
     }).save();
 
     return response(res, 201, true, "New order created", order);
@@ -24,13 +25,13 @@ const createOrderController = async (req, res) => {
 const updateOrderController = async (req, res) => {
   try {
     const { oid } = req.params;
-    const { status } = req.params;
+    const { status } = req.body;
     if (!oid) return response(res, 400, false, "No oid. No order updation");
 
     const updatedOrder = await Order.findByIdAndUpdate(
       oid,
       { status },
-      { new: true }
+      { new: true, runValidators: true } // mongoose validation only works on save or create new data by default so we need to use runValidators in updation
     );
 
     return response(res, 201, true, "Order details updated");
@@ -63,7 +64,7 @@ const fetchAllOrdersController = async (req, res) => {
 
     const orders = await Order.find().skip(skip).limit(limit);
     const totalOrdersCount = await Order.countDocuments();
-    const totalPagesCount = totalOrdersCount / limit;
+    const totalPagesCount = Math.ceil(totalOrdersCount / limit);
 
     return response(
       res,

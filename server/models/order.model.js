@@ -12,9 +12,7 @@ const orderSchema = new mongoose.Schema(
     },
     quantity: {
       type: Number,
-    },
-    amount: {
-      type: Number,
+      required: true,
     },
     status: {
       type: String,
@@ -26,21 +24,12 @@ const orderSchema = new mongoose.Schema(
         "Cancelled & Refunded",
       ],
       default: "Pending",
-      required: true,
     },
   },
   {
     timestamps: true,
   }
 );
-
-orderSchema.pre("save", function (next) {
-  if (this.new) {
-    this.amount = this.product.price * this.quantity;
-  }
-
-  next();
-});
 
 const Order = mongoose.model("order", orderSchema);
 export default Order;

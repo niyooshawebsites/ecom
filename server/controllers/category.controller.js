@@ -80,7 +80,7 @@ const fetchAllCategoriesController = async (req, res) => {
 
     const categoriesPerPage = await Category.find().skip(skip).limit(limit);
     const totalCategoriesCount = await Category.countDocuments();
-    const totalPagesCount = totalCategoriesCount / limit;
+    const totalPagesCount = Math.ceil(totalCategoriesCount / limit);
     return response(
       res,
       200,
