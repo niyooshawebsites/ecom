@@ -1,5 +1,6 @@
 import Category from "../models/category.model.js";
 import response from "../utils/response.js";
+import slugify from "slugify";
 
 const createCategoryController = async (req, res) => {
   try {
@@ -27,13 +28,16 @@ const createCategoryController = async (req, res) => {
 const updateCategoryController = async (req, res) => {
   try {
     const { cid } = req.params;
-    const { name } = req.body;
+    const { name, slug } = req.body;
     if (!cid) return response(res, 400, false, "No cid. No updation");
     if (!name) return response(res, 400, false, "Category name is missing");
+    if (!slug) return response(res, 400, false, "Category slug is missing");
+
+    const updatedSlug = slugify(slug, { lower: true, strict: true });
 
     const updatedCategory = await Category.findByIdAndUpdate(
       cid,
-      { name, slug: name },
+      { name, slug: updatedSlug },
       { new: true }
     );
 

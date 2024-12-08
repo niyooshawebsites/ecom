@@ -1,5 +1,6 @@
 import Product from "../models/product.model.js";
 import response from "../utils/response.js";
+import slugify from "slugify";
 
 const createProductController = async (req, res) => {
   try {
@@ -25,16 +26,22 @@ const createProductController = async (req, res) => {
 const updateProductController = async (req, res) => {
   try {
     const { pid } = req.params;
-    const { name, price, category, shortDesc, longDesc } = req.body;
+    const { name, slug, price, category, shortDesc, longDesc } = req.body;
+
+    const updatedSlug = slugify(slug, { lower: true, strict: true });
 
     if (!pid) response(res, 400, false, "No product id!. No updation!");
 
-    if ((name, price, category, shortDesc, longDesc))
+    if (!name || !price || !slug || !category || !shortDesc || !longDesc)
       return response(res, 400, false, "Please fill out all the details");
 
-    const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, {
-      new: true,
-    });
+    const updatedProduct = await Product.findByIdAndUpdate(
+      pid,
+      { ...req.body, slug: updatedSlug },
+      {
+        new: true,
+      }
+    );
 
     return response(
       res,
@@ -80,7 +87,7 @@ const fetchAllProductsController = async (req, res) => {
       res,
       200,
       true,
-      "12 products fetched",
+      `${productsPerPage.length} products fetched`,
       productsPerPage,
       totalPagesCount
     );
