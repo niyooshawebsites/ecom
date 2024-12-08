@@ -3,7 +3,7 @@ const accountVerificationTxt = (token) => {
   Hi there, 
   <br/>
   <br/>
-  Please verify your email by clicking the following link : <a href="http://localhost:5173/verify-email?token=${token}">Verify</a>
+  Please verify your email by clicking the following link : <a href="http://localhost:5173/verify-email/${token}">Verify</a>
   <br/>
   <br/>
   Thanks and regards,
@@ -12,4 +12,18 @@ const accountVerificationTxt = (token) => {
   `;
 };
 
-export { accountVerificationTxt };
+const passwordResetTxt = (token) => {
+  return `
+  Hi there, 
+  <br/>
+  <br/>
+  Please reset your account password by clicking the following link : <a href="http://localhost:5173/reset-password/${token}">Reset</a>
+  <br/>
+  <br/>
+  Thanks and regards,
+  <br/>
+  <strong>Team Woodcart</strong>
+  `;
+};
+
+export { accountVerificationTxt, passwordResetTxt };

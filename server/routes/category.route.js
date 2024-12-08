@@ -6,7 +6,7 @@ import {
   fetchAllCategoriesController,
   fetchCategoryController,
 } from "../controllers/category.controller.js";
-import auth from "../middlewares/auth.middeware.js";
+import auth from "../middlewares/auth.middleware.js";
 
 const categoryRouter = express.Router();
 

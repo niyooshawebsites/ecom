@@ -1,5 +1,5 @@
 import express from "express";
-import auth from "../middlewares/auth.middeware.js";
+import auth from "../middlewares/auth.middleware.js";
 import {
   createProductController,
   updateProductController,

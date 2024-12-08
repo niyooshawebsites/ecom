@@ -3,7 +3,10 @@ import response from "../utils/response.js";
 import { encryptPassword, decryptPassword } from "../utils/password.js";
 import { verificationEmail } from "../utils/mail.js";
 import { createToken } from "../utils/token.js";
-import { accountVerificationTxt } from "../emailTemplates/accountVerification.js";
+import {
+  accountVerificationTxt,
+  passwordResetTxt,
+} from "../emailTemplates/accountVerification.js";
 
 const registerController = async (req, res) => {
   try {
@@ -17,7 +20,13 @@ const registerController = async (req, res) => {
 
     if (user) return response(res, 409, false, "Account already exists!");
 
-    const authToken = await createToken({ userId: "New user id" }, "1d");
+    const newUser = await new User({
+      username,
+      email,
+      password: await encryptPassword(password),
+    }).save();
+
+    const authToken = await createToken({ userId: newUser._id }, "1d");
 
     const mailOptions = {
       from: "info@woodcart.com",
@@ -28,12 +37,6 @@ const registerController = async (req, res) => {
 
     // sending verification email
     await verificationEmail(mailOptions);
-
-    const newUser = await new User({
-      username,
-      email,
-      password: await encryptPassword(password),
-    }).save();
 
     return response(res, 201, true, "Registration successful");
   } catch (err) {
@@ -74,4 +77,174 @@ const loginController = async (req, res) => {
   }
 };
 
-export { registerController, loginController };
+const logoutController = async (req, res) => {
+  try {
+    const result = res.clearCookie("authToken");
+    if (!result) return response(res, 501, false, "logout failed");
+
+    return response(res, 200, true, "logout successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error!");
+  }
+};
+
+const fetchAllUsersController = async (req, res) => {
+  try {
+    const { pageNo } = req.params;
+    const currentPageNo = parseInt(pageNo) || 1;
+    const limit = 10;
+    const skip = (currentPageNo - 1) * limit;
+
+    const usersPerPage = await User.find().skip(skip).limit(limit);
+
+    if (usersPerPage.length == 0)
+      return response(res, 404, false, "No users found");
+
+    const totalUsersCount = User.countDocuments();
+    const totalPagesCount = Math.ceil(totalUsersCount / limit);
+
+    return response(
+      res,
+      200,
+      true,
+      "All users found",
+      usersPerPage,
+      totalPagesCount
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error!");
+  }
+};
+
+const fetchUserController = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    if (!uid) return response(res, 400, false, "User id missing");
+
+    const user = await User.findById(uid).select("-password");
+    if (!user) return response(res, 404, false, "No user found");
+
+    return response(res, 200, true, "User found", user);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const updateUserPasswordController = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const { password } = req.body;
+
+    if (!uid) return response(res, 400, false, "uid is missing");
+    if (!password) return response(res, 400, false, "Password is missing");
+
+    const updatedUser = await User.findOneAndUpdate(
+      uid,
+      { password },
+      { new: true, runValidators: true }
+    );
+
+    return response(res, 201, true, "Password updated successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const deleteUserController = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    if (!uid) return response(res, 400, false, "No uid is missing");
+
+    const result = await User.findByIdAndDelete(uid);
+
+    return response(res, 200, true, "User deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const verifyUserController = async (req, res) => {
+  try {
+    const { userId } = req.user._id;
+
+    if (!userId)
+      return response(res, 401, false, "No user id found in the token");
+
+    const user = await User.findById(userId);
+
+    if (userId === user._id)
+      return response(res, 200, true, "User verified successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const forgotPasswordController = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) return response(res, 400, false, "Email missing");
+
+    const user = await User.findOne({ email });
+    if (!user) return response(res, 404, false, "No user found");
+
+    const authToken = await createToken({ userId: user._id }, "1d");
+
+    const mailOptions = {
+      from: "info@woodcart.com",
+      to: email,
+      subject: "Reset Password",
+      html: passwordResetTxt(authToken),
+    };
+
+    // sending verification email
+    await verificationEmail(mailOptions);
+
+    return response(res, 200, true, "Password reset email sent");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const resetPasswordController = async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+    const userId = req.user._id;
+
+    if (!newPassword) return response(res, 400, false, "New password missing");
+
+    const user = await User.findById(userId);
+    if (!user) return response(res, 404, false, "No user found");
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { password: await encryptPassword(newPassword) },
+      { new: true, runValidators: true }
+    );
+
+    return response(res, 201, true, "Password reset successful");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+export {
+  registerController,
+  loginController,
+  logoutController,
+  fetchAllUsersController,
+  fetchUserController,
+  updateUserPasswordController,
+  deleteUserController,
+  verifyUserController,
+  forgotPasswordController,
+  resetPasswordController,
+};

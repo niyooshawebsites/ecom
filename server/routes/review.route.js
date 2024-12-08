@@ -4,7 +4,7 @@ import {
   deleteReviewController,
   fetchReviewsByProductsController,
 } from "../controllers/review.controller.js";
-import auth from "../middlewares/auth.middeware.js";
+import auth from "../middlewares/auth.middleware.js";
 
 const reviewRouter = express.Router();
 
