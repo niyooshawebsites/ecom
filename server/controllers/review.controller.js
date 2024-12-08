@@ -39,15 +39,30 @@ const deleteReviewController = async (req, res) => {
 
 const fetchReviewsByProductsController = async (req, res) => {
   try {
-    const { pid } = req.params;
+    const { pid, pageNo } = req.params;
+    const currentPageNo = parseInt(pageNo) || 1;
+    const limit = 10;
+    const skip = (currentPageNo - 1) * limit;
     if (!pid) return response(res, 400, false, "No pid. No review");
 
-    const reviews = await Review.find({ product: pid });
+    const reviewsPerPage = await Review.find({ product: pid })
+      .skip(skip)
+      .limit(limit);
 
     if (reviews.length == 0)
       return response(res, 404, false, "No reviews for given product");
 
-    return response(res, 200, true, "Reviews found for given product");
+    const totalReviewsCount = Review.countDocuments();
+    const totalPagesCount = Math.ceil(totalReviewsCount / limit);
+
+    return response(
+      res,
+      200,
+      true,
+      "Reviews found for given product",
+      reviewsPerPage,
+      totalPagesCount
+    );
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");

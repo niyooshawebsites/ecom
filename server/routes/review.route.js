@@ -9,7 +9,10 @@ import auth from "../middlewares/auth.middeware.js";
 const reviewRouter = express.Router();
 
 reviewRouter.post("/create-review/:pid", auth, createReviewController);
-reviewRouter.delete("/delete-review/:pid", auth, deleteReviewController);
-reviewRouter.get("/fetch-reviews/:pid", fetchReviewsByProductsController);
+reviewRouter.delete("/delete-review/:rid", auth, deleteReviewController);
+reviewRouter.get(
+  "/fetch-reviews/:pid/:pageNo",
+  fetchReviewsByProductsController
+);
 
 export default reviewRouter;
