@@ -176,9 +176,16 @@ const verifyUserController = async (req, res) => {
       return response(res, 401, false, "No user id found in the token");
 
     const user = await User.findById(userId);
+    if (!user) return response(res, 404, false, "No user found");
 
-    if (userId === user._id)
+    if (userId === user._id) {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { isActive: true, isVerified: true },
+        { new: true, runValidators: true }
+      );
       return response(res, 200, true, "User verified successfully");
+    }
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
@@ -236,6 +243,41 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
+const updateContactDetailsController = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const { contactNo, houseNo, streetNo, locality, district, state, pincode } =
+      req.body;
+
+    if (
+      !contactNo ||
+      !houseNo ||
+      !streetNo ||
+      !locality ||
+      !district ||
+      !state ||
+      !pincode
+    )
+      return response(res, 400, false, "Please fill out all the details");
+
+    const updatedUser = await User.findByIdAndUpdate(
+      uid,
+      {
+        contactDetails: req.body,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    return response(res, 201, true, "Contact details updated successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   registerController,
   loginController,
@@ -247,4 +289,5 @@ export {
   verifyUserController,
   forgotPasswordController,
   resetPasswordController,
+  updateContactDetailsController,
 };

@@ -10,6 +10,7 @@ import {
   verifyUserController,
   forgotPasswordController,
   resetPasswordController,
+  updateContactDetailsController,
 } from "../controllers/user.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 import verifyEmail from "../middlewares/verifyEmail.middleware.js";
@@ -32,6 +33,11 @@ userRouter.post(
   "/reset-password/:authToken",
   verifyEmail,
   resetPasswordController
+);
+userRouter.post(
+  "/update-contact-details/:uid",
+  auth,
+  updateContactDetailsController
 );
 
 export default userRouter;
