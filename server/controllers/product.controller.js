@@ -102,7 +102,7 @@ const fetchProductController = async (req, res) => {
     const { pid } = req.params;
     if (!pid) return response(res, 400, false, "Product ID is missing");
 
-    const product = await Product.findById(pid);
+    const product = await Product.findById(pid).populate("category");
     if (!product) return response(res, 404, false, "Product not found");
 
     return response(res, 200, true, "Product found successfully", product);

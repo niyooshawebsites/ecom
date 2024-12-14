@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cartSliceActions } from "../store/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -9,7 +9,7 @@ const DisplayProduct = () => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
   const { category, product, pid } = useParams();
-
+  const [productData, setProductData] = useState({});
   const [cartProducts, setCartProducts] = useState([]);
 
   const increatement = () => {
@@ -35,16 +35,24 @@ const DisplayProduct = () => {
 
   const fetchProductDetails = async () => {
     try {
-      const { data } = await axios.get(
+      const res = await axios.get(
         `http://localhost:8000/api/v1/fetch-product/${pid}`,
         { withCredentials: true }
       );
 
-      if (data.success) toast.success(data.msg);
+      console.log(res.data.data);
+
+      if (res.data.success) {
+        setProductData(res.data.data);
+      }
     } catch (err) {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    fetchProductDetails();
+  }, []);
 
   return (
     <main className="w-9/12 mx-auto mt-5">

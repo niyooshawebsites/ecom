@@ -1,9 +1,34 @@
 import Layout from "../comps/Layout";
 import Card from "../comps/Card";
 import Sidebar from "../comps/Sidebar";
-import productsData from "../data/products";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Shop = () => {
+  const [productsData, setProductsData] = useState([]);
+
+  const fetchProductsData = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-all-products/1`,
+        { withCredentials: true }
+      );
+
+      console.log(res.data.success);
+      console.log(res.data.data);
+
+      if (res.data.success) {
+        console.log(res.data.data);
+        setProductsData(res.data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductsData();
+  }, []);
   return (
     <Layout>
       <main className="flex">
@@ -12,12 +37,12 @@ const Shop = () => {
           {productsData.map((product) => {
             return (
               <Card
-                key={product.uid}
-                pid={product.uid}
-                name={product.name}
+                key={product._id}
+                pid={product._id}
+                name={product.slug}
                 price={product.price}
                 img={product.img}
-                category={product.category}
+                category={product.category.name}
                 shortDesc={product.shortDesc}
                 longDesc={product.longDesc}
               />
