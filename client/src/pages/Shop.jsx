@@ -14,11 +14,7 @@ const Shop = () => {
         { withCredentials: true }
       );
 
-      console.log(res.data.success);
-      console.log(res.data.data);
-
       if (res.data.success) {
-        console.log(res.data.data);
         setProductsData(res.data.data);
       }
     } catch (err) {

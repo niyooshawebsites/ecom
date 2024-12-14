@@ -4,8 +4,6 @@ import { useSelector } from "react-redux";
 const Header = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
 
-  console.log(cartProductList);
-
   return (
     <header className="bg-blue-700 text-white">
       <nav className="flex justify-between items-center w-8/12 mx-auto min-h-10 ">
