@@ -9,6 +9,9 @@ import Cart from "./pages/Cart";
 import { Provider } from "react-redux";
 import store from "./store/CentralStore";
 import CreateProduct from "./pages/CreateProduct";
+import CreateCategory from "./pages/CreateCategory";
+import Categories from "./pages/Categories";
+import UpdateCategory from "./pages/UpdateCategory";
 
 const App = () => {
   return (
@@ -23,6 +26,15 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/:category/:product/:pid" element={<Product />} />
           <Route path="/dashboard/create-product" element={<CreateProduct />} />
+          <Route
+            path="/dashboard/create-category"
+            element={<CreateCategory />}
+          />
+          <Route
+            path="/dashboard/udpate-category/:cid"
+            element={<UpdateCategory />}
+          />
+          <Route path="/dashboard/categories" element={<Categories />} />
         </Routes>
       </BrowserRouter>
     </Provider>
