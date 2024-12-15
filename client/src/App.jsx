@@ -12,6 +12,8 @@ import CreateProduct from "./pages/CreateProduct";
 import CreateCategory from "./pages/CreateCategory";
 import Categories from "./pages/Categories";
 import UpdateCategory from "./pages/UpdateCategory";
+import Products from "./pages/Products";
+import UpdateProduct from "./pages/UpdateProduct";
 
 const App = () => {
   return (
@@ -25,7 +27,6 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/:category/:product/:pid" element={<Product />} />
-          <Route path="/dashboard/create-product" element={<CreateProduct />} />
           <Route
             path="/dashboard/create-category"
             element={<CreateCategory />}
@@ -35,6 +36,12 @@ const App = () => {
             element={<UpdateCategory />}
           />
           <Route path="/dashboard/categories" element={<Categories />} />
+          <Route path="/dashboard/create-product" element={<CreateProduct />} />
+          <Route
+            path="/dashboard/update-product/:pid"
+            element={<UpdateProduct />}
+          />
+          <Route path="/dashboard/products" element={<Products />} />
         </Routes>
       </BrowserRouter>
     </Provider>

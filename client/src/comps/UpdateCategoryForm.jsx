@@ -1,9 +1,26 @@
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
 
 const UpdateCategoryForm = () => {
   const [cid] = useSearchParams();
+  const [category, setCategory] = useState({});
+
+  const fetchCategory = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-category/${cid}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setCategory(res.data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const updateCategory = async (formData) => {
     try {
@@ -23,6 +40,10 @@ const UpdateCategoryForm = () => {
     }
   };
 
+  useEffect(() => {
+    fetchCategory();
+  }, []);
+
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-regular">Update Category</h1>
@@ -34,6 +55,7 @@ const UpdateCategoryForm = () => {
               type="text"
               name="name"
               id="name"
+              defaultValue={category.name}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Product name"
             />
