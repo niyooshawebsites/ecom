@@ -15,6 +15,7 @@ import UpdateCategory from "./pages/UpdateCategory";
 import Products from "./pages/Products";
 import UpdateProduct from "./pages/UpdateProduct";
 import Protect from "./pages/Protect";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const App = () => {
   return (
@@ -28,13 +29,14 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/:category/:product/:pid" element={<Product />} />
-          <Route path="/dashboard" element={<Protect />}>
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route element={<Protect />}>
             <Route
               path="/dashboard/create-category"
               element={<CreateCategory />}
             />
             <Route
-              path="/dashboard/udpate-category/:cid"
+              path="/dashboard/update-category/:cid"
               element={<UpdateCategory />}
             />
             <Route path="/dashboard/categories" element={<Categories />} />

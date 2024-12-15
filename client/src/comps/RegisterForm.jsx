@@ -1,11 +1,32 @@
+import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const RegisterForm = () => {
+  const handleRegsitration = async (formData) => {
+    try {
+      const username = formData.get("username");
+      const email = formData.get("email");
+      const password = formData.get("password");
+
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/register`,
+        { username, email, password },
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-regular">Register</h1>
       <div className="flex flex-col w-3/12 border rounded-lg p-5">
-        <form className="mb-3">
+        <form className="mb-3" action={handleRegsitration}>
           <div className="flex flex-col mb-3">
             <label htmlFor="username">Username</label>
             <input

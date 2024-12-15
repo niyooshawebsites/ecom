@@ -26,7 +26,7 @@ const LoginForm = () => {
           })
         );
         toast.success(res.data.msg);
-        return navigate("/dashboard/create-product");
+        navigate("/dashboard/create-product");
       }
     } catch (err) {
       console.error(err);

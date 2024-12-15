@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -25,7 +25,9 @@ const Protect = () => {
     }
   };
 
-  checkAccess();
+  useEffect(() => {
+    checkAccess();
+  }, []);
 
   return access ? <Outlet /> : <Navigate to="/login" />;
 };
