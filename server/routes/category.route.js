@@ -4,6 +4,7 @@ import {
   updateCategoryController,
   deleteCategoryController,
   fetchAllCategoriesController,
+  fetchAllCategoriesAtOnceController,
   fetchCategoryController,
 } from "../controllers/category.controller.js";
 import auth from "../middlewares/auth.middleware.js";
@@ -16,6 +17,10 @@ categoryRouter.delete("/delete-category/:cid", auth, deleteCategoryController);
 categoryRouter.get(
   "/fetch-all-categories/:pageNo",
   fetchAllCategoriesController
+);
+categoryRouter.get(
+  "/fetch-all-categories-at-once",
+  fetchAllCategoriesAtOnceController
 );
 categoryRouter.get("/fetch-category/:cid", fetchCategoryController);
 

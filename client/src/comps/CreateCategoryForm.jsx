@@ -1,26 +1,4 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-
-const CreateProductForm = () => {
-  const [categories, setCategories] = useState([]);
-
-  const fetchAllCategories = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-categories-at-once`,
-        { withCredentials: true }
-      );
-      if (res.data.success) {
-        setCategories(res.data.data);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllCategories();
-  }, []);
+const CreateCategoryForm = () => {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-regular">Create Product</h1>
@@ -87,4 +65,4 @@ const CreateProductForm = () => {
   );
 };
 
-export default CreateProductForm;
+export default CreateCategoryForm;

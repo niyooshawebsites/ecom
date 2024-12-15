@@ -95,6 +95,22 @@ const fetchAllCategoriesController = async (req, res) => {
   }
 };
 
+const fetchAllCategoriesAtOnceController = async (req, res) => {
+  try {
+    const categories = await Category.find();
+    return response(
+      res,
+      200,
+      true,
+      "Categories fected successfully",
+      categories
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, false, 500, "Internal server error");
+  }
+};
+
 const fetchCategoryController = async (req, res) => {
   try {
     const { cid } = req.params;
@@ -115,5 +131,6 @@ export {
   updateCategoryController,
   deleteCategoryController,
   fetchAllCategoriesController,
+  fetchAllCategoriesAtOnceController,
   fetchCategoryController,
 };

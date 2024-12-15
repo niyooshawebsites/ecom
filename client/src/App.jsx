@@ -8,6 +8,7 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import { Provider } from "react-redux";
 import store from "./store/CentralStore";
+import CreateProduct from "./pages/CreateProduct";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/:category/:product/:pid" element={<Product />} />
+          <Route path="/dashboard/create-product" element={<CreateProduct />} />
         </Routes>
       </BrowserRouter>
     </Provider>
