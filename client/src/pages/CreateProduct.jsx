@@ -1,10 +1,14 @@
 import Layout from "../comps/Layout";
 import CreateProductForm from "../comps/CreateProductForm";
+import AdminSidebar from "../comps/AdminSidebar";
 
 const CreateProduct = () => {
   return (
     <Layout>
-      <CreateProductForm />
+      <div className="flex">
+        <AdminSidebar />
+        <CreateProductForm />
+      </div>
     </Layout>
   );
 };

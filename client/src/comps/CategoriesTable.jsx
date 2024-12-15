@@ -40,7 +40,7 @@ const CategoriesTable = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="w-10/12 flex flex-col justify-center items-center min-h-screen">
       <div className="w-2/12">
         <h1 className="text-4xl py-3 poppins-regular">Product Categories</h1>
         <table className="w-full border border-orange-600">

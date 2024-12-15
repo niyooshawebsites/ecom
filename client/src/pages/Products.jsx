@@ -1,10 +1,14 @@
 import Layout from "../comps/Layout";
 import ProductsTable from "../comps/ProductsTable";
+import AdminSidebar from "../comps/AdminSidebar";
 
 const Products = () => {
   return (
     <Layout>
-      <ProductsTable />
+      <div className="flex">
+        <AdminSidebar />
+        <ProductsTable />
+      </div>
     </Layout>
   );
 };

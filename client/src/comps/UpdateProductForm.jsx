@@ -67,7 +67,7 @@ const UpdateProductForm = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="w-10/12 flex flex-col justify-center items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-regular">Update Category</h1>
       <div className="flex flex-col w-3/12 border rounded-lg p-5">
         <form className="mb-3" action={updateProduct}>

@@ -52,7 +52,7 @@ const loginController = async (req, res) => {
     if (!email || !password)
       return response(res, 400, false, "Please fill out all the details!");
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("password");
     if (!user) return response(res, 404, false, "Invalid email or password");
 
     const validPassword = await decryptPassword(password, user.password);
@@ -70,7 +70,7 @@ const loginController = async (req, res) => {
       path: "/",
     });
 
-    return response(res, 200, true, "Login successful");
+    return response(res, 200, true, "Login successful", user);
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error!");

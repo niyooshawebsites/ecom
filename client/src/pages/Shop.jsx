@@ -1,6 +1,6 @@
 import Layout from "../comps/Layout";
 import Card from "../comps/Card";
-import Sidebar from "../comps/Sidebar";
+import Sidebar from "../comps/ShopSidebar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 

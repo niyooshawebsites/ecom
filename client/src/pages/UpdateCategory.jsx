@@ -1,10 +1,14 @@
 import UpdateCategoryForm from "../comps/UpdateCategoryForm";
 import Layout from "../comps/Layout";
+import AdminSidebar from "../comps/AdminSidebar";
 
 const UpdateCategory = () => {
   return (
     <Layout>
-      <UpdateCategoryForm />
+      <div className="flex">
+        <AdminSidebar />
+        <UpdateCategoryForm />
+      </div>
     </Layout>
   );
 };

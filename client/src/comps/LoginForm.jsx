@@ -1,11 +1,42 @@
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { userSliceActions } from "../store/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogin = async (formData) => {
+    try {
+      const email = formData.get("email");
+      const password = formData.get("password");
+
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        dispatch(
+          userSliceActions.populateUserSlice({
+            uid: res.data.data._id,
+          })
+        );
+        toast.success(res.data.msg);
+        return navigate("/dashboard/create-product");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-regular">Login</h1>
       <div className="flex flex-col w-3/12 border rounded-lg p-5">
-        <form className="mb-3">
+        <form className="mb-3" action={handleLogin}>
           <div className="flex flex-col mb-3">
             <label htmlFor="email">Email</label>
             <input
