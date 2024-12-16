@@ -62,7 +62,11 @@ const fetchAllOrdersController = async (req, res) => {
     const limit = 20;
     const skip = (currentPageNo - 1) * limit;
 
-    const orders = await Order.find().skip(skip).limit(limit);
+    const orders = await Order.find()
+      .skip(skip)
+      .limit(limit)
+      .populate("product")
+      .populate("customer");
     const totalOrdersCount = await Order.countDocuments();
     const totalPagesCount = Math.ceil(totalOrdersCount / limit);
 

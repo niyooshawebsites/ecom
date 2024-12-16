@@ -16,6 +16,8 @@ import Products from "./pages/Products";
 import UpdateProduct from "./pages/UpdateProduct";
 import Protect from "./pages/Protect";
 import ForgotPassword from "./pages/ForgotPassword";
+import AdminOrders from "./pages/AdminOrders";
+import AdminOrder from "./pages/AdminOrder";
 
 const App = () => {
   return (
@@ -49,6 +51,11 @@ const App = () => {
               element={<UpdateProduct />}
             />
             <Route path="/dashboard/products" element={<Products />} />
+            <Route path="/dashboard/orders" element={<AdminOrders />} />
+            <Route
+              path="/dashboard/order-details/:oid"
+              element={<AdminOrder />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>

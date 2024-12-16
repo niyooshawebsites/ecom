@@ -14,6 +14,20 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    paymentMethod: {
+      type: String,
+      emum: ["Online", "COD"],
+      default: "COD",
+    },
+    paymentStatus: {
+      type: String,
+      emum: ["Paid", "Unpaid"],
+      default: "Unpaid",
+    },
+    tnxId: {
+      type: String,
+      default: "",
+    },
     status: {
       type: String,
       enum: [
