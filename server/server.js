@@ -10,7 +10,6 @@ import productRouter from "./routes/product.route.js";
 import categoryRouter from "./routes/category.route.js";
 import orderRouter from "./routes/order.route.js";
 import reviewRouter from "./routes/review.route.js";
-import accessRouter from "./routes/access.route.js";
 
 dotenv.config();
 connectDB();
@@ -35,7 +34,6 @@ app.use(BASE_URL, productRouter);
 app.use(BASE_URL, categoryRouter);
 app.use(BASE_URL, orderRouter);
 app.use(BASE_URL, reviewRouter);
-app.use(BASE_URL, accessRouter);
 
 app.listen(PORT, () =>
   console.log(
