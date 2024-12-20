@@ -67,6 +67,7 @@ const fetchAllOrdersController = async (req, res) => {
       .limit(limit)
       .populate("product")
       .populate("customer");
+
     const totalOrdersCount = await Order.countDocuments();
     const totalPagesCount = Math.ceil(totalOrdersCount / limit);
 
