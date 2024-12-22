@@ -23,46 +23,74 @@ const AdminSidebar = () => {
   return (
     <aside className="w-2/12 bg-orange-500 my-2">
       <ul>
-        <Link to="/orders">
-          <li className="py-5 hover:bg-blue-600">Orders</li>
+        <Link to="/dashboard/orders">
+          <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
+            Orders
+          </li>
         </Link>
         <li
           onClick={toggleShowCategoryMenu}
-          className="cursor-pointer flex items-center"
+          className="cursor-pointer flex items-center px-2 my-2"
         >
           Categories <IoIosArrowDown />
         </li>
         {showCategoryMenu ? (
           <ul>
-            <li>Create Category</li>
-            <li>All Categories</li>
+            <Link to="/dashboard/create-category">
+              <li className="px-3 py-2 hover:bg-blue-600 text-white">
+                Create Category
+              </li>
+            </Link>
+            <Link to="/dashboard/categories">
+              <li className="px-3 py-2 hover:bg-blue-600 text-white">
+                All categories
+              </li>
+            </Link>
           </ul>
         ) : null}
         <li
           onClick={toggleShowProductMenu}
-          className="cursor-pointer flex items-center"
+          className="cursor-pointer flex items-center px-2 my-2"
         >
           Products <IoIosArrowDown />
         </li>
         {showProductMenu ? (
           <ul>
-            <li>Create Product</li>
-            <li>All Products</li>
+            <Link to="/dashboard/create-product">
+              <li className="px-3 py-2 hover:bg-blue-600 text-white">
+                Create Product
+              </li>
+            </Link>
+            <Link to="/dashboard/products">
+              <li className="px-3 py-2 hover:bg-blue-600 text-white">
+                All Products
+              </li>
+            </Link>
           </ul>
         ) : null}
         <li
           onClick={toggleShowCouponMenu}
-          className="cursor-pointer flex items-center"
+          className="cursor-pointer flex items-center px-2"
         >
           Coupons <IoIosArrowDown />
         </li>
         {showCouponMenu ? (
           <ul>
-            <li>Create Coupon</li>
-            <li>All Coupons</li>
+            <Link to="/dashboard/create-coupon">
+              <li className="px-3 py-2 hover:bg-blue-600 text-white">
+                Create Coupon
+              </li>
+            </Link>
+            <Link to="/dashboard/coupons">
+              <li className="px-3 py-2 hover:bg-blue-600 text-white">
+                All Counpons
+              </li>
+            </Link>
           </ul>
         ) : null}
-        <li>Reviews</li>
+        <Link to="/dashboard/reviews">
+          <li className="px-2 py-2 hover:bg-blue-600">Reviews</li>
+        </Link>
       </ul>
     </aside>
   );

@@ -62,12 +62,12 @@ const AdminOrdersTable = () => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
       <div className="flex">
-        <h1 className="text-4xl py-3 poppins-light">All Orders</h1>
-        <button onClick={fetchAllOrders}>
+        <h1 className="text-4xl py-3 poppins-light my-10">All Orders</h1>
+        <button onClick={fetchAllOrders} className="ml-5">
           <SlRefresh className="text-4xl text-blue-600 hover:text-blue-700" />
         </button>
       </div>
-      <table className="w-full">
+      <table className="w-full border">
         <thead className="bg-blue-600 text-white h-10 m-10">
           <tr>
             <th>#</th>
@@ -92,7 +92,7 @@ const AdminOrdersTable = () => {
               >
                 <td>{index + 1}</td>
                 <td>{order.product?.name}</td>
-                <td className="flex justify-center">
+                <td className="flex justify-center p-1">
                   <img
                     src={order.product?.img}
                     alt={order.product?.name}

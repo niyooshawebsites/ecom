@@ -69,8 +69,40 @@ const fetchReviewsByProductsController = async (req, res) => {
   }
 };
 
+const fetchReviewsController = async (req, res) => {
+  try {
+    const { pageNo } = req.params;
+    const currentPageNo = parseInt(pageNo) || 1;
+    const limit = 10;
+    const skip = (currentPageNo - 1) * limit;
+
+    const reviews = await Review.find()
+      .skip(skip)
+      .limit(limit)
+      .populate("product");
+
+    if (reviews.length == 0) return response(res, 404, false, "No reviews.");
+
+    const totalReviewsCount = await Review.countDocuments();
+    const totalPagesCount = Math.ceil(totalReviewsCount / limit);
+
+    return response(
+      res,
+      200,
+      true,
+      "All reviews fetched",
+      reviews,
+      totalPagesCount
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createReviewController,
   deleteReviewController,
   fetchReviewsByProductsController,
+  fetchReviewsController,
 };

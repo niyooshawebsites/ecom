@@ -46,15 +46,18 @@ const CreateProductForm = () => {
   }, []);
 
   return (
-    <div className="w-10/12 flex flex-col justify-center items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-regular">Create Product</h1>
-      <div className="flex flex-col w-3/12 border rounded-lg p-5">
+    <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
+      <h1 className="text-4xl py-3 poppins-light my-10">Create Product</h1>
+      <div className="flex flex-col w-6/12 border rounded-lg p-5">
         <form className="mb-3" action={handleProductCreation}>
           <div className="flex flex-col mb-3">
-            <label htmlFor="username">Select category</label>
+            <label htmlFor="category" className="mb-2">
+              Select category
+            </label>
             <select
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               name="category"
+              id="category"
             >
               {categories.map((category) => (
                 <option key={category._id} value={category._id}>
@@ -64,7 +67,9 @@ const CreateProductForm = () => {
             </select>
           </div>
           <div className="flex flex-col mb-3">
-            <label htmlFor="name">Product name</label>
+            <label htmlFor="name" className="mb-2">
+              Product name
+            </label>
             <input
               type="text"
               name="name"
@@ -74,7 +79,9 @@ const CreateProductForm = () => {
             />
           </div>
           <div className="flex flex-col mb-3">
-            <label htmlFor="price">Price</label>
+            <label htmlFor="price" className="mb-2">
+              Price
+            </label>
             <input
               type="number"
               name="price"
@@ -84,7 +91,9 @@ const CreateProductForm = () => {
             />
           </div>
           <div className="flex flex-col mb-3">
-            <label htmlFor="shortDesc">Short Description</label>
+            <label htmlFor="shortDesc" className="mb-2">
+              Short Description
+            </label>
             <textarea
               name="shortDesc"
               id="shortDesc"
@@ -93,7 +102,9 @@ const CreateProductForm = () => {
             ></textarea>
           </div>
           <div className="flex flex-col mb-3">
-            <label htmlFor="longDesc">Long Description</label>
+            <label htmlFor="longDesc" className="mb-2">
+              Long Description
+            </label>
             <textarea
               name="longDesc"
               id="longDesc"

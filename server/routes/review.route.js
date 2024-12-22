@@ -3,6 +3,7 @@ import {
   createReviewController,
   deleteReviewController,
   fetchReviewsByProductsController,
+  fetchReviewsController,
 } from "../controllers/review.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 
@@ -14,5 +15,6 @@ reviewRouter.get(
   "/fetch-reviews/:pid/:pageNo",
   fetchReviewsByProductsController
 );
+reviewRouter.get("/fetch-reviews/:pageNo", auth, fetchReviewsController);
 
 export default reviewRouter;

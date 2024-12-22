@@ -68,6 +68,9 @@ const fetchAllOrdersController = async (req, res) => {
       .populate("product")
       .populate("customer");
 
+    if (orders.length == 0)
+      return response(res, 404, false, "No orders found.");
+
     const totalOrdersCount = await Order.countDocuments();
     const totalPagesCount = Math.ceil(totalOrdersCount / limit);
 

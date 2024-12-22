@@ -18,6 +18,7 @@ import Protect from "./pages/Protect";
 import ForgotPassword from "./pages/ForgotPassword";
 import AdminOrders from "./pages/AdminOrders";
 import AdminOrder from "./pages/AdminOrder";
+import Reviews from "./pages/Reviews";
 
 const App = () => {
   return (
@@ -56,6 +57,7 @@ const App = () => {
               path="/dashboard/order-details/:oid"
               element={<AdminOrder />}
             />
+            <Route path="/dashboard/reviews" element={<Reviews />} />
           </Route>
         </Routes>
       </BrowserRouter>
