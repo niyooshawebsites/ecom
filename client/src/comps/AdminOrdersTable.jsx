@@ -108,7 +108,7 @@ const AdminOrdersTable = () => {
                   {order.createdAt.split("T")[0].split("-").reverse().join("-")}
                 </td>
                 <td>
-                  <Link to={`/order-details?oid=${order._id}`}>
+                  <Link to={`/dashboard/order-details/${order._id}`}>
                     <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700">
                       View
                     </span>
@@ -123,7 +123,7 @@ const AdminOrdersTable = () => {
                   </button>
                 </td>
                 <td>
-                  <form action={updateOrder()}>
+                  <form action={updateOrder}>
                     <input
                       type="text"
                       name="oid"

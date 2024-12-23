@@ -1,12 +1,13 @@
 import AdminSidebar from "../comps/AdminSidebar";
 import Layout from "../comps/Layout";
+import UpdateCategoryForm from "../comps/UpdateCategoryForm";
 
 const UpdateProduct = () => {
   return (
     <Layout>
       <div className="flex">
         <AdminSidebar />
-        <UpdateProduct />
+        <UpdateCategoryForm />
       </div>
     </Layout>
   );

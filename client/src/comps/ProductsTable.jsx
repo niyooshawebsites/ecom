@@ -93,13 +93,15 @@ const ProductsTable = () => {
                 <td>{product.createdAt}</td>
                 <td>
                   <Link
-                    to={`/update-product?pid=${product._id}`}
+                    to={`/dashboard/update-product/${product._id}`}
                     className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700"
                   >
                     Update
                   </Link>{" "}
                   <button
-                    onClick={deleteProduct(product._id)}
+                    onClick={() => {
+                      deleteProduct(product._id);
+                    }}
                     className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700"
                   >
                     Delete

@@ -24,7 +24,7 @@ const CategoriesTable = () => {
   const deleteCategory = async (cid) => {
     try {
       const res = await axios.delete(
-        `http://localhost:8000/api/v1//delete-category/${cid}`
+        `http://localhost:8000/api/v1/delete-category/${cid}`
       );
 
       if (res.data.success) {
@@ -63,13 +63,15 @@ const CategoriesTable = () => {
                   <td className="text-center">{index + 1}</td>
                   <td className="text-center">{category.name}</td>
                   <td className="text-center">
-                    <Link to={`/update-category?cid=${category._id}`}>
+                    <Link to={`/dashboard/update-category/${category._id}`}>
                       <span className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700 mr-2">
                         Update
                       </span>
                     </Link>{" "}
                     <button
-                      onClick={deleteCategory(category._id)}
+                      onClick={() => {
+                        deleteCategory(category._id);
+                      }}
                       className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700"
                     >
                       Delete
