@@ -19,6 +19,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import AdminOrders from "./pages/AdminOrders";
 import AdminOrder from "./pages/AdminOrder";
 import Reviews from "./pages/Reviews";
+import CreateCoupon from "./pages/CreateCoupon";
+import Coupons from "./pages/Coupons";
 
 const App = () => {
   return (
@@ -57,6 +59,8 @@ const App = () => {
               path="/dashboard/order-details/:oid"
               element={<AdminOrder />}
             />
+            <Route path="/dashboard/create-coupon" element={<CreateCoupon />} />
+            <Route path="/dashboard/coupons" element={<Coupons />} />
             <Route path="/dashboard/reviews" element={<Reviews />} />
           </Route>
         </Routes>

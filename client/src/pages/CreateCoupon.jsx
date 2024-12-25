@@ -1,16 +1,16 @@
 import AdminSidebar from "../comps/AdminSidebar";
+import CreateCouponForm from "../comps/CreateCouponForm";
 import Layout from "../comps/Layout";
-import UpdateProductForm from "../comps/UpdateProductForm";
 
-const UpdateProduct = () => {
+const CreateCoupon = () => {
   return (
     <Layout>
       <div className="flex">
         <AdminSidebar />
-        <UpdateProductForm />
+        <CreateCouponForm />
       </div>
     </Layout>
   );
 };
 
-export default UpdateProduct;
+export default CreateCoupon;
