@@ -38,14 +38,27 @@ const couponSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    products: {
-      type: Array,
-      default: [],
+    endDate:{
+      type: Date,
+      required: true,
     },
     usageLimit: {
-      type: String,
-      enum: ["unlimited", "once"],
+      type: Number,
+      default: Null // Null means unlimited usage
     },
+    useCount: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    applicableTo: {
+      type: [String], // Array of products or categories on which the coupon code will be applicable
+      default: [],
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    }
   },
   {
     timestamps: true,
