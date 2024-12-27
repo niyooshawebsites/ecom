@@ -51,7 +51,7 @@ const updateCouponController = async (req, res) => {
 const fetchCouponController = async(req, res) => {
   try {
     const {ccid} = req.params;
-    
+
     if(!ccid) return response(res, 400, false, "No ccid. No coupon fetching");
 
     const coupon = await Coupon.findById(ccid);
@@ -66,4 +66,28 @@ const fetchCouponController = async(req, res) => {
   }
 }
 
-export { createCounponController, updateCouponController, fetchCouponController };
+const fetchAllCouponsController = async (req, res) => {
+  try {
+    
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+}
+
+const deleteCouponController = async (req, res) => {
+  try {
+    const {ccid} = req.params;
+
+    if(!ccid) return response(res, 400, false, "No ccid. No coupon deletion");
+
+    const deletedCounpon = await Coupon.findByIdAndDelete(ccid);
+
+    return response(res, 201, true, "Coupon deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+}
+
+export { createCounponController, updateCouponController, fetchCouponController, fetchAllCouponsController, deleteCouponController};
