@@ -24,4 +24,12 @@ const createCounponController = async (req, res) => {
   }
 };
 
+const updateCouponController = async (req, res) => {
+  try {
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export { createCounponController };
