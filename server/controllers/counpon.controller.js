@@ -68,7 +68,25 @@ const fetchCouponController = async(req, res) => {
 
 const fetchAllCouponsController = async (req, res) => {
   try {
-    
+    const {pageNo} = req.params;
+    const currentPageNo = parseInt(pageNo) || 1;
+    const limit = 10;
+    const skip = (currentPageNo - 1) * limit;
+
+    const couponsPerPage = await Coupon.find().skip(skip).limit(limit);
+    const tatalCouponsCount = await Coupon.countDocuments();
+    const totalPagesCount = Math.ceil(tatalCouponsCount/limit);
+
+    return response(
+      res,
+      200,
+      true,
+      "Coupons fected successfully",
+      couponsPerPage,
+      totalPagesCount
+    );
+
+    if(coupons.length == 0) return response(res, 404, false, "No coupon found");
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
