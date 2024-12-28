@@ -41,11 +41,11 @@ const couponSchema = new mongoose.Schema(
     },
     endDate:{
       type: Date,
-      default: Null,
+      default: null,
     },
     usageLimit: {
       type: Number,
-      default: Null // Null means unlimited usage
+      default: null // Null means unlimited usage
     },
     usedCount: {
       type: Number,
