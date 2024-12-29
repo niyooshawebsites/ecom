@@ -62,7 +62,7 @@ const AdminOrdersTable = () => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
       <div className="flex">
-        <h1 className="text-4xl py-3 poppins-light my-10">All Orders</h1>
+        <h1 className="text-4xl py-3 poppins-light mt-10 mb-2">All Orders</h1>
         <button onClick={fetchAllOrders} className="ml-5">
           <SlRefresh className="text-4xl text-blue-600 hover:text-blue-700" />
         </button>
@@ -70,17 +70,20 @@ const AdminOrdersTable = () => {
       <table className="w-full border">
         <thead className="bg-blue-600 text-white h-10 m-10">
           <tr>
-            <th>#</th>
-            <th className="poppins-light">Product Name</th>
-            <th className="poppins-light">Product Img</th>
-            <th className="poppins-light">Quantity</th>
-            <th className="poppins-light">Product Price</th>
-            <th className="poppins-light">Product Category</th>
-            <th className="poppins-light">Order Status</th>
-            <th className="poppins-light">Payment Method</th>
-            <th className="poppins-light">Time</th>
-            <th className="poppins-light">Action</th>
-            <th className="poppins-light">Change status</th>
+            <th className="poppins-light border text-sm p-1">#</th>
+            <th className="poppins-light border text-sm p-1">Order ID</th>
+            <th className="poppins-light border text-sm p-1">Product Name</th>
+            <th className="poppins-light border text-sm p-1">Product Img</th>
+            <th className="poppins-light border text-sm p-1">Quantity</th>
+            <th className="poppins-light border text-sm p-1">Product Price</th>
+            <th className="poppins-light border text-sm p-1">
+              Product Category
+            </th>
+            <th className="poppins-light border text-sm p-1">Order Status</th>
+            <th className="poppins-light border text-sm p-1">Payment Method</th>
+            <th className="poppins-light border text-sm p-1">Time</th>
+            <th className="poppins-light border text-sm p-1">Action</th>
+            <th className="poppins-light border text-sm p-1">Change status</th>
           </tr>
         </thead>
         <tbody>
@@ -90,8 +93,9 @@ const AdminOrdersTable = () => {
                 key={order._id}
                 className="odd:bg-white even:bg-gray-300 h-10 text-center border"
               >
-                <td>{index + 1}</td>
-                <td>{order.product?.name}</td>
+                <td className="border text-sm p-1">{index + 1}</td>
+                <td className="border text-sm p-1">{order._id}</td>
+                <td className="border text-sm p-1">{order.product?.name}</td>
                 <td className="flex justify-center p-1">
                   <img
                     src={order.product?.img}
@@ -99,15 +103,17 @@ const AdminOrdersTable = () => {
                     width={40}
                   />
                 </td>
-                <td>{order.quantity}</td>
-                <td>{order.product?.price}</td>
-                <td>{order.product?.category?.name}</td>
-                <td>{order.status}</td>
-                <td>{order.paymentMethod}</td>
-                <td>
+                <td className="border text-sm p-1">{order.quantity}</td>
+                <td className="border text-sm p-1">{order.product?.price}</td>
+                <td className="border text-sm p-1">
+                  {order.product?.category?.name}
+                </td>
+                <td className="border text-sm p-1">{order.status}</td>
+                <td className="border text-sm p-1">{order.paymentMethod}</td>
+                <td className="border text-sm p-1">
                   {order.createdAt.split("T")[0].split("-").reverse().join("-")}
                 </td>
-                <td>
+                <td className="border text-sm p-1">
                   <Link to={`/dashboard/order-details/${order._id}`}>
                     <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700">
                       View

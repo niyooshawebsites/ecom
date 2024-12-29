@@ -21,6 +21,7 @@ import AdminOrder from "./pages/AdminOrder";
 import Reviews from "./pages/Reviews";
 import CreateCoupon from "./pages/CreateCoupon";
 import Coupons from "./pages/Coupons";
+import UpdateCoupon from "./pages/UpdateCoupon";
 
 const App = () => {
   return (
@@ -60,6 +61,10 @@ const App = () => {
               element={<AdminOrder />}
             />
             <Route path="/dashboard/create-coupon" element={<CreateCoupon />} />
+            <Route
+              path="/dashboard/update-coupon/:ccid"
+              element={<UpdateCoupon />}
+            />
             <Route path="/dashboard/coupons" element={<Coupons />} />
             <Route path="/dashboard/reviews" element={<Reviews />} />
           </Route>

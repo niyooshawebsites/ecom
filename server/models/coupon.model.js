@@ -36,21 +36,21 @@ const couponSchema = new mongoose.Schema(
     },
     startDate: {
       type: Date,
-      min: Date.now(),
+      default: null,
       required: true,
     },
-    endDate:{
+    endDate: {
       type: Date,
       default: null,
     },
     usageLimit: {
       type: Number,
-      default: null // Null means unlimited usage
+      default: null, // Null means unlimited usage
     },
     usedCount: {
       type: Number,
       default: 0,
-      min: 0
+      min: 0,
     },
     applicableTo: {
       type: [String], // Array of products or categories on which the coupon code will be applicable
@@ -59,7 +59,12 @@ const couponSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
-    }
+    },
+    desc: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
   {
     timestamps: true,

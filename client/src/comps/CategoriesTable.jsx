@@ -42,15 +42,22 @@ const CategoriesTable = () => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
       <div className="w-5/12">
-        <h1 className="text-4xl text-center py-3 poppins-light my-10">
+        <h1 className="text-4xl text-center py-3 poppins-light mt-10 mb-2">
           Product Categories
         </h1>
         <table className="w-full border">
           <thead className="bg-blue-500 h-10 m-10">
             <tr className="">
-              <th className="poppins-light text-white">#</th>
-              <th className="poppins-light text-white">Category</th>
-              <th className="poppins-light text-white">Action</th>
+              <th className="poppins-light text-white border text-sm p-1">#</th>
+              <th className="poppins-light text-white border text-sm p-1">
+                Category ID
+              </th>
+              <th className="poppins-light text-white border text-sm p-1">
+                Category name
+              </th>
+              <th className="poppins-light text-white border text-sm p-1">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -60,9 +67,16 @@ const CategoriesTable = () => {
                   key={category._id}
                   className="odd:bg-white even:bg-gray-300 h-10"
                 >
-                  <td className="text-center">{index + 1}</td>
-                  <td className="text-center">{category.name}</td>
-                  <td className="text-center">
+                  <td className="text-center border text-sm p-1">
+                    {index + 1}
+                  </td>
+                  <td className="text-center border text-sm p-1">
+                    {category._id}
+                  </td>
+                  <td className="text-center border text-sm p-1">
+                    {category.name}
+                  </td>
+                  <td className="text-center border text-sm">
                     <Link to={`/dashboard/update-category/${category._id}`}>
                       <span className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700 mr-2">
                         Update

@@ -49,7 +49,7 @@ const fetchReviewsByProductsController = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    if (reviews.length == 0)
+    if (reviewsPerPage.length == 0)
       return response(res, 404, false, "No reviews for given product");
 
     const totalReviewsCount = Review.countDocuments();

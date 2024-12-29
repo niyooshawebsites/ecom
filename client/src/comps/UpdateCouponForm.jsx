@@ -1,8 +1,28 @@
-import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
-const CreateCouponForm = () => {
-  const handleCouponCreation = async (formData) => {
+const UpdateCouponForm = () => {
+  const [coupon, setCoupon] = useState({});
+  const { ccid } = useParams();
+
+  const fetchCoupon = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-coupon/${ccid}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setCoupon(res.data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCouponUpdation = async (formData) => {
     try {
       const couponCode = formData.get("couponCode");
       const discountType = formData.get("discountType");
@@ -15,8 +35,8 @@ const CreateCouponForm = () => {
       const isActive = formData.get("isActive");
       const desc = formData.get("desc");
 
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/create-coupon",
+      const res = await axios.patch(
+        `http://localhost:8000/api/v1/update-coupon/${ccid}`,
         {
           couponCode,
           discountType,
@@ -40,11 +60,15 @@ const CreateCouponForm = () => {
     }
   };
 
+  useEffect(() => {
+    fetchCoupon();
+  }, []);
+
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-light my-10">Create Coupon</h1>
+      <h1 className="text-4xl py-3 poppins-light my-10">Update Coupon</h1>
       <div className="flex flex-col w-6/12 border rounded-lg p-5">
-        <form className="mb-3" action={handleCouponCreation}>
+        <form className="mb-3" action={handleCouponUpdation}>
           <div className="flex flex-col mb-3">
             <label htmlFor="couponCode" className="mb-1">
               Coupon Code
@@ -55,6 +79,7 @@ const CreateCouponForm = () => {
               id="couponCode"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter a code"
+              value={coupon.couponCode}
             />
           </div>
 
@@ -67,6 +92,7 @@ const CreateCouponForm = () => {
               id="desc"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter the coupon description"
+              value={coupon.desc}
             ></textarea>
           </div>
 
@@ -78,6 +104,7 @@ const CreateCouponForm = () => {
               name="discountType"
               id="discountType"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+              defaultValue={coupon.defaultValue}
             >
               <option value="percentage">Percentage</option>
               <option value="fixed">Fixed</option>
@@ -94,6 +121,7 @@ const CreateCouponForm = () => {
               id="discountValue"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter the discount value"
+              value={coupon.discountValue}
             />
           </div>
 
@@ -108,6 +136,7 @@ const CreateCouponForm = () => {
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               defaultValue={0}
               placeholder="Enter the minimum order value"
+              value={coupon.minOrderValue}
             />
           </div>
 
@@ -122,6 +151,7 @@ const CreateCouponForm = () => {
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               defaultValue={1000000000}
               placeholder="Enter the minimum order value"
+              value={coupon.maxOrderValue}
             />
           </div>
 
@@ -134,6 +164,7 @@ const CreateCouponForm = () => {
               name="startDate"
               id="startDate"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+              value={coupon.startDate}
             />
           </div>
 
@@ -146,6 +177,7 @@ const CreateCouponForm = () => {
               name="endDate"
               id="endDate"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+              value={coupon.endDate}
             />
           </div>
 
@@ -159,6 +191,7 @@ const CreateCouponForm = () => {
               id="usageLimit"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter the usage limit"
+              value={coupon.usageLimit}
             />
           </div>
 
@@ -170,6 +203,7 @@ const CreateCouponForm = () => {
               name="discountType"
               id="discountType"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+              defaultValue={coupon.discountType}
             >
               <option value="percentage">All products</option>
               <option value="percentage">Selected products</option>
@@ -184,6 +218,7 @@ const CreateCouponForm = () => {
               name="isActive"
               id="isActive"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+              defaultValue={coupon.isActive}
             >
               <option value="true">Active</option>
               <option value="false">Inactive</option>
@@ -193,7 +228,7 @@ const CreateCouponForm = () => {
             type="submit"
             className="bg-blue-600 px-4 py-2 rounded-md text-white hover:bg-blue-700"
           >
-            Create Coupon
+            Update Coupon
           </button>
         </form>
       </div>
@@ -201,4 +236,4 @@ const CreateCouponForm = () => {
   );
 };
 
-export default CreateCouponForm;
+export default UpdateCouponForm;

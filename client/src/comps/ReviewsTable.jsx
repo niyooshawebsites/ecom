@@ -45,7 +45,7 @@ const ReviewsTable = () => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
       <div className="flex">
-        <h1 className="text-4xl py-3 poppins-light my-10">Reviews</h1>
+        <h1 className="text-4xl py-3 poppins-light mt-10 mb-2">Reviews</h1>
         <button onClick={fetchAllReviews} className="ml-5">
           <SlRefresh className="text-4xl text-blue-600 hover:text-blue-700" />
         </button>
@@ -53,13 +53,13 @@ const ReviewsTable = () => {
       <table className="w-full border">
         <thead className="bg-blue-600 text-white h-10 m-10">
           <tr>
-            <th>#</th>
-            <th className="poppins-light">Product ID</th>
-            <th className="poppins-light">Product Name</th>
-            <th className="poppins-light">Product Img</th>
-            <th className="poppins-light">Product Review</th>
-            <th className="poppins-light">Time</th>
-            <th className="poppins-light">Action</th>
+            <th className="poppins-light border text-sm p-1">#</th>
+            <th className="poppins-light border text-sm p-1">Product ID</th>
+            <th className="poppins-light border text-sm p-1">Product Name</th>
+            <th className="poppins-light border text-sm p-1">Product Img</th>
+            <th className="poppins-light border text-sm p-1">Product Review</th>
+            <th className="poppins-light border text-sm p-1">Time</th>
+            <th className="poppins-light border text-sm p-1">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -69,9 +69,9 @@ const ReviewsTable = () => {
                 key={review._id}
                 className="odd:bg-white even:bg-gray-300 h-10 text-center border"
               >
-                <td>{index + 1}</td>
-                <td>{review.product?._id}</td>
-                <td>{review.product?.name}</td>
+                <td className="border text-sm p-1">{index + 1}</td>
+                <td className="border text-sm p-1">{review.product?._id}</td>
+                <td className="border text-sm p-1">{review.product?.name}</td>
                 <td className="flex justify-center p-1">
                   <img
                     src={review.product?.img}
@@ -79,15 +79,15 @@ const ReviewsTable = () => {
                     width={40}
                   />
                 </td>
-                <td>{review.review}</td>
-                <td>
+                <td className="border text-sm p-1">{review.review}</td>
+                <td className="border text-sm p-1">
                   {review.createdAt
                     .split("T")[0]
                     .split("-")
                     .reverse()
                     .join("-")}
                 </td>
-                <td>
+                <td className="border text-sm p-1">
                   <button
                     className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700"
                     onClick={() => {

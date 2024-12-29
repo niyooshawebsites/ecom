@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { cartSliceActions } from "../store/slices/cartSlice";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import CreateReviewForm from "./CreateReviewForm";
 
 const DisplayProduct = () => {
   const [count, setCount] = useState(0);
@@ -10,6 +11,7 @@ const DisplayProduct = () => {
   const { product, pid } = useParams();
   const [productData, setProductData] = useState({});
   const [cartProducts, setCartProducts] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   const increatement = () => {
     setCount((prevCount) => prevCount + 1);
@@ -47,15 +49,31 @@ const DisplayProduct = () => {
     }
   };
 
+  const fetchReviews = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-reviews/${pid}/1`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setReviews(res.data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     fetchProductDetails();
+    fetchReviews();
   }, []);
 
   return (
     <main className="w-9/12 mx-auto mt-5">
       <section className="flex ">
         <section className=" flex justify-center w-5/12 border m-5">
-          <img src={productData.img} />
+          <img src={productData.img} style={{ height: "500px" }} />
         </section>
         <section className="w-7/12 flex flex-col p-10">
           <section className="flex flex-col mb-5">
@@ -94,6 +112,21 @@ const DisplayProduct = () => {
       <section className="p-10">
         <h2 className="text-3xl mb-5">Product Description</h2>
         <p>{productData.longDesc}</p>
+      </section>
+      <section className="p-10">
+        <h2 className="text-3xl mb-5">Write a Review</h2>
+        <CreateReviewForm />
+      </section>
+      <section className="p-10">
+        <h2 className="text-3xl mb-5">Product Reviews</h2>
+        {reviews.map((review) => {
+          return (
+            <div key={review._id}>
+              <h4>Rating - {review.rating}</h4>
+              <p>{review.review}</p>
+            </div>
+          );
+        })}
       </section>
     </main>
   );
