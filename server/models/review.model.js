@@ -11,10 +11,19 @@ const reviewSchema = new mongoose.Schema(
       enum: [1, 2, 3, 4, 5],
       required: true,
     },
-    review: {
+    reviewMsg: {
       type: String,
       required: true,
       trim: true,
+    },
+    reviewer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Accepted", "Rejected"],
+      default: "Pending",
     },
   },
   {

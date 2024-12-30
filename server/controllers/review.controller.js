@@ -4,16 +4,18 @@ import response from "../utils/response.js";
 const createReviewController = async (req, res) => {
   try {
     const { pid } = req.params;
-    const { rating, review } = req.body;
+    const { rating, reviewMsg, uid } = req.body;
 
     if (!pid) return response(res, 400, false, "No pid. No review");
     if (!rating) return response(res, 400, false, "Rating missing");
-    if (!review) return response(res, 400, false, "Review missing");
+    if (!reviewMsg) return response(res, 400, false, "Review msg missing");
+    if (!uid) return response(res, 400, false, "Uid missing");
 
     const newReview = await new Review({
       product: pid,
       rating,
-      review,
+      reviewMsg,
+      reviewer: uid,
     }).save();
 
     return response(res, 201, true, "Review created successfully");
@@ -47,7 +49,8 @@ const fetchReviewsByProductsController = async (req, res) => {
 
     const reviewsPerPage = await Review.find({ product: pid })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .populate("reviewer");
 
     if (reviewsPerPage.length == 0)
       return response(res, 404, false, "No reviews for given product");

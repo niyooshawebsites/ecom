@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import CreateReviewForm from "./CreateReviewForm";
+import { FaStar } from "react-icons/fa";
 
 const DisplayProduct = () => {
   const [count, setCount] = useState(0);
@@ -64,6 +65,15 @@ const DisplayProduct = () => {
     }
   };
 
+  const createRatingArray = (rating) => {
+    let ratingArray = [];
+    ratingArray.length = rating;
+    for (let i = 0; i < rating; i++) {
+      ratingArray.push(i);
+    }
+    return ratingArray;
+  };
+
   useEffect(() => {
     fetchProductDetails();
     fetchReviews();
@@ -121,9 +131,22 @@ const DisplayProduct = () => {
         <h2 className="text-3xl mb-5">Product Reviews</h2>
         {reviews.map((review) => {
           return (
-            <div key={review._id}>
-              <h4>Rating - {review.rating}</h4>
-              <p>{review.review}</p>
+            <div key={review._id} className="border p-3 rounded-lg mb-3">
+              {createRatingArray(review.rating).map((rating, index) => {
+                return (
+                  <FaStar
+                    key={index}
+                    className="inline text-xl text-yellow-500 mb-3"
+                  />
+                );
+              })}
+              <p className="mb-3">{review.reviewMsg}</p>
+              <p className="mb-3">
+                {review.createdAt.split("T")[0].split("-").reverse().join("-")}
+                {" | "}
+                {review.createdAt.split("T")[1].slice(0, 8)}
+              </p>
+              <p className="font-medium">{review.reviewer.username}</p>
             </div>
           );
         })}
