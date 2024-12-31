@@ -38,6 +38,25 @@ const ReviewsTable = () => {
     }
   };
 
+  const updateReview = async (formData) => {
+    try {
+      const rid = formData.get("rid");
+      const status = formData.get("review");
+
+      const res = await axios.patch(
+        `http://localhost:8000/api/v1/update-review`,
+        { rid, status },
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     fetchAllReviews();
   }, []);
@@ -57,7 +76,9 @@ const ReviewsTable = () => {
             <th className="poppins-light border text-sm p-1">Product ID</th>
             <th className="poppins-light border text-sm p-1">Product Name</th>
             <th className="poppins-light border text-sm p-1">Product Img</th>
+            <th className="poppins-light border text-sm p-1">Rating</th>
             <th className="poppins-light border text-sm p-1">Product Review</th>
+            <th className="poppins-light border text-sm p-1">Status</th>
             <th className="poppins-light border text-sm p-1">Time</th>
             <th className="poppins-light border text-sm p-1">Action</th>
           </tr>
@@ -79,7 +100,9 @@ const ReviewsTable = () => {
                     width={40}
                   />
                 </td>
-                <td className="border text-sm p-1">{review.review}</td>
+                <td className="border text-sm p-1">{review.rating}</td>
+                <td className="border text-sm p-1">{review.reviewMsg}</td>
+                <td className="border text-sm p-1">{review.status}</td>
                 <td className="border text-sm p-1">
                   {review.createdAt
                     .split("T")[0]
@@ -88,14 +111,41 @@ const ReviewsTable = () => {
                     .join("-")}
                 </td>
                 <td className="border text-sm p-1">
-                  <button
-                    className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700"
-                    onClick={() => {
-                      deleteReview(review._id);
-                    }}
-                  >
-                    Delete
-                  </button>
+                  <div className="flex justify-center items-center">
+                    <form action={updateReview}>
+                      <input
+                        type="text"
+                        name="rid"
+                        defaultValue={review._id}
+                        readOnly
+                        className="hidden"
+                      />
+                      <select
+                        name="status"
+                        id="status"
+                        className="border rounded-md mr-2"
+                        required
+                      >
+                        <option>Select status</option>
+                        <option value="On hold">Accept</option>
+                        <option value="Completed">Reject</option>
+                      </select>
+                      <button
+                        type="submit"
+                        className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700"
+                      >
+                        Update Status
+                      </button>
+                    </form>
+                    <button
+                      className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700 ml-2"
+                      onClick={() => {
+                        deleteReview(review._id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             );

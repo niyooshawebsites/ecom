@@ -143,6 +143,7 @@ const AdminOrdersTable = () => {
                       className="border rounded-md mr-2"
                       required
                     >
+                      <option>Select status</option>
                       <option value="On hold">On hold</option>
                       <option value="Completed">Completed</option>
                       <option value="Cancelled">Cancelled</option>
@@ -154,7 +155,7 @@ const AdminOrdersTable = () => {
                       type="submit"
                       className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700"
                     >
-                      Update Order
+                      Update Status
                     </button>
                   </form>
                 </td>

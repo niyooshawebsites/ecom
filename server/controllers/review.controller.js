@@ -103,9 +103,37 @@ const fetchReviewsController = async (req, res) => {
   }
 };
 
+const updateReviewController = async (req, res) => {
+  try {
+    const { rid, status } = req.body;
+
+    if (!rid) return response(res, 404, false, "No rid. No review updation");
+    if (!status)
+      return response(res, 404, false, "No status. No review updation");
+
+    const updatedReview = await Review.findByIdAndUpdate(
+      rid,
+      { status },
+      { new: true }
+    );
+
+    return response(
+      res,
+      200,
+      true,
+      "review updated successfully",
+      updatedReview
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createReviewController,
   deleteReviewController,
   fetchReviewsByProductsController,
   fetchReviewsController,
+  updateReviewController,
 };
