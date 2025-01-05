@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { cartSliceActions } from "../store/slices/cartSlice";
-import { useDispatch } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import CreateReviewForm from "./CreateReviewForm";
 import { FaStar } from "react-icons/fa";
@@ -9,10 +9,11 @@ import { FaStar } from "react-icons/fa";
 const DisplayProduct = () => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
-  const { product, pid } = useParams();
+  const { pid } = useParams();
   const [productData, setProductData] = useState({});
-  const [cartProducts, setCartProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
+
+  const { cartProductList } = useSelector((state) => state.cart_Slice);
 
   const increatement = () => {
     setCount((prevCount) => prevCount + 1);
@@ -26,11 +27,25 @@ const DisplayProduct = () => {
   };
 
   const addToCart = () => {
-    dispatch(cartSliceActions.populateCartProduct(product));
-    setCartProducts([...cartProducts, product]);
+    dispatch(
+      cartSliceActions.populateCartProduct({
+        productName: productData.name,
+        productPrice: productData.price,
+        productCategory: productData.category?.name,
+        productQuantity: count,
+      })
+    );
     dispatch(
       cartSliceActions.populateCartList({
-        cartProductList: cartProducts,
+        cartProductList: [
+          ...cartProductList,
+          {
+            productName: productData.name,
+            productPrice: productData.price,
+            productCategory: productData.category?.name,
+            productQuantity: count,
+          },
+        ],
       })
     );
   };

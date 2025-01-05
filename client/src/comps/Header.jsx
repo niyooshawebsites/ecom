@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { userSliceActions } from "../store/slices/userSlice";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const Header = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
@@ -25,6 +26,8 @@ const Header = () => {
       console.log(err);
     }
   };
+
+  useEffect(() => {}, [cartProductList]);
 
   return (
     <header className="bg-blue-700 text-white">
