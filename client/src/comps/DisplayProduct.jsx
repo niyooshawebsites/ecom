@@ -27,27 +27,33 @@ const DisplayProduct = () => {
   };
 
   const addToCart = () => {
-    dispatch(
-      cartSliceActions.populateCartProduct({
-        productName: productData.name,
-        productPrice: productData.price,
-        productCategory: productData.category?.name,
-        productQuantity: count,
-      })
-    );
-    dispatch(
-      cartSliceActions.populateCartList({
-        cartProductList: [
-          ...cartProductList,
-          {
-            productName: productData.name,
-            productPrice: productData.price,
-            productCategory: productData.category?.name,
-            productQuantity: count,
-          },
-        ],
-      })
-    );
+    if (count > 0) {
+      dispatch(
+        cartSliceActions.populateCartProduct({
+          productName: productData.name,
+          productPrice: productData.price,
+          productCategory: productData.category?.name,
+          productQuantity: count,
+          productTotalAmount: count * productData.price,
+        })
+      );
+      dispatch(
+        cartSliceActions.populateCartList({
+          cartProductList: [
+            ...cartProductList,
+            {
+              productName: productData.name,
+              productPrice: productData.price,
+              productCategory: productData.category?.name,
+              productQuantity: count,
+              productTotalAmount: count * productData.price,
+            },
+          ],
+        })
+      );
+    } else {
+      alert("Add atleast one item to the cart");
+    }
   };
 
   const fetchProductDetails = async () => {

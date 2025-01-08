@@ -5,10 +5,11 @@ const cartSlice = createSlice({
 
   initialState: {
     cartProduct: {
-      productName: "",
-      productPrice: "",
-      productCategory: "",
-      productQuantity: "",
+      productName: null,
+      productPrice: null,
+      productCategory: null,
+      productQuantity: null,
+      productTotalAmount: null,
     },
     cartProductList: [],
   },
@@ -19,6 +20,7 @@ const cartSlice = createSlice({
       state.cartProduct.productPrice = action.payload.productPrice;
       state.cartProduct.productCategory = action.payload.productCategory;
       state.cartProduct.productQuantity = action.payload.productQuantity;
+      state.cartProduct.productTotalAmount = action.payload.productTotalAmount;
     },
 
     populateCartList: (state, action) => {
