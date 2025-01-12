@@ -143,7 +143,7 @@ const applyCouponController = async (req, res) => {
 
     if (!coupon) return response(res, 404, false, "No coupon found");
 
-    return response(res, 201, true, "Coupon found successfully", coupon);
+    return response(res, 200, true, "Coupon applied successfully", coupon);
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
