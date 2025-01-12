@@ -97,6 +97,10 @@ const fetchAllCouponsController = async (req, res) => {
     const skip = (currentPageNo - 1) * limit;
 
     const couponsPerPage = await Coupon.find().skip(skip).limit(limit);
+
+    if (couponsPerPage.length == 0)
+      return response(res, 404, false, "No coupon found");
+
     const tatalCouponsCount = await Coupon.countDocuments();
     const totalPagesCount = Math.ceil(tatalCouponsCount / limit);
 
@@ -108,9 +112,6 @@ const fetchAllCouponsController = async (req, res) => {
       couponsPerPage,
       totalPagesCount
     );
-
-    if (coupons.length == 0)
-      return response(res, 404, false, "No coupon found");
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
@@ -132,10 +133,28 @@ const deleteCouponController = async (req, res) => {
   }
 };
 
+const applyCouponController = async (req, res) => {
+  try {
+    const { couponCode } = req.body;
+    if (!couponCode)
+      return response(res, 400, false, "No coupon code. No discount");
+
+    const coupon = await Coupon.findOne({ couponCode });
+
+    if (!coupon) return response(res, 404, false, "No coupon found");
+
+    return response(res, 201, true, "Coupon found successfully", coupon);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createCounponController,
   updateCouponController,
   fetchCouponController,
   fetchAllCouponsController,
   deleteCouponController,
+  applyCouponController,
 };

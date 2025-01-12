@@ -30,6 +30,7 @@ const DisplayProduct = () => {
     if (count > 0) {
       dispatch(
         cartSliceActions.populateCartProduct({
+          productId: pid,
           productName: productData.name,
           productPrice: productData.price,
           productCategory: productData.category?.name,
@@ -42,6 +43,7 @@ const DisplayProduct = () => {
           cartProductList: [
             ...cartProductList,
             {
+              productId: pid,
               productName: productData.name,
               productPrice: productData.price,
               productCategory: productData.category?.name,

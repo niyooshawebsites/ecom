@@ -1,14 +1,45 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const CartTable = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
-  const { cartTotal, setCartTotal } = useState(0);
-  const { discount, setDiscount } = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [coupon, setCoupon] = useState(null);
+  const [discount, setDiscount] = useState(0);
 
   const removeFromCart = () => {};
 
-  const calculateCartTotal = () => {};
+  const calculateCartTotal = () => {
+    const intialValue = 0;
+    const sumOfCart = cartProductList.reduce(
+      (total, item) => total + item.productTotalAmount,
+      intialValue
+    );
+    return sumOfCart;
+  };
+
+  const fetchCoupon = async (formData) => {
+    try {
+      const couponCode = formData.get("couponCode");
+      const result = await axios.get(
+        `http://localhost:8000/api/v1/apply-coupon`,
+        { couponCode },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    setCartTotal(calculateCartTotal());
+    fetchCoupon();
+  }, []);
 
   return (
     <div className="flex flex-col justify-start items-center min-h-screen">
@@ -69,11 +100,13 @@ const CartTable = () => {
 
         <div className="w-full flex justify-between border p-5">
           <div>
-            <form>
+            <form action={fetchCoupon}>
               <input
                 type="text"
                 placeholder="Enter coupon code"
                 className="py-1 px-1 mr-2 border rounded-md border-blue-500"
+                name="couponCode"
+                required
               />
               <button
                 type="submit"
@@ -89,19 +122,19 @@ const CartTable = () => {
               <tr className="border-b">
                 <td className="border text-sm p-1 font-bold">Gross amount</td>
                 <td className="poppins-light border text-sm p-1 text-center">
-                  500
+                  {cartTotal ? cartTotal : 0}
                 </td>
               </tr>
               <tr className="border-b">
                 <td className="border text-sm p-1 font-bold">Discount</td>
                 <td className="poppins-light border text-sm p-1 text-center">
-                  -30
+                  -{discount ? discount : 0}
                 </td>
               </tr>
               <tr className="border-b">
                 <td className="border text-sm p-1 font-bold">Net amount</td>
                 <td className="poppins-light border text-sm p-1 text-center">
-                  470
+                  {cartTotal - discount}
                 </td>
               </tr>
             </tbody>

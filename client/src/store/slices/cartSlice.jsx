@@ -5,6 +5,7 @@ const cartSlice = createSlice({
 
   initialState: {
     cartProduct: {
+      productId: null,
       productName: null,
       productPrice: null,
       productCategory: null,
@@ -16,6 +17,7 @@ const cartSlice = createSlice({
 
   reducers: {
     populateCartProduct: (state, action) => {
+      state.cartProduct.productId = action.payload.productId;
       state.cartProduct.productName = action.payload.productName;
       state.cartProduct.productPrice = action.payload.productPrice;
       state.cartProduct.productCategory = action.payload.productCategory;
