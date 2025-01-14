@@ -136,12 +136,39 @@ const deleteCouponController = async (req, res) => {
 const applyCouponController = async (req, res) => {
   try {
     const { couponCode } = req.body;
+    const { cartTotal } = req.params;
+    const today = new Date();
+
+    console.log("CART TOTAL", cartTotal);
+
     if (!couponCode)
       return response(res, 400, false, "No coupon code. No discount");
 
     const coupon = await Coupon.findOne({ couponCode });
 
     if (!coupon) return response(res, 404, false, "No coupon found");
+
+    if (cartTotal < coupon.minOrderValue)
+      return response(
+        res,
+        401,
+        false,
+        `Coupon applicable for order value above Rs ${coupon.minOrderValue}`
+      );
+
+    if (cartTotal > coupon.maxOrderValue)
+      return response(
+        res,
+        401,
+        false,
+        `Coupon applicable for order value less than Rs ${coupon.minOrderValue}`
+      );
+
+    if (today < coupon.startDate)
+      return response(res, 401, false, `Invalid coupon`);
+
+    if (today > coupon.startDate)
+      return response(res, 401, false, `Coupon expired`);
 
     return response(res, 200, true, "Coupon applied successfully", coupon);
   } catch (err) {

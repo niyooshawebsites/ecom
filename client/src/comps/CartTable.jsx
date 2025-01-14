@@ -23,9 +23,9 @@ const CartTable = () => {
 
   const fetchCoupon = async (formData) => {
     try {
-      const couponCode = formData.get("couponCode");
+      const couponCode = formData?.get("couponCode");
       const { data } = await axios.post(
-        `http://localhost:8000/api/v1/apply-coupon`,
+        `http://localhost:8000/api/v1/apply-coupon/${cartTotal}`,
         { couponCode },
         {
           withCredentials: true,
@@ -33,17 +33,40 @@ const CartTable = () => {
       );
 
       if (data.success) {
-        setCoupon(data.data);
-        toast(data.msg);
+        const minOrderValue = data.data.minOrderValue;
+        const maxOrderValue = data.data.maxOrderValue;
+        const startDate = data.data.startDate;
+        const endDate = data.data.endDate;
+        const today = new Date();
+
+        if (
+          cartTotal > minOrderValue &&
+          cartTotal < maxOrderValue &&
+          today > startDate &&
+          today < endDate
+        ) {
+          setCoupon(data.data);
+          console.log(data.data);
+
+          // calculate discount amount
+          if (data.data.discountType === "percentage") {
+            setDiscount((cartTotal * data.data.discountValue) / 100);
+          }
+
+          if (data.data.discountType !== "percentage") {
+            setDiscount(data.data.discountValue);
+          }
+          toast.success(data.msg);
+        }
       }
     } catch (err) {
-      console.log(err);
+      toast.error(err.response.data.msg);
+      console.log(err.response.data.msg);
     }
   };
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
-    fetchCoupon();
   }, []);
 
   return (
