@@ -1,5 +1,6 @@
 const CheckoutForm = () => {
   const states = ["Delhi", "Maharashtra", "West Bengal", "Tamil Nadu"];
+
   return (
     <div>
       <form action="">
