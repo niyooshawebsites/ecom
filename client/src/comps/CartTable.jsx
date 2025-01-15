@@ -1,16 +1,76 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { cartSliceActions } from "../store/slices/cartSlice";
 
 const CartTable = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
   const [cartTotal, setCartTotal] = useState(0);
   const [coupon, setCoupon] = useState(null);
   const [discount, setDiscount] = useState(0);
+  const dispatch = useDispatch();
+  const [quantityChanged, setQuantityChanged] = useState(false);
 
-  const removeFromCart = () => {};
+  const removeCartItem = (pid) => {
+    const updatedCartProductList = cartProductList.filter(
+      (product) => product.productId !== pid
+    );
+
+    dispatch(
+      cartSliceActions.populateCartList({
+        cartProductList: updatedCartProductList,
+      })
+    );
+  };
+
+  const removeCoupon = () => {
+    setCoupon(null);
+    if (coupon !== null) {
+      setDiscount(0);
+    }
+  };
+
+  const decQuantity = (pid) => {
+    cartProductList.map((product) => {
+      if (product.productId == pid) {
+        dispatch(
+          cartSliceActions.populateCartProduct({
+            productId: pid,
+            productName: product.name,
+            productPrice: product.price,
+            productCategory: product.category?.name,
+            productQuantity: product.productQuantity - 1,
+            productTotalAmount: product.productQuantity * product.productPrice,
+          })
+        );
+
+        dispatch(cartSliceActions.populateCartList({ cartProductList }));
+        setQuantityChanged((prevState) => !prevState);
+      }
+    });
+  };
+
+  const incQuantity = (pid) => {
+    cartProductList.map((product) => {
+      if (product.productId == pid) {
+        dispatch(
+          cartSliceActions.populateCartProduct({
+            productId: pid,
+            productName: product.name,
+            productPrice: product.price,
+            productCategory: product.category?.name,
+            productQuantity: product.productQuantity + 1,
+            productTotalAmount: product.productQuantity * product.productPrice,
+          })
+        );
+
+        dispatch(cartSliceActions.populateCartList({ cartProductList }));
+        setQuantityChanged((prevState) => !prevState);
+      }
+    });
+  };
 
   const calculateCartTotal = () => {
     const intialValue = 0;
@@ -33,18 +93,7 @@ const CartTable = () => {
       );
 
       if (data.success) {
-        const minOrderValue = data.data.minOrderValue;
-        const maxOrderValue = data.data.maxOrderValue;
-        const startDate = data.data.startDate;
-        const endDate = data.data.endDate;
-        const today = new Date();
-
-        if (
-          cartTotal > minOrderValue &&
-          cartTotal < maxOrderValue &&
-          today > startDate &&
-          today < endDate
-        ) {
+        {
           setCoupon(data.data);
           console.log(data.data);
 
@@ -67,7 +116,9 @@ const CartTable = () => {
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
-  }, []);
+  }, [quantityChanged, coupon]);
+
+  console.log(cartProductList);
 
   return (
     <div className="flex flex-col justify-start items-center min-h-screen">
@@ -107,7 +158,23 @@ const CartTable = () => {
                       {cartProduct.productName}
                     </td>
                     <td className="border text-sm p-1">
-                      {cartProduct.productQuantity}
+                      <button
+                        className="bg-gray-200 py-1 px-2 border rounded-md text-xl hover:bg-gray-300 mr-2"
+                        onClick={() => {
+                          decQuantity(cartProduct.productId);
+                        }}
+                      >
+                        -
+                      </button>
+                      <span>{cartProduct.productQuantity}</span>
+                      <button
+                        className="bg-gray-200 py-1 px-2 border rounded-md text-xl hover:bg-gray-300 ml-2"
+                        onClick={() => {
+                          incQuantity(cartProduct.productId);
+                        }}
+                      >
+                        +
+                      </button>
                     </td>
                     <td className="border text-sm p-1">
                       {cartProduct.productPrice}
@@ -118,7 +185,7 @@ const CartTable = () => {
                     <td className="border text-sm p-1">
                       <button
                         className="bg-orange-600 py-1 px-1 border rounded-md  text-gray-100 hover:bg-orange-700"
-                        onClick={removeFromCart}
+                        onClick={() => removeCartItem(cartProduct.productId)}
                       >
                         Remove
                       </button>
@@ -147,7 +214,7 @@ const CartTable = () => {
                 </button>
               </form>
               <div className="mt-3">
-                {coupon ? (
+                {coupon !== null ? (
                   <>
                     <h3>
                       <span className="font-bold">Coupon code applied: </span>
@@ -180,7 +247,7 @@ const CartTable = () => {
                     {coupon?.couponCode ? (
                       <button
                         className="bg-orange-600 py-1 px-1 border rounded-md  text-gray-100 hover:bg-orange-700 poppins-light"
-                        onClick={removeFromCart}
+                        onClick={removeCoupon}
                       >
                         Remove
                       </button>
@@ -203,9 +270,12 @@ const CartTable = () => {
           </div>
 
           <div className="flex justify-end items-center mt-5">
-            <button className="bg-blue-600 py-1 px-2 border rounded-md  text-gray-100 hover:bg-blue-700">
+            <Link
+              className="bg-blue-600 py-1 px-2 rounded-md text-gray-100 hover:bg-blue-700"
+              to="/checkout"
+            >
               Proceed to checkout
-            </button>
+            </Link>
           </div>
         </div>
       ) : (

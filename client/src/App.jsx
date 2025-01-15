@@ -22,6 +22,7 @@ import Reviews from "./pages/Reviews";
 import CreateCoupon from "./pages/CreateCoupon";
 import Coupons from "./pages/Coupons";
 import UpdateCoupon from "./pages/UpdateCoupon";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/:category/:product/:pid" element={<Product />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="checkout" element={<Checkout />} />
           <Route element={<Protect />}>
             <Route
               path="/dashboard/create-category"

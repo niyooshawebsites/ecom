@@ -139,8 +139,6 @@ const applyCouponController = async (req, res) => {
     const { cartTotal } = req.params;
     const today = new Date();
 
-    console.log("CART TOTAL", cartTotal);
-
     if (!couponCode)
       return response(res, 400, false, "No coupon code. No discount");
 
@@ -167,7 +165,7 @@ const applyCouponController = async (req, res) => {
     if (today < coupon.startDate)
       return response(res, 401, false, `Invalid coupon`);
 
-    if (today > coupon.startDate)
+    if (today > coupon.endDate)
       return response(res, 401, false, `Coupon expired`);
 
     return response(res, 200, true, "Coupon applied successfully", coupon);

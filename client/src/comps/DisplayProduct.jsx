@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { cartSliceActions } from "../store/slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import CreateReviewForm from "./CreateReviewForm";
 import { FaStar } from "react-icons/fa";
@@ -12,14 +12,13 @@ const DisplayProduct = () => {
   const { pid } = useParams();
   const [productData, setProductData] = useState({});
   const [reviews, setReviews] = useState([]);
-
   const { cartProductList } = useSelector((state) => state.cart_Slice);
 
-  const increatement = () => {
+  const increment = () => {
     setCount((prevCount) => prevCount + 1);
   };
 
-  const decreament = () => {
+  const decrement = () => {
     setCount((prevCount) => prevCount - 1);
     if (count == 0) {
       setCount(0);
@@ -28,31 +27,105 @@ const DisplayProduct = () => {
 
   const addToCart = () => {
     if (count > 0) {
-      dispatch(
-        cartSliceActions.populateCartProduct({
-          productId: pid,
-          productName: productData.name,
-          productPrice: productData.price,
-          productCategory: productData.category?.name,
-          productQuantity: count,
-          productTotalAmount: count * productData.price,
-        })
-      );
-      dispatch(
-        cartSliceActions.populateCartList({
-          cartProductList: [
-            ...cartProductList,
-            {
+      const additionalQuantity = count;
+
+      cartProductList.map((product) => {
+        // if the product is already available in the cart
+        if (product.productId == pid) {
+          dispatch(
+            cartSliceActions.populateCartProduct({
+              productId: pid,
+              productName: productData.name,
+              productPrice: productData.price,
+              productCategory: productData.category?.name,
+              productQuantity: product.productQuantity + additionalQuantity,
+              productTotalAmount: product.productQuantity * productData.price,
+            })
+          );
+
+          const otherCartProductsList = cartProductList.filter(
+            (product) => product.productId !== pid
+          );
+
+          dispatch(
+            cartSliceActions.populateCartList({
+              cartProductList: [
+                ...otherCartProductsList,
+                {
+                  productId: pid,
+                  productName: productData.name,
+                  productPrice: productData.price,
+                  productCategory: productData.category?.name,
+                  productQuantity: product.productQuantity + additionalQuantity,
+                  productTotalAmount:
+                    (product.productQuantity + additionalQuantity) *
+                    productData.price,
+                },
+              ],
+            })
+          );
+        }
+
+        // if the product is not available in the cart
+        if (product.productId !== pid) {
+          dispatch(
+            cartSliceActions.populateCartProduct({
               productId: pid,
               productName: productData.name,
               productPrice: productData.price,
               productCategory: productData.category?.name,
               productQuantity: count,
               productTotalAmount: count * productData.price,
-            },
-          ],
-        })
-      );
+            })
+          );
+
+          dispatch(
+            cartSliceActions.populateCartList({
+              cartProductList: [
+                ...cartProductList,
+                {
+                  productId: pid,
+                  productName: productData.name,
+                  productPrice: productData.price,
+                  productCategory: productData.category?.name,
+                  productQuantity: count,
+                  productTotalAmount: count * productData.price,
+                },
+              ],
+            })
+          );
+        }
+      });
+
+      // if the product is not available in the cart
+      if (cartProductList.length == 0) {
+        dispatch(
+          cartSliceActions.populateCartProduct({
+            productId: pid,
+            productName: productData.name,
+            productPrice: productData.price,
+            productCategory: productData.category?.name,
+            productQuantity: count,
+            productTotalAmount: count * productData.price,
+          })
+        );
+
+        dispatch(
+          cartSliceActions.populateCartList({
+            cartProductList: [
+              ...cartProductList,
+              {
+                productId: pid,
+                productName: productData.name,
+                productPrice: productData.price,
+                productCategory: productData.category?.name,
+                productQuantity: count,
+                productTotalAmount: count * productData.price,
+              },
+            ],
+          })
+        );
+      }
     } else {
       alert("Add atleast one item to the cart");
     }
@@ -104,6 +177,17 @@ const DisplayProduct = () => {
 
   return (
     <main className="w-9/12 mx-auto mt-5">
+      <div className={`${cartProductList.length > 0 ? "block" : "hidden"}`}>
+        <p className=" border text-center py-3">
+          Your cart has products.{" "}
+          <Link
+            className="bg-orange-600 py-1 px-1 rounded-md  text-gray-100 hover:bg-orange-700"
+            to="/cart"
+          >
+            View cart
+          </Link>
+        </p>
+      </div>
       <section className="flex ">
         <section className=" flex justify-center w-5/12 border m-5">
           <img src={productData.img} style={{ height: "500px" }} />
@@ -121,14 +205,14 @@ const DisplayProduct = () => {
           <section className="w-5/12 flex justify-evenly items-center">
             <button
               className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300"
-              onClick={decreament}
+              onClick={decrement}
             >
               -
             </button>
             <span>{count}</span>
             <button
               className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300"
-              onClick={increatement}
+              onClick={increment}
             >
               +
             </button>
