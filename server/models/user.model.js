@@ -1,49 +1,62 @@
 import mongoose from "mongoose";
 
 const contactSchema = new mongoose.Schema({
+  fName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  lName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   contactNo: {
     type: String,
     required: true,
     unique: true,
     trim: true,
-    default: "",
   },
   address: {
-    houseNo: {
+    buildingNo: {
       type: String,
       required: true,
       trim: true,
-      default: "",
     },
     streetNo: {
       type: String,
       required: true,
       trim: true,
-      default: "",
     },
     locality: {
       type: String,
       required: true,
       trim: true,
-      default: "",
     },
     district: {
       type: String,
       required: true,
       trim: true,
-      default: "",
+    },
+    landmark: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    city: {
+      type: String,
+      required: true,
+      trim: true,
     },
     state: {
       type: String,
       required: true,
       trim: true,
-      default: "",
     },
     pincode: {
       type: Number,
       required: true,
       trim: true,
-      default: null,
     },
   },
 });

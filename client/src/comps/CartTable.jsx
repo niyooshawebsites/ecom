@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 import { cartSliceActions } from "../store/slices/cartSlice";
 
 const CartTable = () => {
-  const { cartProductList } = useSelector((state) => state.cart_Slice);
+  const { cartProductList, cartDiscount } = useSelector(
+    (state) => state.cart_Slice
+  );
   const [cartTotal, setCartTotal] = useState(0);
   const [coupon, setCoupon] = useState(null);
   const [discount, setDiscount] = useState(0);
@@ -27,9 +29,24 @@ const CartTable = () => {
 
   const removeCoupon = () => {
     setCoupon(null);
+
     if (coupon !== null) {
       setDiscount(0);
+
+      // resetting global cart discount total state
+      dispatch(
+        cartSliceActions.populateCartDiscount({
+          cartDiscount: 0,
+        })
+      );
     }
+
+    // resetting global cart net total state
+    dispatch(
+      cartSliceActions.populateCartNetTotal({
+        cartNetTotal: cartTotal - 0,
+      })
+    );
   };
 
   const decQuantity = (pid) => {
@@ -84,6 +101,7 @@ const CartTable = () => {
   const fetchCoupon = async (formData) => {
     try {
       const couponCode = formData?.get("couponCode");
+
       const { data } = await axios.post(
         `http://localhost:8000/api/v1/apply-coupon/${cartTotal}`,
         { couponCode },
@@ -93,32 +111,67 @@ const CartTable = () => {
       );
 
       if (data.success) {
-        {
-          setCoupon(data.data);
-          console.log(data.data);
+        setCoupon(data.data);
 
-          // calculate discount amount
-          if (data.data.discountType === "percentage") {
-            setDiscount((cartTotal * data.data.discountValue) / 100);
-          }
+        // calculate discount amount
+        if (data.data.discountType === "percentage") {
+          setDiscount((cartTotal * data.data.discountValue) / 100);
 
-          if (data.data.discountType !== "percentage") {
-            setDiscount(data.data.discountValue);
-          }
+          // creating global cart discount state
+          dispatch(
+            cartSliceActions.populateCartDiscount({
+              discountAmount: (cartTotal * data.data.discountValue) / 100,
+              couponCode: data.data.couponCode,
+              couponDesc: data.data.desc,
+            })
+          );
+
+          // creating global cart net total state
+          dispatch(
+            cartSliceActions.populateCartNetTotal({
+              cartNetTotal:
+                cartTotal - (cartTotal * data.data.discountValue) / 100,
+            })
+          );
+        }
+
+        if (data.data.discountType !== "percentage") {
+          setDiscount(data.data.discountValue);
+
+          // creating global cart discount state
+          dispatch(
+            cartSliceActions.populateCartDiscount({
+              discountAmount: data.data.discountValue,
+              couponCode: data.data.couponCode,
+              couponDesc: data.data.desc,
+            })
+          );
+
+          // creating global cart net total state
+          dispatch(
+            cartSliceActions.populateCartNetTotal({
+              cartNetTotal: cartTotal - data.data.discountValue,
+            })
+          );
           toast.success(data.msg);
         }
       }
     } catch (err) {
-      toast.error(err.response.data.msg);
-      console.log(err.response.data.msg);
+      toast.error(err.response?.data.msg);
+      console.log(err.response?.data.msg);
     }
   };
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
-  }, [quantityChanged, coupon]);
 
-  console.log(cartProductList);
+    // creating global cart gross total state
+    dispatch(
+      cartSliceActions.populateCartGrossTotal({
+        cartGrossTotal: calculateCartTotal(),
+      })
+    );
+  }, [quantityChanged, coupon]);
 
   return (
     <div className="flex flex-col justify-start items-center min-h-screen">
@@ -214,17 +267,18 @@ const CartTable = () => {
                 </button>
               </form>
               <div className="mt-3">
-                {coupon !== null ? (
+                {cartDiscount.couponCode !== null ? (
                   <>
                     <h3>
                       <span className="font-bold">Coupon code applied: </span>
                       <span className="text-orange-500 font-bold">
-                        {coupon?.couponCode}
+                        {cartDiscount.couponCode}
+                        {console.log(cartDiscount.couponCode)}
                       </span>
                     </h3>
                     <p>
                       <span className="font-bold">Coupon description:</span>{" "}
-                      {coupon?.desc}
+                      {cartDiscount.couponDesc}
                     </p>
                   </>
                 ) : (
@@ -243,8 +297,8 @@ const CartTable = () => {
                 </tr>
                 <tr className="border-b">
                   <td className="border text-sm p-1 font-bold">
-                    Discount: {coupon?.couponCode}{" "}
-                    {coupon?.couponCode ? (
+                    Discount: {cartDiscount?.couponCode || ""}{" "}
+                    {cartDiscount?.couponCode ? (
                       <button
                         className="bg-orange-600 py-1 px-1 border rounded-md  text-gray-100 hover:bg-orange-700 poppins-light"
                         onClick={removeCoupon}
@@ -256,7 +310,7 @@ const CartTable = () => {
                     )}
                   </td>
                   <td className="poppins-light border text-sm p-1 text-center">
-                    ({discount ? discount : 0})
+                    ({cartDiscount?.discountAmount || 0})
                   </td>
                 </tr>
                 <tr className="border-b">

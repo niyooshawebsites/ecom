@@ -13,6 +13,13 @@ const cartSlice = createSlice({
       productTotalAmount: null,
     },
     cartProductList: [],
+    cartGrossTotal: 0,
+    cartDiscount: {
+      discountAmount: 0,
+      couponCode: null,
+      couponDesc: null,
+    },
+    cartNetTotal: 0,
   },
 
   reducers: {
@@ -27,6 +34,20 @@ const cartSlice = createSlice({
 
     populateCartList: (state, action) => {
       state.cartProductList = action.payload.cartProductList;
+    },
+
+    populateCartGrossTotal: (state, action) => {
+      state.cartGrossTotal = action.payload.cartGrossTotal;
+    },
+
+    populateCartDiscount: (state, action) => {
+      state.cartDiscount.discountAmount = action.payload.discountAmount;
+      state.cartDiscount.couponCode = action.payload.couponCode;
+      state.cartDiscount.couponDesc = action.payload.couponDesc;
+    },
+
+    populateCartNetTotal: (state, action) => {
+      state.cartNetTotal = action.payload.cartNetTotal;
     },
   },
 });
