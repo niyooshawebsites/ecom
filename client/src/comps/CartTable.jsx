@@ -9,10 +9,11 @@ const CartTable = () => {
   const { cartProductList, cartDiscount } = useSelector(
     (state) => state.cart_Slice
   );
+  const dispatch = useDispatch();
+  const [itemRemoved, setItemRemoved] = useState(false);
   const [cartTotal, setCartTotal] = useState(0);
   const [coupon, setCoupon] = useState(null);
   const [discount, setDiscount] = useState(0);
-  const dispatch = useDispatch();
   const [quantityChanged, setQuantityChanged] = useState(false);
 
   const removeCartItem = (pid) => {
@@ -25,6 +26,8 @@ const CartTable = () => {
         cartProductList: updatedCartProductList,
       })
     );
+
+    setItemRemoved((prevState) => !prevState);
   };
 
   const removeCoupon = () => {
@@ -36,7 +39,7 @@ const CartTable = () => {
       // resetting global cart discount total state
       dispatch(
         cartSliceActions.populateCartDiscount({
-          cartDiscount: 0,
+          couponCode: null,
         })
       );
     }
@@ -95,6 +98,14 @@ const CartTable = () => {
       (total, item) => total + item.productTotalAmount,
       intialValue
     );
+
+    // creating global cart net total state
+    dispatch(
+      cartSliceActions.populateCartNetTotal({
+        cartNetTotal: sumOfCart - discount,
+      })
+    );
+
     return sumOfCart;
   };
 
@@ -164,14 +175,16 @@ const CartTable = () => {
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
+  }, [itemRemoved]);
 
+  useEffect(() => {
     // creating global cart gross total state
     dispatch(
       cartSliceActions.populateCartGrossTotal({
         cartGrossTotal: calculateCartTotal(),
       })
     );
-  }, [quantityChanged, coupon]);
+  }, [quantityChanged, coupon, cartDiscount, itemRemoved]);
 
   return (
     <div className="flex flex-col justify-start items-center min-h-screen">

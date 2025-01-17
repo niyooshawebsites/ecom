@@ -445,11 +445,36 @@ const CheckoutForm = () => {
                 </div>
               )}
 
+              <div className="flex flex-col justify-start item-start mb-3 px-2 w-full">
+                <h2 className="font-semibold mb-5">Payment method</h2>
+
+                <label htmlFor="online" className="mb-2">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    id="online"
+                    value={"Online"}
+                    defaultChecked
+                  />{" "}
+                  Online
+                </label>
+
+                <label htmlFor="cod" className="mb-2">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    id="cod"
+                    value={"COD"}
+                  />{" "}
+                  Cash on Delivery
+                </label>
+              </div>
+
               <button
                 type="submit"
-                className="bg-blue-600 px-4 py-2 rounded-md text-white hover:bg-blue-700 w-full"
+                className="bg-green-600 px-4 py-2 rounded-md text-white hover:bg-green-700 w-full"
               >
-                Place order
+                PLACE ORDER
               </button>
             </div>
           </div>
