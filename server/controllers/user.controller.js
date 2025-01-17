@@ -18,7 +18,8 @@ const registerController = async (req, res) => {
     // check for existing user
     const user = await User.findOne({ $or: [{ username }, { email }] });
 
-    if (user) return response(res, 409, false, "Account already exists!");
+    if (user)
+      return response(res, 409, false, "Account already exists! Please login");
 
     const newUser = await new User({
       username,
@@ -246,15 +247,30 @@ const resetPasswordController = async (req, res) => {
 const updateContactDetailsController = async (req, res) => {
   try {
     const { uid } = req.params;
-    const { contactNo, houseNo, streetNo, locality, district, state, pincode } =
-      req.body;
+    const {
+      fName,
+      lname,
+      contactNo,
+      buildingNo,
+      streetNo,
+      locality,
+      district,
+      landmark,
+      city,
+      state,
+      pincode,
+    } = req.body;
 
     if (
+      !fName ||
+      !lname ||
       !contactNo ||
-      !houseNo ||
+      !buildingNo ||
       !streetNo ||
       !locality ||
       !district ||
+      !landmark ||
+      !city ||
       !state ||
       !pincode
     )

@@ -34,7 +34,7 @@ userRouter.post(
   verifyEmail,
   resetPasswordController
 );
-userRouter.post(
+userRouter.patch(
   "/update-contact-details/:uid",
   auth,
   updateContactDetailsController

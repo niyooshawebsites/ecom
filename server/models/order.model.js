@@ -26,7 +26,11 @@ const orderSchema = new mongoose.Schema(
     },
     tnxId: {
       type: String,
-      default: "",
+      default: null,
+    },
+    orderNote: {
+      type: String,
+      default: null,
     },
     status: {
       type: String,

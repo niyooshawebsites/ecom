@@ -6,6 +6,9 @@ import { Link } from "react-router-dom";
 
 const CheckoutForm = () => {
   const states = ["Delhi", "Maharashtra", "West Bengal", "Tamil Nadu"];
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   const {
     cartProduct,
     cartProductList,
@@ -13,7 +16,10 @@ const CheckoutForm = () => {
     cartGrossTotal,
     cartNetTotal,
   } = useSelector((state) => state.cart_Slice);
+
   const [cartTotal, setCartTotal] = useState(0);
+
+  const { uid } = useSelector((state) => state.user_Slice);
 
   const calculateCartTotal = () => {
     const intialValue = 0;
@@ -25,9 +31,12 @@ const CheckoutForm = () => {
   };
 
   const placeOrder = async (formData) => {
+    const email = formData.get("email");
+    const username = formData.get("username");
+    const password = formData.get("password");
+
     const fName = formData.get("fname");
     const lname = formData.get("lname");
-    const email = formData.get("email");
     const contactNo = formData.get("contactNo");
     const buildingNo = formData.get("buildingNo");
     const streetNo = formData.get("streetNo");
@@ -40,14 +49,63 @@ const CheckoutForm = () => {
     const orderNote = formData.get("orderNote");
 
     try {
-      const orderRes = await axios.post(
-        `http;//localhost:8000/api/v1/create-order/${cartProduct.productId}`,
-        {}
+      // account creation.
+
+      const accountRes = await axios.post(
+        `http://localhost:8000/api/v1/register`,
+        {
+          username,
+          email,
+          password,
+        },
+        { withCredentials: true }
       );
+
+      // if account creation is successfull
+      if (accountRes.success) {
+        toast.success(accountRes.msg);
+
+        // update user contact information
+        const userRes = await axios.patch(
+          `http://localhost:8000/api/v1/update-user/${uid}`,
+          {
+            fName,
+            lname,
+            contactNo,
+            buildingNo,
+            streetNo,
+            locality,
+            district,
+            landmark,
+            city,
+            state,
+            pincode,
+          },
+          { withCredentials: true }
+        );
+
+        // if user contact information updation is successfull
+        if (userRes.success) {
+          const orderRes = await axios.post(
+            `http;//localhost:8000/api/v1/create-order/${cartProduct.productId}`,
+            { uid, quantity: cartProduct.productQuantity, orderNote },
+            { withCredentials: true }
+          );
+
+          // if order is successfull
+          if (orderRes.success) {
+            toast.success(orderRes.msg);
+          }
+        }
+      }
     } catch (err) {
       toast.error(err.response.data.msg);
       console.log(err.response.data.msg);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible((prevState) => !prevState);
   };
 
   useEffect(() => {
@@ -58,10 +116,46 @@ const CheckoutForm = () => {
     <div className=" flex flex-col justify-start items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-light my-10">Checkout</h1>
       <form className="w-8/12 mb-3" action={placeOrder}>
-        <h2 className="font-semibold mb-5">Billing information</h2>
-
         <div className="flex">
           <div className="w-7/12">
+            <h2 className="font-semibold mb-5">Account information</h2>
+            <div className="flex mb-5">
+              <div className="w-6/12 flex flex-col px-2">
+                <label htmlFor="username" className="mb-2">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  id="username"
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Unique username"
+                  required
+                />
+              </div>
+
+              <div className="w-6/12 flex flex-col px-2">
+                <label htmlFor="password" className="mb-2">
+                  Password
+                </label>
+                <div className="flex justify-start items-center">
+                  <input
+                    type={isPasswordVisible ? "text" : "password"}
+                    name="password"
+                    id="password"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    placeholder="Strong passowrd"
+                    required
+                  />
+                  <Link className="ml-2" onClick={togglePasswordVisibility}>
+                    {isPasswordVisible ? "Hide" : "Show"}
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <h2 className="font-semibold mb-5">Billing information</h2>
+
             <div className="flex mb-3">
               <div className="w-6/12 flex flex-col px-2">
                 <label htmlFor="fname" className="mb-2">
@@ -180,19 +274,6 @@ const CheckoutForm = () => {
                 />
               </div>
             </div>
-
-            {/* <div className="flex flex-col mb-3 px-2">
-              <label htmlFor="address" className="mb-2">
-                Address
-              </label>
-              <input
-                name="address"
-                id="address"
-                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                placeholder="Address"
-                required
-              />
-            </div> */}
 
             <div className="flex mb-3">
               <div className="w-6/12 flex flex-col px-2">
