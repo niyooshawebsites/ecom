@@ -10,7 +10,6 @@ const CartTable = () => {
     (state) => state.cart_Slice
   );
   const dispatch = useDispatch();
-  const [itemRemoved, setItemRemoved] = useState(false);
   const [cartTotal, setCartTotal] = useState(0);
   const [coupon, setCoupon] = useState(null);
   const [discount, setDiscount] = useState(0);
@@ -26,8 +25,6 @@ const CartTable = () => {
         cartProductList: updatedCartProductList,
       })
     );
-
-    setItemRemoved((prevState) => !prevState);
   };
 
   const removeCoupon = () => {
@@ -109,7 +106,7 @@ const CartTable = () => {
     return sumOfCart;
   };
 
-  const fetchCoupon = async (formData) => {
+  const applyDiscount = async (formData) => {
     try {
       const couponCode = formData?.get("couponCode");
 
@@ -175,7 +172,7 @@ const CartTable = () => {
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
-  }, [itemRemoved]);
+  }, []);
 
   useEffect(() => {
     // creating global cart gross total state
@@ -184,7 +181,7 @@ const CartTable = () => {
         cartGrossTotal: calculateCartTotal(),
       })
     );
-  }, [quantityChanged, coupon, cartDiscount, itemRemoved]);
+  }, [quantityChanged, coupon, cartDiscount]);
 
   return (
     <div className="flex flex-col justify-start items-center min-h-screen">
@@ -264,7 +261,7 @@ const CartTable = () => {
 
           <div className="w-full flex justify-between border p-5">
             <div>
-              <form action={fetchCoupon}>
+              <form action={applyDiscount}>
                 <input
                   type="text"
                   placeholder="Enter coupon code"
