@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { cartSliceActions } from "../store/slices/cartSlice";
 
 const CartTable = () => {
-  const { cartProductList, cartDiscount } = useSelector(
+  const { cartProductList, cartDiscount, cartProduct } = useSelector(
     (state) => state.cart_Slice
   );
   const dispatch = useDispatch();
@@ -23,6 +23,21 @@ const CartTable = () => {
     dispatch(
       cartSliceActions.populateCartList({
         cartProductList: updatedCartProductList,
+      })
+    );
+
+    // resetting the discount amount
+    setDiscount(0);
+
+    // resetting the coupon
+    setCoupon(null);
+
+    // creating global cart discount state
+    dispatch(
+      cartSliceActions.populateCartDiscount({
+        discountAmount: 0,
+        couponCode: null,
+        couponDesc: null,
       })
     );
   };
@@ -172,7 +187,7 @@ const CartTable = () => {
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
-  }, []);
+  }, [cartProductList.length]);
 
   useEffect(() => {
     // creating global cart gross total state
@@ -181,7 +196,14 @@ const CartTable = () => {
         cartGrossTotal: calculateCartTotal(),
       })
     );
-  }, [quantityChanged, coupon, cartDiscount]);
+  }, [
+    quantityChanged,
+    coupon,
+    cartDiscount,
+    discount,
+    cartTotal,
+    cartProduct.productQuantity,
+  ]);
 
   return (
     <div className="flex flex-col justify-start items-center min-h-screen">
@@ -283,7 +305,6 @@ const CartTable = () => {
                       <span className="font-bold">Coupon code applied: </span>
                       <span className="text-orange-500 font-bold">
                         {cartDiscount.couponCode}
-                        {console.log(cartDiscount.couponCode)}
                       </span>
                     </h3>
                     <p>

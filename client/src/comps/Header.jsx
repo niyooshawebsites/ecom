@@ -32,7 +32,10 @@ const Header = () => {
   return (
     <header className="bg-blue-700 text-white">
       <nav className="flex justify-between items-center w-8/12 mx-auto min-h-10">
-        <h1>ECOM</h1>
+        <Link to="/">
+          <h1>ECOM</h1>
+        </Link>
+
         <ul className={`flex ${uid ? "justify-end" : "justify-evenly"} w-6/12`}>
           {uid ? (
             <button onClick={logout}>logout</button>
