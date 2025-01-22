@@ -26,6 +26,10 @@ const CartTable = () => {
       })
     );
 
+    resetDiscount();
+  };
+
+  const resetDiscount = () => {
     // resetting the discount amount
     setDiscount(0);
 
@@ -65,43 +69,54 @@ const CartTable = () => {
   };
 
   const decQuantity = (pid) => {
-    cartProductList.map((product) => {
-      if (product.productId == pid) {
-        dispatch(
-          cartSliceActions.populateCartProduct({
-            productId: pid,
-            productName: product.name,
-            productPrice: product.price,
-            productCategory: product.category?.name,
-            productQuantity: product.productQuantity - 1,
-            productTotalAmount: product.productQuantity * product.productPrice,
-          })
-        );
-
-        dispatch(cartSliceActions.populateCartList({ cartProductList }));
-        setQuantityChanged((prevState) => !prevState);
+    const updatedCartProductList = cartProductList.map((product) => {
+      if (product.productId === pid) {
+        // Increment product quantity in the copy of the cart
+        return {
+          ...product,
+          productQuantity:
+            product.productQuantity - 1 <= 0 ? 0 : product.productQuantity - 1,
+          productTotalAmount:
+            (product.productQuantity - 1) * product.productPrice,
+        };
       }
+      return product;
     });
+
+    // Dispatch the updated list to the store
+    dispatch(
+      cartSliceActions.populateCartList({
+        cartProductList: updatedCartProductList,
+      })
+    );
+    setQuantityChanged((prevState) => !prevState);
+
+    resetDiscount();
   };
 
   const incQuantity = (pid) => {
-    cartProductList.map((product) => {
-      if (product.productId == pid) {
-        dispatch(
-          cartSliceActions.populateCartProduct({
-            productId: pid,
-            productName: product.name,
-            productPrice: product.price,
-            productCategory: product.category?.name,
-            productQuantity: product.productQuantity + 1,
-            productTotalAmount: product.productQuantity * product.productPrice,
-          })
-        );
-
-        dispatch(cartSliceActions.populateCartList({ cartProductList }));
-        setQuantityChanged((prevState) => !prevState);
+    const updatedCartProductList = cartProductList.map((product) => {
+      if (product.productId === pid) {
+        // Increment product quantity in the copy of the cart
+        return {
+          ...product,
+          productQuantity: product.productQuantity + 1,
+          productTotalAmount:
+            (product.productQuantity + 1) * product.productPrice,
+        };
       }
+      return product;
     });
+
+    // Dispatch the updated list to the store
+    dispatch(
+      cartSliceActions.populateCartList({
+        cartProductList: updatedCartProductList,
+      })
+    );
+    setQuantityChanged((prevState) => !prevState);
+
+    resetDiscount();
   };
 
   const calculateCartTotal = () => {
@@ -187,7 +202,7 @@ const CartTable = () => {
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
-  }, [cartProductList.length]);
+  }, [cartProductList.length, quantityChanged]);
 
   useEffect(() => {
     // creating global cart gross total state
