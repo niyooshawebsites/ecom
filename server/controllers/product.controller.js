@@ -112,10 +112,84 @@ const fetchProductController = async (req, res) => {
   }
 };
 
+const fetchAllProductsByCategoryController = async (req, res) => {
+  try {
+    const { cid } = req.params;
+
+    if (!cid) return response(res, 400, false, "Cateogry Id is missing");
+
+    const products = await Product.find({ category: cid }).populate("category");
+
+    if (products.length === 0)
+      return response(res, 404, false, "No products in this category");
+
+    return response(res, 200, true, "Products found successfully", products);
+  } catch (err) {
+    console.log(err.message);
+    return response(res, 500, false, "Internal sever error");
+  }
+};
+
+const fetchAllProductsByNameController = async (req, res) => {
+  try {
+    const { pName } = req.params;
+
+    if (!pName) return response(res, 400, false, "Product name is missing");
+
+    const products = await Product.find({ name: pName }).populate("category");
+
+    if (products.length === 0)
+      return response(res, 404, false, "No products in this category");
+
+    return response(res, 200, true, "Products found successfully", products);
+  } catch (err) {
+    console.log(err.message);
+    return response(res, 500, false, "Internal sever error");
+  }
+};
+
+const fetchAllProductsByPriceRangeController = async (req, res) => {
+  try {
+    const { minPrice, maxPrice } = req.params;
+
+    if (!minPrice) return response(res, 400, false, "Min price is missing");
+    if (!maxPrice) return response(res, 400, false, "Max price is missing");
+
+    const products = await Product.find({
+      price: { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) },
+    }).populate("category");
+
+    if (products.length === 0)
+      return response(res, 404, false, "No products in this price range");
+
+    return response(res, 200, true, "Products found successfully", products);
+  } catch (err) {
+    console.log(err.message);
+    return response(res, 500, false, "Internal sever error");
+  }
+};
+
+const fetchAllProductsAndsortByProductsController = async (req, res) => {
+  try {
+    const { sortOption } = req.params;
+
+    if (!sortOption) return response(res, 400, false, "Sort option is missing");
+
+    return response(res, 200, true, "Products found successfully", products);
+  } catch (err) {
+    console.log(err.message);
+    return response(res, 500, false, "Internal sever error");
+  }
+};
+
 export {
   createProductController,
   updateProductController,
   deleteProductController,
   fetchAllProductsController,
   fetchProductController,
+  fetchAllProductsByCategoryController,
+  fetchAllProductsByNameController,
+  fetchAllProductsByPriceRangeController,
+  fetchAllProductsAndsortByProductsController,
 };

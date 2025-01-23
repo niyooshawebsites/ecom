@@ -6,6 +6,10 @@ import {
   deleteProductController,
   fetchAllProductsController,
   fetchProductController,
+  fetchAllProductsByCategoryController,
+  fetchAllProductsByNameController,
+  fetchAllProductsByPriceRangeController,
+  fetchAllProductsAndsortByProductsController,
 } from "../controllers/product.controller.js";
 
 const productRouter = express.Router();
@@ -15,5 +19,21 @@ productRouter.patch("/update-product/:pid", auth, updateProductController);
 productRouter.delete("/delete-product/:pid", auth, deleteProductController);
 productRouter.get("/fetch-all-products/:pageNo", fetchAllProductsController);
 productRouter.get("/fetch-product/:pid", fetchProductController);
+productRouter.get(
+  "/fetch-all-products-by-category/:cid",
+  fetchAllProductsByCategoryController
+);
+productRouter.get(
+  "/fetch-all-products-by-name/:pName",
+  fetchAllProductsByNameController
+);
+productRouter.get(
+  "/fetch-all-products-by-price-range/:minPrice/:maxPrice",
+  fetchAllProductsByPriceRangeController
+);
+productRouter.get(
+  "/fetch-all-products-and-sort-by/:sortOption",
+  fetchAllProductsAndsortByProductsController
+);
 
 export default productRouter;
