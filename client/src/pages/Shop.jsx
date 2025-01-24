@@ -24,9 +24,10 @@ const Shop = () => {
 
   const sortBy = async (e) => {
     try {
-      const sortOption = e.target.value;
+      const sortParam = e.target.value;
+      console.log(sortParam);
       const res = await axios.get(
-        `http://localhost:8000/api/v1/sort-by?sortParam=${sortOption}`,
+        `http://localhost:8000/api/v1/sort-by?sortParam=${sortParam}`,
         { withCredentials: true }
       );
 
@@ -48,13 +49,12 @@ const Shop = () => {
         <Sidebar />
         <div className="w-full flex flex-col px-2">
           <div className="flex justify-end my-3">
-            <select name="" id="" onChange={sortBy}>
-              <option value="lowToHigh">Sort by</option>
+            <select name="sortBy" id="sortBy" onChange={sortBy}>
+              <option value="">Sort by</option>
               <option value="lowToHigh">Low to high</option>
-              <option value="lowToHigh">High to low</option>
-              <option value="lowToHigh">Featured</option>
-              <option value="lowToHigh">Top rated</option>
-              <option value="lowToHigh">Best seller</option>
+              <option value="highToLow">High to low</option>
+              <option value="topRated">Top rated</option>
+              <option value="bestSellers">Best sellers</option>
             </select>
           </div>
           <section className="w-10/12 flex flex-wrap">

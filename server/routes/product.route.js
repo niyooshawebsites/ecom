@@ -7,7 +7,7 @@ import {
   fetchAllProductsController,
   fetchProductController,
   fetchAllProductsByCategoryController,
-  fetchAllProductsByNameController,
+  fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
   fetchAllProductsAndsortByProductsController,
 } from "../controllers/product.controller.js";
@@ -24,8 +24,8 @@ productRouter.get(
   fetchAllProductsByCategoryController
 );
 productRouter.get(
-  "/fetch-all-products-by-name/:pName",
-  fetchAllProductsByNameController
+  "/fetch-all-products-by-slug/:pSlug",
+  fetchAllProductsBySlugController
 );
 productRouter.get(
   "/fetch-all-products-by-price-range/:minPrice/:maxPrice",

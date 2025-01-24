@@ -23,8 +23,9 @@ const ShopSidebar = () => {
 
   const fiterProductsByName = (formData) => {
     try {
-      const pName = formData.get("pName");
-      navigate(`/filter-by-name/${pName}`);
+      const pSlug = formData.get("pSlug");
+      const modifiedSlug = pSlug.toLowerCase().split(" ").join("-");
+      navigate(`/filter-by-slug?pSlug=${modifiedSlug}`);
     } catch (err) {
       console.log(err.message);
     }
@@ -51,14 +52,14 @@ const ShopSidebar = () => {
         FILTER
       </h2>
       <form action={fiterProductsByName} className="flex flex-col">
-        <label htmlFor="pName" className="poppins-light my-3 uppercase text-xl">
+        <label htmlFor="pSlug" className="poppins-light my-3 uppercase text-xl">
           Search
         </label>
         <div className="flex">
           <input
             type="text"
-            id="pName"
-            name="pName"
+            id="pSlug"
+            name="pSlug"
             placeholder="Enter product name"
             className="border border-gray-500 focus:border-gray-600 mr-1 py-1 px-1 rounded"
             required
@@ -107,7 +108,7 @@ const ShopSidebar = () => {
             return (
               <Link
                 key={category._id}
-                to={`/filter-by-category/${category._id}`}
+                to={`/filter-by-category?cid=${category._id}`}
               >
                 <li className="mb-2 hover:pl-2 hover:font-semibold hover:text-blue-600">
                   {category.name}

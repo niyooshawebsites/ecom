@@ -5,17 +5,17 @@ import Layout from "../../comps/Layout";
 import Card from "../../comps/Card";
 import axios from "axios";
 
-const FilterByName = () => {
+const SortByLowToHigh = () => {
   const location = useLocation();
   const [productsData, setProductsData] = useState([]);
   const queryParams = new URLSearchParams(location.search);
 
-  const pSlug = queryParams.get("pSlug");
+  const sortParam = queryParams.get("sortParam");
 
   const fetchProductsData = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-products-by-slug/${pSlug}`,
+        `http://localhost:8000/api/v1/fetch-all-products-and-sort-by/${sortParam}`,
         { withCredentials: true }
       );
 
@@ -46,7 +46,7 @@ const FilterByName = () => {
 
   useEffect(() => {
     fetchProductsData();
-  }, [pSlug]);
+  }, [sortParam]);
 
   return (
     <Layout>
@@ -98,4 +98,4 @@ const FilterByName = () => {
   );
 };
 
-export default FilterByName;
+export default SortByLowToHigh;

@@ -130,13 +130,13 @@ const fetchAllProductsByCategoryController = async (req, res) => {
   }
 };
 
-const fetchAllProductsByNameController = async (req, res) => {
+const fetchAllProductsBySlugController = async (req, res) => {
   try {
-    const { pName } = req.params;
+    const { pSlug } = req.params;
 
-    if (!pName) return response(res, 400, false, "Product name is missing");
+    if (!pSlug) return response(res, 400, false, "Product slug is missing");
 
-    const products = await Product.find({ name: pName }).populate("category");
+    const products = await Product.find({ slug: pSlug }).populate("category");
 
     if (products.length === 0)
       return response(res, 404, false, "No products in this category");
@@ -182,6 +182,19 @@ const fetchAllProductsAndsortByProductsController = async (req, res) => {
   }
 };
 
+const fetchAllProductsAndSortByController = async (req, res) => {
+  try {
+    const { sortOption } = req.params;
+
+    if (!sortOption) return response(res, 400, false, "Sort option is missing");
+
+    return response(res, 200, true, "Products found successfully", products);
+  } catch (err) {
+    console.log(err.message);
+    return response(res, 500, false, "Internal sever error");
+  }
+};
+
 export {
   createProductController,
   updateProductController,
@@ -189,7 +202,8 @@ export {
   fetchAllProductsController,
   fetchProductController,
   fetchAllProductsByCategoryController,
-  fetchAllProductsByNameController,
+  fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
   fetchAllProductsAndsortByProductsController,
+  fetchAllProductsAndSortByController,
 };
