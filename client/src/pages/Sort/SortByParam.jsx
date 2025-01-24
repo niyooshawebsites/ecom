@@ -1,21 +1,31 @@
 import { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../comps/ShopSidebar";
 import Layout from "../../comps/Layout";
 import Card from "../../comps/Card";
 import axios from "axios";
 
-const SortByTopRated = () => {
+const SortByParam = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [productsData, setProductsData] = useState([]);
   const queryParams = new URLSearchParams(location.search);
 
   const sortParam = queryParams.get("sortParam");
+  const cid = queryParams.get("cid");
+
+  const sortBy = async (e) => {
+    try {
+      navigate(`/sort-by?cid=${cid}&sortParam=${e.target.value}`);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   const fetchProductsData = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-products-and-sort-by/${sortParam}`,
+        `http://localhost:8000/api/v1/fetch-all-products-and-sort-by/${cid}/${sortParam}`,
         { withCredentials: true }
       );
 
@@ -28,25 +38,9 @@ const SortByTopRated = () => {
     }
   };
 
-  const sortBy = async (e) => {
-    try {
-      const sortOption = e.target.value;
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/sort-by?sortParam=${sortOption}`,
-        { withCredentials: true }
-      );
-
-      if (res.data.success) {
-        setProductsData(res.data.data);
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-
   useEffect(() => {
     fetchProductsData();
-  }, [sortParam]);
+  }, [sortParam, cid]);
 
   return (
     <Layout>
@@ -54,12 +48,12 @@ const SortByTopRated = () => {
         <Sidebar />
         <div className="w-full flex flex-col px-2">
           <div className="flex justify-end my-3">
-            <select name="" id="" onChange={sortBy}>
-              <option value="lowToHigh">Sort by</option>
+            <select name="sortBy" id="sortBy" onChange={sortBy}>
+              <option value="" disabled selected>
+                Sort by
+              </option>
               <option value="lowToHigh">Low to high</option>
-              <option value="lowToHigh">High to low</option>
-              <option value="lowToHigh">Top rated</option>
-              <option value="lowToHigh">Best seller</option>
+              <option value="highToLow">High to low</option>
             </select>
           </div>
           <section className="w-10/12 flex flex-wrap">
@@ -98,4 +92,4 @@ const SortByTopRated = () => {
   );
 };
 
-export default SortByTopRated;
+export default SortByParam;

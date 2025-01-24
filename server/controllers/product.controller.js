@@ -169,24 +169,49 @@ const fetchAllProductsByPriceRangeController = async (req, res) => {
   }
 };
 
-const fetchAllProductsAndsortByProductsController = async (req, res) => {
-  try {
-    const { sortOption } = req.params;
-
-    if (!sortOption) return response(res, 400, false, "Sort option is missing");
-
-    return response(res, 200, true, "Products found successfully", products);
-  } catch (err) {
-    console.log(err.message);
-    return response(res, 500, false, "Internal sever error");
-  }
-};
-
 const fetchAllProductsAndSortByController = async (req, res) => {
   try {
-    const { sortOption } = req.params;
+    const { sortParam, cid } = req.params;
+    let products;
 
-    if (!sortOption) return response(res, 400, false, "Sort option is missing");
+    if (!sortParam)
+      return response(res, 400, false, "Sort parameter is missing");
+
+    // sorting products according to price low to high
+    if (sortParam === "lowToHigh" && cid === "na") {
+      products = await Product.find()
+        .sort({
+          price: 1,
+        })
+        .populate("category");
+    }
+
+    // sorting products according to price high to low
+    if (sortParam === "highToLow" && cid === "na") {
+      products = await Product.find()
+        .sort({
+          price: -1,
+        })
+        .populate("category");
+    }
+
+    // sorting products according to price low to high
+    if (sortParam === "lowToHigh" && cid !== "na") {
+      products = await Product.find({ category: cid })
+        .sort({
+          price: 1,
+        })
+        .populate("category");
+    }
+
+    // sorting products according to price high to low
+    if (sortParam === "highToLow" && cid !== "na") {
+      products = await Product.find({ category: cid })
+        .sort({
+          price: -1,
+        })
+        .populate("category");
+    }
 
     return response(res, 200, true, "Products found successfully", products);
   } catch (err) {
@@ -204,6 +229,5 @@ export {
   fetchAllProductsByCategoryController,
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
-  fetchAllProductsAndsortByProductsController,
   fetchAllProductsAndSortByController,
 };

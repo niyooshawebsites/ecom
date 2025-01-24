@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../comps/ShopSidebar";
 import Layout from "../../comps/Layout";
 import Card from "../../comps/Card";
@@ -7,9 +7,12 @@ import axios from "axios";
 
 const FilterByName = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [productsData, setProductsData] = useState([]);
   const queryParams = new URLSearchParams(location.search);
 
+  const cid = queryParams.get("cid") || "na";
+  const sortParam = queryParams.get("sortParam");
   const pSlug = queryParams.get("pSlug");
 
   const fetchProductsData = async () => {
@@ -30,15 +33,7 @@ const FilterByName = () => {
 
   const sortBy = async (e) => {
     try {
-      const sortOption = e.target.value;
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/sort-by?sortParam=${sortOption}`,
-        { withCredentials: true }
-      );
-
-      if (res.data.success) {
-        setProductsData(res.data.data);
-      }
+      navigate(`/sort-by?cid=${cid}&sortParam=${e.target.value}`);
     } catch (err) {
       console.log(err.message);
     }
@@ -46,7 +41,7 @@ const FilterByName = () => {
 
   useEffect(() => {
     fetchProductsData();
-  }, [pSlug]);
+  }, [sortParam, pSlug, cid]);
 
   return (
     <Layout>
@@ -58,8 +53,6 @@ const FilterByName = () => {
               <option value="lowToHigh">Sort by</option>
               <option value="lowToHigh">Low to high</option>
               <option value="lowToHigh">High to low</option>
-              <option value="lowToHigh">Top rated</option>
-              <option value="lowToHigh">Best seller</option>
             </select>
           </div>
           <section className="w-10/12 flex flex-wrap">

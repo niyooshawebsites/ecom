@@ -9,7 +9,7 @@ import {
   fetchAllProductsByCategoryController,
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
-  fetchAllProductsAndsortByProductsController,
+  fetchAllProductsAndSortByController,
 } from "../controllers/product.controller.js";
 
 const productRouter = express.Router();
@@ -32,8 +32,8 @@ productRouter.get(
   fetchAllProductsByPriceRangeController
 );
 productRouter.get(
-  "/fetch-all-products-and-sort-by/:sortOption",
-  fetchAllProductsAndsortByProductsController
+  "/fetch-all-products-and-sort-by/:cid/:sortParam",
+  fetchAllProductsAndSortByController
 );
 
 export default productRouter;

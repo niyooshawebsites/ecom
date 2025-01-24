@@ -3,8 +3,10 @@ import Card from "../comps/Card";
 import Sidebar from "../comps/ShopSidebar";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Shop = () => {
+  const navigate = useNavigate();
   const [productsData, setProductsData] = useState([]);
 
   const fetchProductsData = async () => {
@@ -24,16 +26,7 @@ const Shop = () => {
 
   const sortBy = async (e) => {
     try {
-      const sortParam = e.target.value;
-      console.log(sortParam);
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/sort-by?sortParam=${sortParam}`,
-        { withCredentials: true }
-      );
-
-      if (res.data.success) {
-        setProductsData(res.data.data);
-      }
+      navigate(`/sort-by?cid=na&sortParam=${e.target.value}`);
     } catch (err) {
       console.log(err.message);
     }
@@ -50,11 +43,11 @@ const Shop = () => {
         <div className="w-full flex flex-col px-2">
           <div className="flex justify-end my-3">
             <select name="sortBy" id="sortBy" onChange={sortBy}>
-              <option value="">Sort by</option>
+              <option value="" selected disabled>
+                Sort by
+              </option>
               <option value="lowToHigh">Low to high</option>
               <option value="highToLow">High to low</option>
-              <option value="topRated">Top rated</option>
-              <option value="bestSellers">Best sellers</option>
             </select>
           </div>
           <section className="w-10/12 flex flex-wrap">

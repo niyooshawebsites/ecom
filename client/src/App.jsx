@@ -26,10 +26,7 @@ import Checkout from "./pages/Checkout";
 import FilterByCategory from "./pages/Filter/FilterByCategory";
 import FilterByName from "./pages/Filter/FilterByName";
 import FiterByPriceRange from "./pages/Filter/FiterByPriceRange";
-import SortByHighToLow from "./pages/Sort/SortByHighToLow";
-import SortByLowToHigh from "./pages/Sort/SortByLowToHigh";
-import SortByTopRated from "./pages/Sort/SortByTopRated";
-import SortByBestSellers from "./pages/Sort/SortByBestSellers";
+import SortByParam from "./pages/Sort/SortByParam";
 
 const App = () => {
   return (
@@ -42,10 +39,7 @@ const App = () => {
           <Route path="/filter-by-slug" element={<FilterByName />} />
           <Route path="/filter-by-price" element={<FiterByPriceRange />} />
 
-          <Route path="/sort-by-low-to-high" element={<SortByLowToHigh />} />
-          <Route path="/sort-by-high-to-low" element={<SortByHighToLow />} />
-          <Route path="/sort-by-top-rated" element={<SortByTopRated />} />
-          <Route path="/sort-by-best-sellers" element={<SortByBestSellers />} />
+          <Route path="/sort-by" element={<SortByParam />} />
 
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
