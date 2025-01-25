@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { filterSliceActions } from "../store/slices/filterSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,9 +6,14 @@ import { MdOutlineClear } from "react-icons/md";
 
 const ShopSidebar = () => {
   const [categories, setCategories] = useState([]);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { activeFilterId } = useSelector((state) => state.filter_Slice);
+  const {
+    activeFilterId,
+    filteredCategory,
+    filteredPriceRangeMinimum,
+    filteredPriceRangeMaximum,
+    filteredProductSlug,
+  } = useSelector((state) => state.filter_Slice);
 
   const fetchCategories = async () => {
     try {
@@ -80,14 +84,68 @@ const ShopSidebar = () => {
     }
   };
 
+  const removeAllFilters = () => {
+    dispatch(
+      filterSliceActions.populateActiveFilterId({
+        activeFilterId: null,
+      })
+    );
+
+    dispatch(
+      filterSliceActions.populateFilteredCategory({
+        filteredCategory: null,
+      })
+    );
+
+    dispatch(
+      filterSliceActions.populateFilteredPriceRangeMinimum({
+        filteredPriceRangeMinimum: null,
+      })
+    );
+
+    dispatch(
+      filterSliceActions.populateFilteredPriceRangeMaximum({
+        filteredPriceRangeMaximum: null,
+      })
+    );
+
+    dispatch(
+      filterSliceActions.populateFilteredProductSlug({
+        filteredProductSlug: null,
+      })
+    );
+  };
+
+  const removeSlugFilter = () => {
+    dispatch(
+      filterSliceActions.populateFilteredProductSlug({
+        filteredProductSlug: null,
+      })
+    );
+  };
+
+  const removePriceFilter = () => {
+    dispatch(
+      filterSliceActions.populateFilteredPriceRangeMinimum({
+        filteredPriceRangeMinimum: null,
+      })
+    );
+
+    dispatch(
+      filterSliceActions.populateFilteredPriceRangeMaximum({
+        filteredPriceRangeMaximum: null,
+      })
+    );
+  };
+
   const removeCategoryFilter = () => {
     try {
       dispatch(
         filterSliceActions.populateActiveFilterId({
           activeFilterId: null,
+          filteredCategory: null,
         })
       );
-      navigate(`/`);
     } catch (err) {
       console.log(err);
     }
@@ -104,7 +162,12 @@ const ShopSidebar = () => {
           FILTERS
         </h2>
 
-        <MdOutlineClear className="cursor-pointer text-2xl" />
+        {activeFilterId ? (
+          <MdOutlineClear
+            className="cursor-pointer text-xl"
+            onClick={removeAllFilters}
+          />
+        ) : null}
       </div>
       <form action={fiterProductsByName} className="flex flex-col">
         <div className="flex justify-between items-center">
@@ -114,7 +177,13 @@ const ShopSidebar = () => {
           >
             Search
           </label>
-          <MdOutlineClear className="cursor-pointer text-xl" />
+
+          {activeFilterId ? (
+            <MdOutlineClear
+              className="cursor-pointer text-xl"
+              onClick={removeSlugFilter}
+            />
+          ) : null}
         </div>
         <div className="flex">
           <input
@@ -140,7 +209,13 @@ const ShopSidebar = () => {
             >
               Price
             </label>
-            <MdOutlineClear className="cursor-pointer text-xl" />
+
+            {activeFilterId ? (
+              <MdOutlineClear
+                className="cursor-pointer text-xl"
+                onClick={removePriceFilter}
+              />
+            ) : null}
           </div>
           <div className="flex flex-col">
             <input

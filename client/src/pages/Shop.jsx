@@ -42,7 +42,7 @@ const Shop = () => {
           { withCredentials: true }
         );
 
-        setFilterText(filteredCategory);
+        setFilterText("Filter: " + filteredCategory);
       }
 
       // if the price range filter is not null
@@ -53,7 +53,7 @@ const Shop = () => {
         );
 
         setFilterText(
-          `Min price: ${
+          `Filter: Min price: ${
             filteredPriceRangeMinimum < 10
               ? "0" + filteredPriceRangeMinimum
               : filteredPriceRangeMinimum
@@ -73,7 +73,7 @@ const Shop = () => {
           { withCredentials: true }
         );
 
-        setFilterText(filteredProductSlug);
+        setFilterText("Filter: " + filteredProductSlug);
       }
 
       if (res.data.success) {
