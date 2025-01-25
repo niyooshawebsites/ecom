@@ -23,10 +23,6 @@ import CreateCoupon from "./pages/CreateCoupon";
 import Coupons from "./pages/Coupons";
 import UpdateCoupon from "./pages/UpdateCoupon";
 import Checkout from "./pages/Checkout";
-import FilterByCategory from "./pages/Filter/FilterByCategory";
-import FilterByName from "./pages/Filter/FilterByName";
-import FiterByPriceRange from "./pages/Filter/FiterByPriceRange";
-import SortByParam from "./pages/Sort/SortByParam";
 
 const App = () => {
   return (
@@ -34,13 +30,6 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Shop />} />
-
-          <Route path="/filter-by-category" element={<FilterByCategory />} />
-          <Route path="/filter-by-slug" element={<FilterByName />} />
-          <Route path="/filter-by-price" element={<FiterByPriceRange />} />
-
-          <Route path="/sort-by" element={<SortByParam />} />
-
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/register" element={<Register />} />

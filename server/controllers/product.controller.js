@@ -136,7 +136,9 @@ const fetchAllProductsBySlugController = async (req, res) => {
 
     if (!pSlug) return response(res, 400, false, "Product slug is missing");
 
-    const products = await Product.find({ slug: pSlug }).populate("category");
+    const products = await Product.find({
+      slug: { $regex: pSlug, $options: "i" },
+    }).populate("category");
 
     if (products.length === 0)
       return response(res, 404, false, "No products in this category");
@@ -169,56 +171,56 @@ const fetchAllProductsByPriceRangeController = async (req, res) => {
   }
 };
 
-const fetchAllProductsAndSortByController = async (req, res) => {
-  try {
-    const { sortParam, cid } = req.params;
-    let products;
+// const fetchAllProductsAndSortByController = async (req, res) => {
+//   try {
+//     const { sortParam, cid } = req.params;
+//     let products;
 
-    if (!sortParam)
-      return response(res, 400, false, "Sort parameter is missing");
+//     if (!sortParam)
+//       return response(res, 400, false, "Sort parameter is missing");
 
-    // sorting products according to price low to high
-    if (sortParam === "lowToHigh" && cid === "na") {
-      products = await Product.find()
-        .sort({
-          price: 1,
-        })
-        .populate("category");
-    }
+//     // sorting products according to price low to high
+//     if (sortParam === "lowToHigh" && cid === "na") {
+//       products = await Product.find()
+//         .sort({
+//           price: 1,
+//         })
+//         .populate("category");
+//     }
 
-    // sorting products according to price high to low
-    if (sortParam === "highToLow" && cid === "na") {
-      products = await Product.find()
-        .sort({
-          price: -1,
-        })
-        .populate("category");
-    }
+//     // sorting products according to price high to low
+//     if (sortParam === "highToLow" && cid === "na") {
+//       products = await Product.find()
+//         .sort({
+//           price: -1,
+//         })
+//         .populate("category");
+//     }
 
-    // sorting products according to price low to high
-    if (sortParam === "lowToHigh" && cid !== "na") {
-      products = await Product.find({ category: cid })
-        .sort({
-          price: 1,
-        })
-        .populate("category");
-    }
+//     // sorting products according to price low to high
+//     if (sortParam === "lowToHigh" && cid !== "na") {
+//       products = await Product.find({ category: cid })
+//         .sort({
+//           price: 1,
+//         })
+//         .populate("category");
+//     }
 
-    // sorting products according to price high to low
-    if (sortParam === "highToLow" && cid !== "na") {
-      products = await Product.find({ category: cid })
-        .sort({
-          price: -1,
-        })
-        .populate("category");
-    }
+//     // sorting products according to price high to low
+//     if (sortParam === "highToLow" && cid !== "na") {
+//       products = await Product.find({ category: cid })
+//         .sort({
+//           price: -1,
+//         })
+//         .populate("category");
+//     }
 
-    return response(res, 200, true, "Products found successfully", products);
-  } catch (err) {
-    console.log(err.message);
-    return response(res, 500, false, "Internal sever error");
-  }
-};
+//     return response(res, 200, true, "Products found successfully", products);
+//   } catch (err) {
+//     console.log(err.message);
+//     return response(res, 500, false, "Internal sever error");
+//   }
+// };
 
 export {
   createProductController,
@@ -229,5 +231,4 @@ export {
   fetchAllProductsByCategoryController,
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
-  fetchAllProductsAndSortByController,
 };

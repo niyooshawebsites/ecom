@@ -15,6 +15,7 @@ const AdminOrdersTable = () => {
       );
 
       if (res.data.success) {
+        console.log(res.data.data);
         setAdminOrders(res.data.data);
       }
     } catch (err) {
@@ -76,9 +77,6 @@ const AdminOrdersTable = () => {
             <th className="poppins-light border text-sm p-1">Product Img</th>
             <th className="poppins-light border text-sm p-1">Quantity</th>
             <th className="poppins-light border text-sm p-1">Product Price</th>
-            <th className="poppins-light border text-sm p-1">
-              Product Category
-            </th>
             <th className="poppins-light border text-sm p-1">Order Status</th>
             <th className="poppins-light border text-sm p-1">Payment Method</th>
             <th className="poppins-light border text-sm p-1">Time</th>
@@ -105,9 +103,6 @@ const AdminOrdersTable = () => {
                 </td>
                 <td className="border text-sm p-1">{order.quantity}</td>
                 <td className="border text-sm p-1">{order.product?.price}</td>
-                <td className="border text-sm p-1">
-                  {order.product?.category?.name}
-                </td>
                 <td className="border text-sm p-1">{order.status}</td>
                 <td className="border text-sm p-1">{order.paymentMethod}</td>
                 <td className="border text-sm p-1">

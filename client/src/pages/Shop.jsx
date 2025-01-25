@@ -3,18 +3,78 @@ import Card from "../comps/Card";
 import Sidebar from "../comps/ShopSidebar";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Shop = () => {
-  const navigate = useNavigate();
   const [productsData, setProductsData] = useState([]);
+  const [sortedProductData, setSortedProductData] = useState([]);
+  const [sortBasis, setSortBasis] = useState(null);
+  const [filterText, setFilterText] = useState("");
+  const {
+    activeFilterId, // cid
+    filteredCategory,
+    filteredPriceRangeMinimum,
+    filteredPriceRangeMaximum,
+    filteredProductSlug,
+  } = useSelector((state) => state.filter_Slice);
 
   const fetchProductsData = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-products/1`,
-        { withCredentials: true }
-      );
+      let res;
+
+      // if all the filtered data is null
+      if (
+        activeFilterId === null &&
+        filteredCategory === null &&
+        filteredPriceRangeMaximum === null &&
+        filteredProductSlug === null
+      ) {
+        res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-all-products/1`,
+          { withCredentials: true }
+        );
+      }
+
+      // if category filter is not null
+      if (activeFilterId !== null && filteredCategory !== null) {
+        res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-all-products-by-category/${activeFilterId}`,
+          { withCredentials: true }
+        );
+
+        setFilterText(filteredCategory);
+      }
+
+      // if the price range filter is not null
+      if (filteredPriceRangeMaximum !== null) {
+        res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-all-products-by-price-range/${filteredPriceRangeMinimum}/${filteredPriceRangeMaximum}`,
+          { withCredentials: true }
+        );
+
+        setFilterText(
+          `Min price: ${
+            filteredPriceRangeMinimum < 10
+              ? "0" + filteredPriceRangeMinimum
+              : filteredPriceRangeMinimum
+          } | Max price: ${
+            filteredPriceRangeMaximum < 10
+              ? "0" + filteredPriceRangeMaximum
+              : filteredPriceRangeMaximum
+          }`
+        );
+      }
+
+      // if the product slug filter is not null
+      if (filteredProductSlug !== null) {
+        console.log(filteredProductSlug);
+        res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-all-products-by-slug/${filteredProductSlug}`,
+          { withCredentials: true }
+        );
+
+        setFilterText(filteredProductSlug);
+      }
 
       if (res.data.success) {
         setProductsData(res.data.data);
@@ -24,9 +84,22 @@ const Shop = () => {
     }
   };
 
-  const sortBy = async (e) => {
+  const sortProducts = (e) => {
     try {
-      navigate(`/sort-by?cid=na&sortParam=${e.target.value}`);
+      const selectedSortBasis = e.target.value;
+      setSortBasis(selectedSortBasis);
+
+      const sortedData = [...productsData];
+
+      if (selectedSortBasis === "lowToHigh") {
+        sortedData.sort((a, b) => a.price - b.price);
+      }
+
+      if (selectedSortBasis === "highToLow") {
+        sortedData.sort((a, b) => b.price - a.price);
+      }
+
+      setSortedProductData(sortedData);
     } catch (err) {
       console.log(err.message);
     }
@@ -34,16 +107,25 @@ const Shop = () => {
 
   useEffect(() => {
     fetchProductsData();
-  }, []);
+  }, [
+    activeFilterId,
+    filteredCategory,
+    filteredPriceRangeMinimum,
+    filteredPriceRangeMaximum,
+    filteredProductSlug,
+  ]);
+
+  const displayProducts = sortBasis ? sortedProductData : productsData;
 
   return (
     <Layout>
       <main className="flex">
         <Sidebar />
         <div className="w-full flex flex-col px-2">
-          <div className="flex justify-end my-3">
-            <select name="sortBy" id="sortBy" onChange={sortBy}>
-              <option value="" selected disabled>
+          <div className="flex justify-between my-3">
+            {filterText || <span></span>}
+            <select name="sortBy" id="sortBy" onChange={sortProducts}>
+              <option value="" defaultChecked>
                 Sort by
               </option>
               <option value="lowToHigh">Low to high</option>
@@ -51,7 +133,7 @@ const Shop = () => {
             </select>
           </div>
           <section className="w-10/12 flex flex-wrap">
-            {productsData.map((product) => {
+            {displayProducts.map((product) => {
               return (
                 <Card
                   key={product._id}

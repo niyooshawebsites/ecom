@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { filterSliceActions } from "../store/slices/filterSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { MdOutlineClear } from "react-icons/md";
 
 const ShopSidebar = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { activeFilterId } = useSelector((state) => state.filter_Slice);
 
   const fetchCategories = async () => {
     try {
@@ -25,7 +30,12 @@ const ShopSidebar = () => {
     try {
       const pSlug = formData.get("pSlug");
       const modifiedSlug = pSlug.toLowerCase().split(" ").join("-");
-      navigate(`/filter-by-slug?pSlug=${modifiedSlug}`);
+
+      dispatch(
+        filterSliceActions.populateFilteredProductSlug({
+          filteredProductSlug: modifiedSlug,
+        })
+      );
     } catch (err) {
       console.log(err.message);
     }
@@ -36,9 +46,50 @@ const ShopSidebar = () => {
       const minPrice = formData.get("minPrice") || 1;
       const maxPrice = formData.get("maxPrice");
 
-      navigate(`/filter-by-price?minPrice=${minPrice}&maxPrice=${maxPrice}`);
+      dispatch(
+        filterSliceActions.populateFilteredPriceRangeMinimum({
+          filteredPriceRangeMinimum: minPrice,
+        })
+      );
+
+      dispatch(
+        filterSliceActions.populateFilteredPriceRangeMaximum({
+          filteredPriceRangeMaximum: maxPrice,
+        })
+      );
     } catch (err) {
       console.log(err.message);
+    }
+  };
+
+  const fiterByCategory = (cid, cName) => {
+    try {
+      dispatch(
+        filterSliceActions.populateActiveFilterId({
+          activeFilterId: cid,
+        })
+      );
+
+      dispatch(
+        filterSliceActions.populateFilteredCategory({
+          filteredCategory: cName,
+        })
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const removeCategoryFilter = () => {
+    try {
+      dispatch(
+        filterSliceActions.populateActiveFilterId({
+          activeFilterId: null,
+        })
+      );
+      navigate(`/`);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -48,13 +99,23 @@ const ShopSidebar = () => {
 
   return (
     <aside className="w-2/12 flex flex-col p-2">
-      <h2 className="poppins-light my-3 uppercase text-3xl text-blue-600">
-        FILTER
-      </h2>
+      <div className="flex justify-between items-center">
+        <h2 className="poppins-light my-3 uppercase text-3xl text-blue-600">
+          FILTERS
+        </h2>
+
+        <MdOutlineClear className="cursor-pointer text-2xl" />
+      </div>
       <form action={fiterProductsByName} className="flex flex-col">
-        <label htmlFor="pSlug" className="poppins-light my-3 uppercase text-xl">
-          Search
-        </label>
+        <div className="flex justify-between items-center">
+          <label
+            htmlFor="pSlug"
+            className="poppins-light my-3 uppercase text-xl"
+          >
+            Search
+          </label>
+          <MdOutlineClear className="cursor-pointer text-xl" />
+        </div>
         <div className="flex">
           <input
             type="text"
@@ -72,12 +133,15 @@ const ShopSidebar = () => {
 
       <div className="mt-5">
         <form action={filterProductsByPrice} className="flex flex-col">
-          <label
-            htmlFor="searchProduct"
-            className="poppins-light my-3 uppercase text-xl"
-          >
-            Price
-          </label>
+          <div className="flex justify-between items-center">
+            <label
+              htmlFor="minPrice"
+              className="poppins-light my-3 uppercase text-xl"
+            >
+              Price
+            </label>
+            <MdOutlineClear className="cursor-pointer text-xl" />
+          </div>
           <div className="flex flex-col">
             <input
               type="number"
@@ -102,18 +166,29 @@ const ShopSidebar = () => {
       </div>
 
       <div className="mt-5">
-        <h2 className="poppins-light my-3 uppercase text-xl">Categories</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="poppins-light my-3 uppercase text-xl">Categories</h2>
+          {activeFilterId ? (
+            <MdOutlineClear
+              className="cursor-pointer text-xl"
+              onClick={removeCategoryFilter}
+            />
+          ) : null}
+        </div>
         <ul>
           {categories.map((category) => {
             return (
-              <Link
+              <li
                 key={category._id}
-                to={`/filter-by-category?cid=${category._id}`}
+                className={
+                  category._id === activeFilterId
+                    ? `font-semibold text-orange-600 hover:cursor-pointer`
+                    : "hover:cursor-pointer"
+                }
+                onClick={() => fiterByCategory(category._id, category.name)}
               >
-                <li className="mb-2 hover:pl-2 hover:font-semibold hover:text-blue-600">
-                  {category.name}
-                </li>
-              </Link>
+                {category.name}
+              </li>
             );
           })}
         </ul>

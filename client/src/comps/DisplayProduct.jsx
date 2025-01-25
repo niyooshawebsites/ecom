@@ -196,8 +196,8 @@ const DisplayProduct = () => {
           <section className="flex flex-col mb-5">
             <h1 className="text-5xl mb-5">{productData.name}</h1>
             <p className="mb-4">Category: {productData.category?.name}</p>
-            <h2 className="text-5xl text-blue-500 mb-5">
-              ${productData.price}
+            <h2 className="text-5xl text-orange-500 mb-5">
+              Rs {productData.price}
             </h2>
             <h2 className="text-2xl mb-5">Short product description</h2>
             <p className="w-6/12">{productData.shortDesc}</p>
