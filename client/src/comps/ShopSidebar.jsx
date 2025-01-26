@@ -8,13 +8,7 @@ import { sortSliceActions } from "../store/slices/sortSlice";
 const ShopSidebar = () => {
   const [categories, setCategories] = useState([]);
   const dispatch = useDispatch();
-  const {
-    activeFilterId,
-    filteredCategory,
-    filteredPriceRangeMinimum,
-    filteredPriceRangeMaximum,
-    filteredProductSlug,
-  } = useSelector((state) => state.filter_Slice);
+  const { activeFilterId } = useSelector((state) => state.filter_Slice);
 
   const fetchCategories = async () => {
     try {
