@@ -53,7 +53,7 @@ const loginController = async (req, res) => {
     if (!email || !password)
       return response(res, 400, false, "Please fill out all the details!");
 
-    const user = await User.findOne({ email }).select("password");
+    const user = await User.findOne({ email }).select("-password");
     if (!user) return response(res, 404, false, "Invalid email or password");
 
     const validPassword = await decryptPassword(password, user.password);

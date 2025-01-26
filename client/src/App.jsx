@@ -16,7 +16,7 @@ import Products from "./pages/Products";
 import UpdateProduct from "./pages/UpdateProduct";
 import Protect from "./pages/Protect";
 import ForgotPassword from "./pages/ForgotPassword";
-import AdminOrders from "./pages/AdminOrders";
+import Orders from "./pages/Orders";
 import AdminOrder from "./pages/AdminOrder";
 import Reviews from "./pages/Reviews";
 import CreateCoupon from "./pages/CreateCoupon";
@@ -57,7 +57,7 @@ const App = () => {
               element={<UpdateProduct />}
             />
             <Route path="/dashboard/products" element={<Products />} />
-            <Route path="/dashboard/orders" element={<AdminOrders />} />
+            <Route path="/dashboard/orders" element={<Orders />} />
             <Route
               path="/dashboard/order-details/:oid"
               element={<AdminOrder />}

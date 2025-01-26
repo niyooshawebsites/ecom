@@ -20,9 +20,14 @@ const LoginForm = () => {
       );
 
       if (res.data.success) {
+        console.log(res.data.data);
         dispatch(
           userSliceActions.populateUserSlice({
             uid: res.data.data._id,
+            role: res.data.data.role,
+            isVerified: res.data.data.isVerified,
+            isActive: res.data.data.isActive,
+            username: res.data.data.username,
           })
         );
         toast.success(res.data.msg);
@@ -30,6 +35,7 @@ const LoginForm = () => {
       }
     } catch (err) {
       console.error(err);
+      toast(err.response.data.msg);
     }
   };
   return (

@@ -3,20 +3,28 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { SlRefresh } from "react-icons/sl";
+import { useSelector } from "react-redux";
 
-const AdminOrdersTable = () => {
-  const [adminOrders, setAdminOrders] = useState([]);
+const OrdersTable = () => {
+  const [orders, setOrders] = useState([]);
+  const { uid, role, isActive, isVerified } = useSelector(
+    (state) => state.user_Slice
+  );
+
+  console.log(role, isActive, isVerified);
 
   const fetchAllOrders = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-orders`,
-        { withCredentials: true }
-      );
+      if (isVerified && role === 1 && isActive) {
+        const res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-all-orders`,
+          { withCredentials: true }
+        );
 
-      if (res.data.success) {
-        console.log(res.data.data);
-        setAdminOrders(res.data.data);
+        if (res.data.success) {
+          console.log(res.data.data);
+          setOrders(res.data.data);
+        }
       }
     } catch (err) {
       console.log(err);
@@ -85,7 +93,7 @@ const AdminOrdersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {adminOrders.map((order, index) => {
+          {orders.map((order, index) => {
             return (
               <tr
                 key={order._id}
@@ -163,4 +171,4 @@ const AdminOrdersTable = () => {
   );
 };
 
-export default AdminOrdersTable;
+export default OrdersTable;
