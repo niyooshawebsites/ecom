@@ -4,6 +4,7 @@ import { userSliceActions } from "../store/slices/userSlice";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { CiShoppingCart } from "react-icons/ci";
 
 const Header = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
@@ -57,9 +58,13 @@ const Header = () => {
                 <li>Login</li>
               </Link>
               <Link to="/cart">
-                <li>
-                  Cart (
-                  {cartProductList.length != "" ? cartProductList.length : 0})
+                <li className="flex">
+                  <CiShoppingCart className="text-2xl mr-1" />
+                  <span className="bg-orange-500 px-1 rounded border">
+                    {cartProductList.length > 0
+                      ? `0${cartProductList.length}`
+                      : 0}
+                  </span>
                 </li>
               </Link>
             </>
