@@ -1,16 +1,16 @@
 import Layout from "../comps/Layout";
 import AdminSidebar from "../comps/AdminSidebar";
-import ProfileForm from "../comps/ProfileForm";
+import ContactInfoFrom from "../comps/ContactInfoForm";
 
-const Profile = () => {
+const ContactInfo = () => {
   return (
     <Layout>
       <div className="flex">
         <AdminSidebar />
-        <ProfileForm />
+        <ContactInfoFrom />
       </div>
     </Layout>
   );
 };
 
-export default Profile;
+export default ContactInfo;

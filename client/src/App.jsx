@@ -23,7 +23,7 @@ import CreateCoupon from "./pages/CreateCoupon";
 import Coupons from "./pages/Coupons";
 import UpdateCoupon from "./pages/UpdateCoupon";
 import Checkout from "./pages/Checkout";
-import Address from "./pages/Address";
+import ContactInfo from "./pages/ContactInfo";
 import Profile from "./pages/Profile";
 
 const App = () => {
@@ -71,7 +71,7 @@ const App = () => {
             />
             <Route path="/dashboard/coupons" element={<Coupons />} />
             <Route path="/dashboard/reviews" element={<Reviews />} />
-            <Route path="/dashboard/address" element={<Address />} />
+            <Route path="/dashboard/contact-info" element={<ContactInfo />} />
             <Route path="/dashboard/profile" element={<Profile />} />
           </Route>
         </Routes>

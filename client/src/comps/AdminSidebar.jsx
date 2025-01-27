@@ -104,9 +104,9 @@ const AdminSidebar = () => {
               Orders
             </li>
           </Link>
-          <Link to="/dashboard/address">
+          <Link to="/dashboard/contact-info">
             <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
-              Address
+              Contact Information
             </li>
           </Link>
           <Link to="/dashboard/profile">

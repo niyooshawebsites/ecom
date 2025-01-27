@@ -256,6 +256,7 @@ const resetPasswordController = async (req, res) => {
 const updateContactDetailsController = async (req, res) => {
   try {
     const { uid } = req.params;
+
     const {
       fName,
       lname,
@@ -269,6 +270,8 @@ const updateContactDetailsController = async (req, res) => {
       state,
       pincode,
     } = req.body;
+
+    console.log(req.body);
 
     if (
       !fName ||

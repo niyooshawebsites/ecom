@@ -22,7 +22,7 @@ const CreateCategoryForm = () => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-light my-10">Create Category</h1>
-      <div className="flex flex-col w-6/12 border rounded-lg p-5">
+      <div className="flex flex-col w-5/12 border rounded-lg p-5">
         <form className="mb-3" action={handleCategoryCreation}>
           <div className="flex flex-col mb-3">
             <label htmlFor="name" className="mb-3">
