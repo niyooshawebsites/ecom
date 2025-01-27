@@ -8,14 +8,16 @@ const ContactInfoFrom = () => {
     fName: "Not available",
     lName: "Not available",
     contactNo: "Not available",
-    buildingNo: "Not available",
-    streetNo: "Not available",
-    locality: "Not available",
-    district: "Not available",
-    landmark: "Not available",
-    city: "Not available",
-    state: "Not available",
-    pincode: "Not available",
+    address: {
+      buildingNo: "Not available",
+      streetNo: "Not available",
+      locality: "Not available",
+      district: "Not available",
+      landmark: "Not available",
+      city: "Not available",
+      state: "Not available",
+      pincode: "Not available",
+    },
   });
 
   const { uid } = useSelector((state) => state.user_Slice);
@@ -28,10 +30,11 @@ const ContactInfoFrom = () => {
       );
 
       if (res.data.success) {
+        console.log(res.data.data.contactDetails);
         setUpdatedContactInfo((prevState) => {
           return {
             ...prevState,
-            ...res.data.data,
+            ...res.data.data.contactDetails,
           };
         });
       }
@@ -124,7 +127,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="buildingNo"
               id="buildingNo"
-              value={updatedContactInfo.buildingNo}
+              value={updatedContactInfo.address.buildingNo}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="A 123"
@@ -139,7 +142,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="streetNo"
               id="streetNo"
-              value={updatedContactInfo.streetNo}
+              value={updatedContactInfo.address.streetNo}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="07"
@@ -154,7 +157,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="locality"
               id="locality"
-              value={updatedContactInfo.locality}
+              value={updatedContactInfo.address.locality}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Nehru Enclave"
@@ -169,7 +172,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="district"
               id="district"
-              value={updatedContactInfo.district}
+              value={updatedContactInfo.address.district}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="North East"
@@ -184,7 +187,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="landmark"
               id="landmark"
-              value={updatedContactInfo.landmark}
+              value={updatedContactInfo.address.landmark}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Ahuja builders"
@@ -199,7 +202,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="city"
               id="city"
-              value={updatedContactInfo.city}
+              value={updatedContactInfo.address.city}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="New Delhi"
@@ -214,7 +217,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="state"
               id="state"
-              value={updatedContactInfo.state}
+              value={updatedContactInfo.address.state}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Delhi"
@@ -229,7 +232,7 @@ const ContactInfoFrom = () => {
               type="text"
               name="pincode"
               id="pincode"
-              value={updatedContactInfo.pincode}
+              value={updatedContactInfo.address.pincode}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="110001"

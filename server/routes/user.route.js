@@ -28,8 +28,8 @@ userRouter.patch(
 );
 userRouter.get("/delete-user/:uid", auth, deleteUserController);
 userRouter.get("/verify-email/:authToken", verifyEmail, verifyUserController);
-userRouter.post("/forgot-password/:authToken", forgotPasswordController);
-userRouter.post(
+userRouter.post("/forgot-password", forgotPasswordController);
+userRouter.patch(
   "/reset-password/:authToken",
   verifyEmail,
   resetPasswordController

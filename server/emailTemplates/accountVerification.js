@@ -17,7 +17,7 @@ const passwordResetTxt = (token) => {
   Hi there, 
   <br/>
   <br/>
-  Please reset your account password by clicking the following link : <a href="http://localhost:5173/reset-password/${token}">Reset</a>
+  Please reset your account password by clicking the following link : <a href="http://localhost:5173/reset-password?authToken=${token}">Reset</a>
   <br/>
   <br/>
   Thanks and regards,

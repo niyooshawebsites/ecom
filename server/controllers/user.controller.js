@@ -151,9 +151,11 @@ const updateUserPasswordController = async (req, res) => {
     if (!uid) return response(res, 400, false, "uid is missing");
     if (!password) return response(res, 400, false, "Password is missing");
 
-    const updatedUser = await User.findOneAndUpdate(
+    const encryptedPassword = await encryptPassword(password);
+
+    const updatedUser = await User.findByIdAndUpdate(
       uid,
-      { password },
+      { $set: { password: encryptedPassword } },
       { new: true, runValidators: true }
     );
 
@@ -233,16 +235,20 @@ const forgotPasswordController = async (req, res) => {
 const resetPasswordController = async (req, res) => {
   try {
     const { newPassword } = req.body;
-    const userId = req.user._id;
+    if (!newPassword)
+      return response(res, 400, false, "Reset password missing");
 
-    if (!newPassword) return response(res, 400, false, "New password missing");
+    const userId = req.user.userId;
 
     const user = await User.findById(userId);
+
     if (!user) return response(res, 404, false, "No user found");
+
+    const encryptedPassword = await encryptPassword(newPassword);
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { password: await encryptPassword(newPassword) },
+      { $set: { password: encryptedPassword } },
       { new: true, runValidators: true }
     );
 
@@ -259,7 +265,7 @@ const updateContactDetailsController = async (req, res) => {
 
     const {
       fName,
-      lname,
+      lName,
       contactNo,
       buildingNo,
       streetNo,
@@ -275,7 +281,7 @@ const updateContactDetailsController = async (req, res) => {
 
     if (
       !fName ||
-      !lname ||
+      !lName ||
       !contactNo ||
       !buildingNo ||
       !streetNo ||
@@ -291,7 +297,20 @@ const updateContactDetailsController = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       uid,
       {
-        contactDetails: req.body,
+        // Update contact details and address as separate sub-documents
+        $set: {
+          "contactDetails.fName": fName,
+          "contactDetails.lName": lName,
+          "contactDetails.contactNo": contactNo,
+          "contactDetails.address.buildingNo": buildingNo,
+          "contactDetails.address.streetNo": streetNo,
+          "contactDetails.address.locality": locality,
+          "contactDetails.address.district": district,
+          "contactDetails.address.landmark": landmark,
+          "contactDetails.address.city": city,
+          "contactDetails.address.state": state,
+          "contactDetails.address.pincode": pincode,
+        },
       },
       {
         new: true,

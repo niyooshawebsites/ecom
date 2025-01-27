@@ -1,9 +1,20 @@
 import axios from "axios";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
 const ProfileForm = () => {
   const { uid } = useSelector((state) => state.user_Slice);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prev) => !prev);
+  };
 
   const updateProfile = async (formData) => {
     try {
@@ -11,7 +22,8 @@ const ProfileForm = () => {
       const confirmNewPassword = formData.get("confirmNewPassword");
 
       if (newPassword !== confirmNewPassword) {
-        return toast.error("Password mismatch");
+        toast.error("Password mismatch");
+        return;
       }
 
       const res = await axios.patch(
@@ -38,26 +50,42 @@ const ProfileForm = () => {
             <label htmlFor="newPassword" className="mb-3">
               Update password
             </label>
-            <input
-              type="text"
-              name="newPassword"
-              id="newPassword"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="New Password"
-            />
+            <div className="flex items-center">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="newPassword"
+                id="newPassword"
+                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 w-full mr-2"
+                placeholder="New Password"
+              />
+              <span
+                className="border p-2 rounded-lg cursor-pointer"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col mb-3">
             <label htmlFor="confirmNewPassword" className="mb-3">
               Confirm password
             </label>
-            <input
-              type="text"
-              name="confirmNewPassword"
-              id="confirmNewPassword"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Confirm new password"
-            />
+            <div className="flex items-center">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmNewPassword"
+                id="confirmNewPassword"
+                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 w-full mr-2"
+                placeholder="Confirm new password"
+              />
+              <span
+                className="border p-2 rounded-lg cursor-pointer"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </span>
+            </div>
           </div>
           <button
             type="submit"

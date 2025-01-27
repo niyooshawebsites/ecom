@@ -3,8 +3,6 @@ import Shop from "./pages/Shop";
 import Product from "./pages/Product";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import { Provider } from "react-redux";
 import store from "./store/CentralStore";
@@ -25,6 +23,8 @@ import UpdateCoupon from "./pages/UpdateCoupon";
 import Checkout from "./pages/Checkout";
 import ContactInfo from "./pages/ContactInfo";
 import Profile from "./pages/Profile";
+import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const App = () => {
   return (
@@ -32,13 +32,13 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Shop />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/:category/:product/:pid" element={<Product />} />
-          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="/verfiy-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="checkout" element={<Checkout />} />
           <Route element={<Protect />}>
             <Route

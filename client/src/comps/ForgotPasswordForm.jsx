@@ -34,6 +34,7 @@ const ForgotPasswordForm = () => {
               id="email"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter the registered email id"
+              required
             />
             <span className="text-gray-200 mt-2">
               Reset password email will be sent

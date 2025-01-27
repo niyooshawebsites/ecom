@@ -5,10 +5,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { CiShoppingCart } from "react-icons/ci";
+import { RiLogoutCircleRLine } from "react-icons/ri";
 
 const Header = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
-  const { uid } = useSelector((state) => state.user_Slice);
+  const { uid, username } = useSelector((state) => state.user_Slice);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -37,19 +38,25 @@ const Header = () => {
           <h1>ECOM</h1>
         </Link>
 
-        <ul className={`flex ${uid ? "justify-end" : "justify-evenly"} w-6/12`}>
+        <ul
+          className={`flex ${uid ? "justify-end" : "justify-evenly"} ${
+            uid ? "w-fit" : "w-6/12"
+          }`}
+        >
           {uid ? (
-            <button onClick={logout}>logout</button>
+            <>
+              <li className="inline-block mr-3">Welcome, {username}</li>
+              <li
+                onClick={logout}
+                className="cursor-pointer inline-block text-2xl align-middle"
+              >
+                <RiLogoutCircleRLine />
+              </li>
+            </>
           ) : (
             <>
               <Link to="/">
-                <li>Home</li>
-              </Link>
-              <Link to="/about">
-                <li>About</li>
-              </Link>
-              <Link to="/contact">
-                <li>Contact</li>
+                <li>Store</li>
               </Link>
               <Link to="/register">
                 <li>Register</li>

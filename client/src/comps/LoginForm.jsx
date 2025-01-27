@@ -20,6 +20,18 @@ const LoginForm = () => {
       );
 
       if (res.data.success) {
+        if (!res.data.data.isVerified) {
+          toast.error("Account not verified!");
+          toast.error("Verify your account to login!");
+          return;
+        }
+
+        if (!res.data.data.isActive) {
+          toast.error("Account is inactive!");
+          toast.error("Contact admin!");
+          return;
+        }
+
         dispatch(
           userSliceActions.populateUserSlice({
             uid: res.data.data._id,
