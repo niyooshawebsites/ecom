@@ -20,7 +20,7 @@ userRouter.post("/register", registerController);
 userRouter.post("/auth/login", loginController);
 userRouter.get("/auth/logout", auth, logoutController);
 userRouter.get("/fetch-all-users", auth, fetchAllUsersController);
-userRouter.get("/fetch-user", auth, fetchUserController);
+userRouter.get("/fetch-user/:uid", auth, fetchUserController);
 userRouter.patch(
   "/update-user-password/:uid",
   auth,

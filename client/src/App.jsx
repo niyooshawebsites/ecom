@@ -16,13 +16,15 @@ import Products from "./pages/Products";
 import UpdateProduct from "./pages/UpdateProduct";
 import Protect from "./pages/Protect";
 import ForgotPassword from "./pages/ForgotPassword";
-import AdminOrders from "./pages/AdminOrders";
+import Orders from "./pages/Orders";
 import AdminOrder from "./pages/AdminOrder";
 import Reviews from "./pages/Reviews";
 import CreateCoupon from "./pages/CreateCoupon";
 import Coupons from "./pages/Coupons";
 import UpdateCoupon from "./pages/UpdateCoupon";
 import Checkout from "./pages/Checkout";
+import ContactInfo from "./pages/ContactInfo";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -57,7 +59,7 @@ const App = () => {
               element={<UpdateProduct />}
             />
             <Route path="/dashboard/products" element={<Products />} />
-            <Route path="/dashboard/orders" element={<AdminOrders />} />
+            <Route path="/dashboard/orders" element={<Orders />} />
             <Route
               path="/dashboard/order-details/:oid"
               element={<AdminOrder />}
@@ -69,6 +71,8 @@ const App = () => {
             />
             <Route path="/dashboard/coupons" element={<Coupons />} />
             <Route path="/dashboard/reviews" element={<Reviews />} />
+            <Route path="/dashboard/contact-info" element={<ContactInfo />} />
+            <Route path="/dashboard/profile" element={<Profile />} />
           </Route>
         </Routes>
       </BrowserRouter>

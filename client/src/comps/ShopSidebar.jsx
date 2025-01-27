@@ -3,17 +3,12 @@ import axios from "axios";
 import { filterSliceActions } from "../store/slices/filterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { MdOutlineClear } from "react-icons/md";
+import { sortSliceActions } from "../store/slices/sortSlice";
 
 const ShopSidebar = () => {
   const [categories, setCategories] = useState([]);
   const dispatch = useDispatch();
-  const {
-    activeFilterId,
-    filteredCategory,
-    filteredPriceRangeMinimum,
-    filteredPriceRangeMaximum,
-    filteredProductSlug,
-  } = useSelector((state) => state.filter_Slice);
+  const { activeFilterId } = useSelector((state) => state.filter_Slice);
 
   const fetchCategories = async () => {
     try {
@@ -68,6 +63,12 @@ const ShopSidebar = () => {
 
   const fiterByCategory = (cid, cName) => {
     try {
+      dispatch(
+        sortSliceActions.populateSortBasis({
+          sortBasis: null,
+        })
+      );
+
       dispatch(
         filterSliceActions.populateActiveFilterId({
           activeFilterId: cid,
@@ -250,6 +251,7 @@ const ShopSidebar = () => {
             />
           ) : null}
         </div>
+
         <ul>
           {categories.map((category) => {
             return (
@@ -257,7 +259,7 @@ const ShopSidebar = () => {
                 key={category._id}
                 className={
                   category._id === activeFilterId
-                    ? `font-semibold text-orange-600 hover:cursor-pointer`
+                    ? `font-semibold text-orange-600 hover:cursor-pointer hover:text-orange-600`
                     : "hover:cursor-pointer"
                 }
                 onClick={() => fiterByCategory(category._id, category.name)}

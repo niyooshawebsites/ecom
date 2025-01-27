@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 const contactSchema = new mongoose.Schema({
   fName: {
@@ -16,6 +17,9 @@ const contactSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
+    default: () => {
+      uuidv4();
+    },
   },
   address: {
     buildingNo: {
@@ -88,7 +92,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      default: "0",
+      default: "customer",
     },
     isVerified: {
       type: Boolean,

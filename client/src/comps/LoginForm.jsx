@@ -23,6 +23,10 @@ const LoginForm = () => {
         dispatch(
           userSliceActions.populateUserSlice({
             uid: res.data.data._id,
+            role: res.data.data.role,
+            isVerified: res.data.data.isVerified,
+            isActive: res.data.data.isActive,
+            username: res.data.data.username,
           })
         );
         toast.success(res.data.msg);
@@ -30,6 +34,7 @@ const LoginForm = () => {
       }
     } catch (err) {
       console.error(err);
+      toast.error(err.response.data.msg);
     }
   };
   return (
@@ -45,6 +50,7 @@ const LoginForm = () => {
               id="email"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="abc@example.com"
+              required
             />
           </div>
           <div className="flex flex-col mb-3">
@@ -55,6 +61,7 @@ const LoginForm = () => {
               id="password"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="*********"
+              required
             />
           </div>
           <button

@@ -1,16 +1,16 @@
 import Layout from "../comps/Layout";
-import AdminOrdersTable from "../comps/AdminOrdersTable";
+import OrdersTable from "../comps/OrdersTable";
 import AdminSidebar from "../comps/AdminSidebar";
 
-const AdminOrders = () => {
+const Orders = () => {
   return (
     <Layout>
       <main className="flex">
         <AdminSidebar />
-        <AdminOrdersTable />
+        <OrdersTable />
       </main>
     </Layout>
   );
 };
 
-export default AdminOrders;
+export default Orders;

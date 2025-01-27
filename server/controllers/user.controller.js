@@ -53,7 +53,7 @@ const loginController = async (req, res) => {
     if (!email || !password)
       return response(res, 400, false, "Please fill out all the details!");
 
-    const user = await User.findOne({ email }).select("password");
+    let user = await User.findOne({ email });
     if (!user) return response(res, 404, false, "Invalid email or password");
 
     const validPassword = await decryptPassword(password, user.password);
@@ -70,6 +70,15 @@ const loginController = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
     });
+
+    user = {
+      _id: user._id,
+      email: user.email,
+      role: user.role,
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      username: user.username,
+    };
 
     return response(res, 200, true, "Login successful", user);
   } catch (err) {
@@ -247,6 +256,7 @@ const resetPasswordController = async (req, res) => {
 const updateContactDetailsController = async (req, res) => {
   try {
     const { uid } = req.params;
+
     const {
       fName,
       lname,
@@ -260,6 +270,8 @@ const updateContactDetailsController = async (req, res) => {
       state,
       pincode,
     } = req.body;
+
+    console.log(req.body);
 
     if (
       !fName ||

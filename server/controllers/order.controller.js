@@ -101,6 +101,25 @@ const fetchOrderController = async (req, res) => {
     return response(res, 200, true, "Order fetched", order);
   } catch (err) {
     console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchCustomerOrdersController = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    if (!uid)
+      return response(res, 400, false, "No uid. No orders per customer");
+
+    const orders = await Order.find({ customer: uid });
+
+    if (orders.length === 0)
+      return response(res, 404, false, "No orders found");
+
+    return response(res, 200, true, "Orders fetched", orders);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
   }
 };
 
@@ -110,4 +129,5 @@ export {
   deleteOrderController,
   fetchAllOrdersController,
   fetchOrderController,
+  fetchCustomerOrdersController,
 };

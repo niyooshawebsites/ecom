@@ -3,12 +3,15 @@ import Card from "../comps/Card";
 import Sidebar from "../comps/ShopSidebar";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { sortSliceActions } from "../store/slices/sortSlice";
 
 const Shop = () => {
+  const dispatch = useDispatch();
   const [productsData, setProductsData] = useState([]);
   const [sortedProductData, setSortedProductData] = useState([]);
-  const [sortBasis, setSortBasis] = useState(null);
+  const { sortBasis } = useSelector((state) => state.sort_Slice);
   const [filterText, setFilterText] = useState("");
   const {
     activeFilterId, // cid
@@ -81,13 +84,19 @@ const Shop = () => {
       }
     } catch (err) {
       console.log(err);
+      toast.error(err.response.data.msg);
     }
   };
 
   const sortProducts = (e) => {
     try {
       const selectedSortBasis = e.target.value;
-      setSortBasis(selectedSortBasis);
+
+      dispatch(
+        sortSliceActions.populateSortBasis({
+          sortBasis: selectedSortBasis,
+        })
+      );
 
       const sortedData = [...productsData];
 
@@ -113,9 +122,12 @@ const Shop = () => {
     filteredPriceRangeMinimum,
     filteredPriceRangeMaximum,
     filteredProductSlug,
+    sortBasis,
   ]);
 
   const displayProducts = sortBasis ? sortedProductData : productsData;
+
+  console.log(displayProducts);
 
   return (
     <Layout>
@@ -125,9 +137,7 @@ const Shop = () => {
           <div className="flex justify-between my-3">
             {filterText || <span></span>}
             <select name="sortBy" id="sortBy" onChange={sortProducts}>
-              <option value="" defaultChecked>
-                Sort by
-              </option>
+              <option defaultChecked>Sort by</option>
               <option value="lowToHigh">Low to high</option>
               <option value="highToLow">High to low</option>
             </select>
