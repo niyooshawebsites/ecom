@@ -78,6 +78,7 @@ const fetchAllProductsController = async (req, res) => {
     const productsPerPage = await Product.find()
       .skip(skip)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .populate("category");
 
     const totalProductsCount = await Product.countDocuments();
@@ -118,7 +119,9 @@ const fetchAllProductsByCategoryController = async (req, res) => {
 
     if (!cid) return response(res, 400, false, "Cateogry Id is missing");
 
-    const products = await Product.find({ category: cid }).populate("category");
+    const products = await Product.find({ category: cid })
+      .sort({ createdAt: -1 })
+      .populate("category");
 
     if (products.length === 0)
       return response(res, 404, false, "No products in this category");
