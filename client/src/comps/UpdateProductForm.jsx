@@ -4,8 +4,17 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const UpdateProductForm = () => {
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState({
+    name: "",
+    price: "",
+    slug: "",
+    category: {},
+    img: "",
+    shortDesc: "",
+    longDesc: "",
+  });
   const [categories, setCategories] = useState([]);
+  const [productUpdated, setProductUpdated] = useState(false);
   const { pid } = useParams();
 
   const fetchAllCategories = async () => {
@@ -39,38 +48,44 @@ const UpdateProductForm = () => {
   };
 
   const updateProduct = async (formData) => {
-    const updatedCategory = formData.get("category");
-    const updatedName = formData.get("name");
-    const updatedPrice = formData.get("price");
-    const updatedShortDesc = formData.get("shortDesc");
-    const updatedLongDesc = formData.get("longDesc");
+    try {
+      const updatedCategory = formData.get("category");
+      const updatedName = formData.get("name");
+      const updatedPrice = formData.get("price");
+      const updatedShortDesc = formData.get("shortDesc");
+      const updatedLongDesc = formData.get("longDesc");
 
-    const res = await axios.patch(
-      `http://localhost:8000/api/v1/update-product/${pid}`,
-      {
-        category: updatedCategory,
-        name: updatedName,
-        price: updatedPrice,
-        shortDesc: updatedShortDesc,
-        longDesc: updatedLongDesc,
-      },
-      { withCredentials: true }
-    );
+      const res = await axios.patch(
+        `http://localhost:8000/api/v1/update-product/${pid}`,
+        {
+          category: updatedCategory,
+          name: updatedName,
+          price: updatedPrice,
+          shortDesc: updatedShortDesc,
+          longDesc: updatedLongDesc,
+        },
+        { withCredentials: true }
+      );
 
-    if (res.data.success) {
-      toast.success(res.data.msg);
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        setProductUpdated((prev) => !prev);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
     }
   };
 
   useEffect(() => {
     fetchAllCategories();
     fetchProduct();
-  }, []);
+  }, [productUpdated]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-light my-10">Update Product</h1>
-      <div className="flex flex-col w-6/12 border rounded-lg p-5">
+      <div className="flex flex-col w-6/12 border rounded-lg p-5 mb-10">
         <form className="mb-3" action={updateProduct}>
           <div className="flex flex-col mb-3">
             <label htmlFor="username">Select category</label>
@@ -85,6 +100,22 @@ const UpdateProductForm = () => {
               ))}
             </select>
           </div>
+
+          <div className="flex flex-col mb-3">
+            <label htmlFor="currentCategory" className="text-gray-400">
+              Current category
+            </label>
+            <input
+              type="text"
+              name="currentCategory"
+              id="currentCategory"
+              defaultValue={product.category.name}
+              className="border rounded-lg py-2 px-2 outline-none bg-gray-100 text-gray-400"
+              placeholder="Product name"
+              readOnly
+            />
+          </div>
+
           <div className="flex flex-col mb-3">
             <label htmlFor="username">Product name</label>
             <input

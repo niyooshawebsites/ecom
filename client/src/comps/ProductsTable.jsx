@@ -102,15 +102,15 @@ const ProductsTable = () => {
                 <td className="p-1">
                   <Link
                     to={`/dashboard/update-product/${product._id}`}
-                    className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700 border text-sm"
+                    className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 text-sm"
                   >
-                    Update
+                    Edit
                   </Link>{" "}
                   <button
                     onClick={() => {
                       deleteProduct(product._id);
                     }}
-                    className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700 border text-sm"
+                    className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700 text-sm"
                   >
                     Delete
                   </button>

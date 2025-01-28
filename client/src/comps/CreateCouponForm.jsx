@@ -163,20 +163,6 @@ const CreateCouponForm = () => {
           </div>
 
           <div className="flex flex-col mb-3">
-            <label htmlFor="discountType" className="mb-1">
-              Applicable On
-            </label>
-            <select
-              name="discountType"
-              id="discountType"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-            >
-              <option value="percentage">All products</option>
-              <option value="percentage">Selected products</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col mb-3">
             <label htmlFor="isActive" className="mb-1">
               Activation status
             </label>

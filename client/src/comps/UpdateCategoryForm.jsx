@@ -24,11 +24,11 @@ const UpdateCategoryForm = () => {
 
   const updateCategory = async (formData) => {
     try {
-      const udpateCategory = formData.get("name");
+      const udpatedCategoryName = formData.get("name");
       // updating the catetory
       const res = await axios.patch(
         `http://localhost:8000/api/v1/update-category/${cid}`,
-        { category: udpateCategory },
+        { name: udpatedCategoryName },
         { withCredentials: true }
       );
 

@@ -26,13 +26,13 @@ const createProductController = async (req, res) => {
 const updateProductController = async (req, res) => {
   try {
     const { pid } = req.params;
-    const { name, slug, price, category, shortDesc, longDesc } = req.body;
-
-    const updatedSlug = slugify(slug, { lower: true, strict: true });
+    const { name, price, category, shortDesc, longDesc } = req.body;
 
     if (!pid) response(res, 400, false, "No product id!. No updation!");
 
-    if (!name || !price || !slug || !category || !shortDesc || !longDesc)
+    const updatedSlug = slugify(name, { lower: true, strict: true });
+
+    if (!name || !price || !updatedSlug || !category || !shortDesc || !longDesc)
       return response(res, 400, false, "Please fill out all the details");
 
     const updatedProduct = await Product.findByIdAndUpdate(

@@ -17,6 +17,6 @@ reviewRouter.get(
   fetchReviewsByProductsController
 );
 reviewRouter.get("/fetch-reviews/:pageNo", auth, fetchReviewsController);
-reviewRouter.get("/update-review", auth, updateReviewController);
+reviewRouter.patch("/update-review", auth, updateReviewController);
 
 export default reviewRouter;

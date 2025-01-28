@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 const UpdateCouponForm = () => {
   const [coupon, setCoupon] = useState({});
+
   const { ccid } = useParams();
 
   const fetchCoupon = async () => {
@@ -15,7 +16,19 @@ const UpdateCouponForm = () => {
       );
 
       if (res.data.success) {
-        setCoupon(res.data.data);
+        setCoupon({
+          ...res.data.data,
+          startDate: res.data.data.startDate
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-"),
+          endDate: res.data.data.endDate
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-"),
+        });
       }
     } catch (err) {
       console.log(err);
@@ -67,7 +80,7 @@ const UpdateCouponForm = () => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
       <h1 className="text-4xl py-3 poppins-light my-10">Update Coupon</h1>
-      <div className="flex flex-col w-6/12 border rounded-lg p-5">
+      <div className="flex flex-col w-6/12 border rounded-lg p-5 mb-10">
         <form className="mb-3" action={handleCouponUpdation}>
           <div className="flex flex-col mb-3">
             <label htmlFor="couponCode" className="mb-1">
@@ -79,7 +92,7 @@ const UpdateCouponForm = () => {
               id="couponCode"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter a code"
-              value={coupon.couponCode}
+              defaultValue={coupon.couponCode}
             />
           </div>
 
@@ -92,23 +105,42 @@ const UpdateCouponForm = () => {
               id="desc"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter the coupon description"
-              value={coupon.desc}
-            ></textarea>
+              defaultValue={coupon.desc}
+            >
+              {coupon.desc}
+            </textarea>
           </div>
 
-          <div className="flex flex-col mb-3">
-            <label htmlFor="discountType" className="mb-1">
-              Discount Type
-            </label>
-            <select
-              name="discountType"
-              id="discountType"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              defaultValue={coupon.defaultValue}
-            >
-              <option value="percentage">Percentage</option>
-              <option value="fixed">Fixed</option>
-            </select>
+          <div className="flex">
+            <div className="flex flex-col mb-3 w-6/12 mr-3">
+              <label htmlFor="discountType" className="mb-1">
+                Discount Type
+              </label>
+              <select
+                name="discountType"
+                id="discountType"
+                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                defaultValue={coupon.defaultValue}
+              >
+                <option value="percentage">Percentage (%)</option>
+                <option value="fixed">Fixed</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col mb-3 w-6/12">
+              <label htmlFor="currentDiscountType" className="text-gray-400">
+                Current Discount Type
+              </label>
+              <input
+                type="text"
+                name="currentDiscountType"
+                id="currentDiscountType"
+                defaultValue={coupon.discountType}
+                className="border rounded-lg py-2 px-2 outline-none bg-gray-100 text-gray-400"
+                placeholder="Product name"
+                readOnly
+              />
+            </div>
           </div>
 
           <div className="flex flex-col mb-3">
@@ -121,7 +153,7 @@ const UpdateCouponForm = () => {
               id="discountValue"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter the discount value"
-              value={coupon.discountValue}
+              defaultValue={coupon.discountValue}
             />
           </div>
 
@@ -134,9 +166,8 @@ const UpdateCouponForm = () => {
               name="minOrderValue"
               id="minOrderValue"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              defaultValue={0}
               placeholder="Enter the minimum order value"
-              value={coupon.minOrderValue}
+              defaultValue={coupon.minOrderValue}
             />
           </div>
 
@@ -149,36 +180,69 @@ const UpdateCouponForm = () => {
               name="maxOrderValue"
               id="maxOrderValue"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              defaultValue={1000000000}
+              defaultValue={coupon.maxOrderValue}
               placeholder="Enter the minimum order value"
-              value={coupon.maxOrderValue}
             />
           </div>
 
-          <div className="flex flex-col mb-3">
-            <label htmlFor="startDate" className="mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              name="startDate"
-              id="startDate"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              value={coupon.startDate}
-            />
+          <div className="flex">
+            <div className="flex flex-col mb-3 w-6/12 mr-3">
+              <label htmlFor="startDate" className="mb-1">
+                Start Date
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                id="startDate"
+                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                defaultValue={coupon.startDate}
+              />
+            </div>
+
+            <div className="flex flex-col mb-3 w-6/12">
+              <label htmlFor="currentStartDate" className="text-gray-400">
+                Current Start Date
+              </label>
+              <input
+                type="text"
+                name="currentStartDate"
+                id="currentStartDate"
+                defaultValue={coupon.startDate}
+                className="border rounded-lg py-3 px-2 outline-none bg-gray-100 text-gray-400"
+                placeholder="Product name"
+                readOnly
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col mb-3">
-            <label htmlFor="endDate" className="mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              name="endDate"
-              id="endDate"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              value={coupon.endDate}
-            />
+          <div className="flex">
+            <div className="flex flex-col mb-3 w-6/12 mr-3">
+              <label htmlFor="endDate" className="mb-1">
+                End Date
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                id="endDate"
+                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                defaultValue={coupon.endDate}
+              />
+            </div>
+
+            <div className="flex flex-col mb-3 w-6/12">
+              <label htmlFor="currentEndDate" className="text-gray-400">
+                Current End Date
+              </label>
+              <input
+                type="text"
+                name="currentEndDate"
+                id="currentEndDate"
+                defaultValue={coupon.endDate}
+                className="border rounded-lg py-3 px-2 outline-none bg-gray-100 text-gray-400"
+                placeholder="Product name"
+                readOnly
+              />
+            </div>
           </div>
 
           <div className="flex flex-col mb-3">
@@ -191,23 +255,8 @@ const UpdateCouponForm = () => {
               id="usageLimit"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="Enter the usage limit"
-              value={coupon.usageLimit}
+              defaultValue={coupon.usageLimit}
             />
-          </div>
-
-          <div className="flex flex-col mb-3">
-            <label htmlFor="discountType" className="mb-1">
-              Applicable On
-            </label>
-            <select
-              name="discountType"
-              id="discountType"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              defaultValue={coupon.discountType}
-            >
-              <option value="percentage">All products</option>
-              <option value="percentage">Selected products</option>
-            </select>
           </div>
 
           <div className="flex flex-col mb-3">

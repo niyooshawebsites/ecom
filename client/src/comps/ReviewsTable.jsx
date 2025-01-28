@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 
 const ReviewsTable = () => {
   const [reviews, setReviews] = useState([]);
+  const [reviewStatusUpdation, setReviewStatusUpdation] = useState(false);
+  const [reviewDeletion, setReviewDeletion] = useState(false);
 
   const fetchAllReviews = async () => {
     try {
@@ -31,6 +33,7 @@ const ReviewsTable = () => {
       );
 
       if (res.data.success) {
+        setReviewDeletion((prev) => !prev);
         toast.success(res.data.msg);
       }
     } catch (err) {
@@ -41,7 +44,7 @@ const ReviewsTable = () => {
   const updateReview = async (formData) => {
     try {
       const rid = formData.get("rid");
-      const status = formData.get("review");
+      const status = formData.get("status");
 
       const res = await axios.patch(
         `http://localhost:8000/api/v1/update-review`,
@@ -50,6 +53,7 @@ const ReviewsTable = () => {
       );
 
       if (res.data.success) {
+        setReviewStatusUpdation((prev) => !prev);
         toast.success(res.data.msg);
       }
     } catch (err) {
@@ -59,7 +63,7 @@ const ReviewsTable = () => {
 
   useEffect(() => {
     fetchAllReviews();
-  }, []);
+  }, [reviewStatusUpdation, reviewDeletion]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
@@ -127,14 +131,14 @@ const ReviewsTable = () => {
                         required
                       >
                         <option>Select status</option>
-                        <option value="On hold">Accept</option>
-                        <option value="Completed">Reject</option>
+                        <option value="Accepted">Accept</option>
+                        <option value="Rejected">Reject</option>
                       </select>
                       <button
                         type="submit"
                         className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700"
                       >
-                        Update Status
+                        Update
                       </button>
                     </form>
                     <button

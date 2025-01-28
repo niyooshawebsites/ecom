@@ -6,6 +6,7 @@ import { SlRefresh } from "react-icons/sl";
 
 const CouponsTable = () => {
   const [coupons, setCoupons] = useState([]);
+  const [couponDeletion, setCouponDeletion] = useState(false);
 
   const fetchCoupons = async () => {
     try {
@@ -30,6 +31,7 @@ const CouponsTable = () => {
       );
 
       if (res.data.success) {
+        setCouponDeletion((prev) => !prev);
         toast.success(res.data.msg);
       }
     } catch (err) {
@@ -39,7 +41,7 @@ const CouponsTable = () => {
 
   useEffect(() => {
     fetchCoupons();
-  }, []);
+  }, [couponDeletion]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
@@ -109,7 +111,7 @@ const CouponsTable = () => {
                   {coupon.couponCode}
                 </td>
                 <td className="text-center border text-sm p-1">
-                  {coupon.discountType}
+                  {coupon.discountType === "percentage" ? "%" : "Fixed"}
                 </td>
                 <td className="text-center border text-sm p-1">
                   {coupon.discountValue}
@@ -156,8 +158,8 @@ const CouponsTable = () => {
                 </td>
                 <td className="text-center border text-sm p-1">
                   <Link to={`/dashboard/update-coupon/${coupon._id}`}>
-                    <span className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700 mr-2">
-                      Update
+                    <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 mr-2">
+                      Edit
                     </span>
                   </Link>{" "}
                   <button

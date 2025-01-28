@@ -28,7 +28,7 @@ const CreateProductForm = () => {
       const longDesc = formData.get("longDesc");
 
       const res = await axios.post(
-        "https://localhost:8000/api/v1/create-product",
+        "http://localhost:8000/api/v1/create-product",
         { category, name, price, shortDesc, longDesc },
         { withCredentials: true }
       );

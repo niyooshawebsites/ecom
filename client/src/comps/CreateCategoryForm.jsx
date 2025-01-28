@@ -6,7 +6,7 @@ const CreateCategoryForm = () => {
     try {
       const name = formData.get("name");
       const res = await axios.post(
-        "https://localhost:8000/api/v1/create-category",
+        "http://localhost:8000/api/v1/create-category",
         { name },
         { withCredentials: true }
       );

@@ -121,7 +121,7 @@ const updateReviewController = async (req, res) => {
       res,
       200,
       true,
-      "review updated successfully",
+      "Review status updated successfully",
       updatedReview
     );
   } catch (err) {

@@ -189,9 +189,9 @@ const OrdersTable = () => {
                         </select>
                         <button
                           type="submit"
-                          className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700"
+                          className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700"
                         >
-                          Update Status
+                          Update
                         </button>
                       </form>
                     </td>

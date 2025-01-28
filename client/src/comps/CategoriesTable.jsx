@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
+  const [categoryDeleted, setCategoryDeleted] = useState(false);
 
   const fetchAllCategories = async () => {
     try {
@@ -24,11 +25,13 @@ const CategoriesTable = () => {
   const deleteCategory = async (cid) => {
     try {
       const res = await axios.delete(
-        `http://localhost:8000/api/v1/delete-category/${cid}`
+        `http://localhost:8000/api/v1/delete-category/${cid}`,
+        { withCredentials: true }
       );
 
       if (res.data.success) {
         toast.success(res.data.msg);
+        setCategoryDeleted((prev) => !prev);
       }
     } catch (err) {
       console.log(err);
@@ -37,7 +40,7 @@ const CategoriesTable = () => {
 
   useEffect(() => {
     fetchAllCategories();
-  }, []);
+  }, [categoryDeleted]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
@@ -78,8 +81,8 @@ const CategoriesTable = () => {
                   </td>
                   <td className="text-center border text-sm">
                     <Link to={`/dashboard/update-category/${category._id}`}>
-                      <span className="bg-orange-600 px-1 rounded-md text-white hover:bg-orange-700 mr-2">
-                        Update
+                      <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 mr-2">
+                        Edit
                       </span>
                     </Link>{" "}
                     <button

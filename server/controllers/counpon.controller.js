@@ -122,6 +122,8 @@ const deleteCouponController = async (req, res) => {
   try {
     const { ccid } = req.params;
 
+    console.log(ccid);
+
     if (!ccid) return response(res, 400, false, "No ccid. No coupon deletion");
 
     const deletedCounpon = await Coupon.findByIdAndDelete(ccid);
