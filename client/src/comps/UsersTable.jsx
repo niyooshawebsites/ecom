@@ -65,11 +65,26 @@ const UsersTable = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
-      <div className="flex justify-center items-center mt-10">
-        <h1 className="text-4xl py-3 poppins-light mb-2">Users</h1>
-        <button onClick={fetchAllUsers} className="ml-5">
-          <SlRefresh className="text-4xl text-blue-600 hover:text-orange-600" />
-        </button>
+      <div className="flex justify-between items-center mt-10 w-full">
+        <div className="flex justify-center items-center">
+          <h1 className="text-4xl py-3 poppins-light mb-2">Users</h1>
+          <button onClick={fetchAllUsers} className="ml-5">
+            <SlRefresh className="text-4xl text-blue-600 hover:text-orange-600" />
+          </button>
+        </div>
+
+        <div>
+          <form action="" className="">
+            <input
+              type="text"
+              placeholder="User ID"
+              className="border border-gray-300 rounded p-1 mr-2"
+            />
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+        </div>
       </div>
       <table className="w-full border">
         <thead className="bg-blue-600 text-white h-10 m-10">

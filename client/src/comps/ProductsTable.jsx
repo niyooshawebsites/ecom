@@ -57,7 +57,7 @@ const ProductsTable = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
-      <div className="flex justify-between items-center mt-10">
+      <div className="flex justify-between items-center mt-10 w-full">
         <div className="flex justify-center items-center">
           <h1 className="text-4xl py-3 poppins-light mb-2">All Products</h1>
           <button onClick={fetchAllProducts} className="ml-5">
@@ -69,7 +69,7 @@ const ProductsTable = () => {
           <form action="" className="">
             <input
               type="text"
-              placeholder="Order ID"
+              placeholder="Product ID"
               className="border border-gray-300 rounded p-1 mr-2"
             />
             <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
@@ -80,7 +80,7 @@ const ProductsTable = () => {
       </div>
 
       <table className="w-full border">
-        <thead className="bg-blue-500 h-10 m-10 text-white">
+        <thead className="bg-blue-600 h-10 m-10 text-white">
           <tr className="border">
             <th className="poppins-light border text-sm">#</th>
             <th className="poppins-light border text-sm">Product ID</th>
