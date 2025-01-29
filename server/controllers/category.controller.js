@@ -80,7 +80,10 @@ const fetchAllCategoriesController = async (req, res) => {
     const limit = 10;
     const skip = (currentPageNo - 1) * limit;
 
-    const categoriesPerPage = await Category.find().skip(skip).limit(limit);
+    const categoriesPerPage = await Category.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
     const totalCategoriesCount = await Category.countDocuments();
     const totalPagesCount = Math.ceil(totalCategoriesCount / limit);
     return response(
@@ -99,7 +102,8 @@ const fetchAllCategoriesController = async (req, res) => {
 
 const fetchAllCategoriesAtOnceController = async (req, res) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find().sort({ name: 1 });
+
     return response(
       res,
       200,

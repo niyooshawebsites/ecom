@@ -25,6 +25,7 @@ import ContactInfo from "./pages/ContactInfo";
 import Profile from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
+import Users from "./pages/Users";
 
 const App = () => {
   return (
@@ -70,6 +71,7 @@ const App = () => {
               element={<UpdateCoupon />}
             />
             <Route path="/dashboard/coupons" element={<Coupons />} />
+            <Route path="/dashboard/users" element={<Users />} />
             <Route path="/dashboard/reviews" element={<Reviews />} />
             <Route path="/dashboard/contact-info" element={<ContactInfo />} />
             <Route path="/dashboard/profile" element={<Profile />} />

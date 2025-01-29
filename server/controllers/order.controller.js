@@ -66,6 +66,7 @@ const fetchAllOrdersController = async (req, res) => {
     const orders = await Order.find()
       .skip(skip)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .populate("product")
       .populate("customer");
 
@@ -111,7 +112,7 @@ const fetchCustomerOrdersController = async (req, res) => {
     if (!uid)
       return response(res, 400, false, "No uid. No orders per customer");
 
-    const orders = await Order.find({ customer: uid });
+    const orders = await Order.find({ customer: uid }).sort({ createdAt: -1 });
 
     if (orders.length === 0)
       return response(res, 404, false, "No orders found");

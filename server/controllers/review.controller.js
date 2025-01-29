@@ -50,6 +50,7 @@ const fetchReviewsByProductsController = async (req, res) => {
     const reviewsPerPage = await Review.find({ product: pid })
       .skip(skip)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .populate("reviewer");
 
     if (reviewsPerPage.length == 0)
@@ -82,6 +83,7 @@ const fetchReviewsController = async (req, res) => {
     const reviews = await Review.find()
       .skip(skip)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .populate("product");
 
     if (reviews.length == 0) return response(res, 404, false, "No reviews.");

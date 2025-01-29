@@ -17,9 +17,9 @@ const contactSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
-    default: () => {
+    default: (() => {
       return uuidv4();
-    },
+    })(),
   },
   address: {
     buildingNo: {

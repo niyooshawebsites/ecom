@@ -45,10 +45,10 @@ const CouponsTable = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
-      <div className="flex">
-        <h1 className="text-4xl py-3 poppins-light mt-10 mb-2">All Coupons</h1>
+      <div className="flex justify-center items-center mt-10">
+        <h1 className="text-4xl py-3 poppins-light mb-2">All Coupons</h1>
         <button onClick={fetchCoupons} className="ml-5">
-          <SlRefresh className="text-4xl text-blue-600 hover:text-blue-700" />
+          <SlRefresh className="text-4xl text-blue-600 hover:text-orange-600" />
         </button>
       </div>
       <table className="w-full border">

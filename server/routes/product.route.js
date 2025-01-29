@@ -30,9 +30,5 @@ productRouter.get(
   "/fetch-all-products-by-price-range/:minPrice/:maxPrice",
   fetchAllProductsByPriceRangeController
 );
-// productRouter.get(
-//   "/fetch-all-products-and-sort-by/:cid/:sortParam",
-//   fetchAllProductsAndSortByController
-// );
 
 export default productRouter;

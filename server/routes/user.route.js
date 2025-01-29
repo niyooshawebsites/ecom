@@ -11,6 +11,7 @@ import {
   forgotPasswordController,
   resetPasswordController,
   updateContactDetailsController,
+  updateActivationStatusController,
 } from "../controllers/user.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 import verifyEmail from "../middlewares/verifyEmail.middleware.js";
@@ -26,7 +27,7 @@ userRouter.patch(
   auth,
   updateUserPasswordController
 );
-userRouter.get("/delete-user/:uid", auth, deleteUserController);
+userRouter.delete("/delete-user/:uid", auth, deleteUserController);
 userRouter.get("/verify-email/:authToken", verifyEmail, verifyUserController);
 userRouter.post("/forgot-password", forgotPasswordController);
 userRouter.patch(
@@ -38,6 +39,11 @@ userRouter.patch(
   "/update-contact-details/:uid",
   auth,
   updateContactDetailsController
+);
+userRouter.patch(
+  "/update-activation-status/:uid",
+  auth,
+  updateActivationStatusController
 );
 
 export default userRouter;

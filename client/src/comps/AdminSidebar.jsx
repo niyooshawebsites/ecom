@@ -93,6 +93,9 @@ const AdminSidebar = () => {
           <Link to="/dashboard/reviews">
             <li className="px-2 py-2 hover:bg-blue-600">Reviews</li>
           </Link>
+          <Link to="/dashboard/users">
+            <li className="px-2 py-2 hover:bg-blue-600 ">Users</li>
+          </Link>
           <Link to="/dashboard/profile">
             <li className="px-2 py-2 hover:bg-blue-600">Profile</li>
           </Link>

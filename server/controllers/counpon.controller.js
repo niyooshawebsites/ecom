@@ -96,7 +96,10 @@ const fetchAllCouponsController = async (req, res) => {
     const limit = 10;
     const skip = (currentPageNo - 1) * limit;
 
-    const couponsPerPage = await Coupon.find().skip(skip).limit(limit);
+    const couponsPerPage = await Coupon.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     if (couponsPerPage.length == 0)
       return response(res, 404, false, "No coupon found");
