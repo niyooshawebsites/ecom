@@ -48,8 +48,20 @@ const CategoriesTable = () => {
         <h1 className="text-4xl text-center py-3 poppins-light mt-10 mb-2">
           Product Categories
         </h1>
+        <div className="flex my-3">
+          <form action="" className="flex w-full">
+            <input
+              type="text"
+              placeholder="Category ID"
+              className="border border-gray-300 rounded p-1 mr-2 w-full"
+            />
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+        </div>
         <table className="w-full border">
-          <thead className="bg-blue-500 h-10 m-10">
+          <thead className="bg-blue-600 h-10 m-10">
             <tr className="">
               <th className="poppins-light text-white border text-sm p-1">#</th>
               <th className="poppins-light text-white border text-sm p-1">
