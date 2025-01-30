@@ -92,7 +92,27 @@ const OrdersTable = () => {
               </button>
             </div>
 
-            <div>
+            <div className="flex">
+              <form action="" className=" flex mr-5">
+                <div className=" border p-1 rounded mr-3">
+                  <label htmlFor="from" className="font-semibold">
+                    From:{" "}
+                  </label>
+                  <input type="date" />
+                </div>
+
+                <div className=" border p-1 rounded mr-3">
+                  <label htmlFor="from" className="font-semibold">
+                    To:{" "}
+                  </label>
+                  <input type="date" />
+                </div>
+
+                <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+                  Search
+                </button>
+              </form>
+
               <form action="" className="">
                 <input
                   type="text"
