@@ -6,6 +6,21 @@ import { SlRefresh } from "react-icons/sl";
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const fetchAllCategories = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-all-categories-at-once`,
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setCategories(res.data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -52,6 +67,7 @@ const ProductsTable = () => {
   };
 
   useEffect(() => {
+    fetchAllCategories();
     fetchProducts();
   }, []);
 
@@ -65,7 +81,21 @@ const ProductsTable = () => {
           </button>
         </div>
 
-        <div>
+        <div className="flex items-center">
+          <form action="" className="mr-3">
+            <label htmlFor="">Category: </label>
+            <select
+              className="border rounded-lg py-1 px-1 outline-none focus:border-blue-600"
+              name="category"
+              id="category"
+            >
+              {categories.map((category) => (
+                <option key="{category._id}" value="{category._id}">
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </form>
           <form action="" className="">
             <input
               type="text"
