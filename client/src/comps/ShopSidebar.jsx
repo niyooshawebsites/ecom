@@ -259,8 +259,8 @@ const ShopSidebar = () => {
                 key={category._id}
                 className={
                   category._id === activeFilterId
-                    ? `font-semibold text-orange-600 hover:cursor-pointer hover:text-orange-600`
-                    : "hover:cursor-pointer"
+                    ? `font-semibold text-orange-600 hover:cursor-pointer`
+                    : "hover:cursor-pointer hover:font-semibold hover:text-orange-600"
                 }
                 onClick={() => fiterByCategory(category._id, category.name)}
               >

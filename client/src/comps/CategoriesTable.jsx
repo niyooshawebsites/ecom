@@ -2,6 +2,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { SlRefresh } from "react-icons/sl";
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
@@ -38,6 +39,24 @@ const CategoriesTable = () => {
     }
   };
 
+  const fetchCategory = async (formData) => {
+    try {
+      const cid = formData.get("cid");
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-category/${cid}`
+      );
+
+      if (res.data.success) {
+        setCategories([res.data.data]);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
   useEffect(() => {
     fetchAllCategories();
   }, [categoryDeleted]);
@@ -45,13 +64,24 @@ const CategoriesTable = () => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
       <div className="w-5/12">
-        <h1 className="text-4xl text-center py-3 poppins-light mt-10 mb-2">
-          Product Categories
-        </h1>
+        <div className="flex justify-center items-center mt-10">
+          <h1 className="text-4xl text-center py-3 poppins-light bg-gray-200 rounded-md p-3 mb-2">
+            Product Categories (
+            {categories.length < 10
+              ? `0${categories.length}`
+              : categories.length}
+            )
+          </h1>
+          <button onClick={fetchAllCategories} className="ml-5">
+            <SlRefresh className="text-4xl text-blue-600 hover:text-orange-600" />
+          </button>
+        </div>
         <div className="flex my-3">
-          <form action="" className="flex w-full">
+          <form action={fetchCategory} className="flex w-full">
             <input
               type="text"
+              name="cid"
+              id="cid"
               placeholder="Category ID"
               className="border border-gray-300 rounded p-1 mr-2 w-full"
             />

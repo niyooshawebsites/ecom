@@ -74,11 +74,12 @@ const updateCouponController = async (req, res) => {
 
 const fetchCouponController = async (req, res) => {
   try {
-    const { ccid } = req.params;
+    const { couponCode } = req.params;
 
-    if (!ccid) return response(res, 400, false, "No ccid. No coupon fetching");
+    if (!couponCode)
+      return response(res, 400, false, "No coupon code. No coupon fetching");
 
-    const coupon = await Coupon.findById(ccid);
+    const coupon = await Coupon.findOne({ couponCode });
 
     if (!coupon) return response(res, 404, false, "No coupon found");
 

@@ -39,25 +39,49 @@ const CouponsTable = () => {
     }
   };
 
+  const fetchCoupon = async (formData) => {
+    try {
+      let couponCode = formData.get("couponCode");
+      couponCode.toUpperCase();
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-coupon/${couponCode}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setCoupons([res.data.data]);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response.data.msg);
+    }
+  };
+
   useEffect(() => {
     fetchCoupons();
   }, [couponDeletion]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
-      <div className="flex justify-between items-center mt-10 w-full">
+      <div className="flex flex-col justify-between items-center my-5 w-full">
         <div className="flex justify-center items-center">
-          <h1 className="text-4xl py-3 poppins-light mb-2">All Coupons</h1>
+          <h1 className="text-4xl py-3 poppins-light my-5 bg-gray-200 rounded-md p-3">
+            All Coupons (
+            {coupons.length < 10 ? `0${coupons.length}` : coupons.length})
+          </h1>
           <button onClick={fetchCoupons} className="ml-5">
             <SlRefresh className="text-4xl text-blue-600 hover:text-orange-600" />
           </button>
         </div>
 
         <div>
-          <form action="" className="">
+          <form action={fetchCoupon} className="">
             <input
               type="text"
-              placeholder="Coupon ID"
+              name="couponCode"
+              id="couponCode"
+              placeholder="Coupon code"
+              required
               className="border border-gray-300 rounded p-1 mr-2"
             />
             <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">

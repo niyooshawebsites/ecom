@@ -124,6 +124,26 @@ const fetchCustomerOrdersController = async (req, res) => {
   }
 };
 
+const fetchOrdersByDatesController = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.params;
+
+    if (!startDate || !endDate)
+      return response(res, 400, false, "Please select the dates");
+
+    const orders = await Order.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+    }).populate("product");
+
+    if (orders.length === 0) return response(res, 404, false, "No users found");
+
+    return response(res, 200, true, "Orders fetched", orders);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createOrderController,
   updateOrderController,
@@ -131,4 +151,5 @@ export {
   fetchAllOrdersController,
   fetchOrderController,
   fetchCustomerOrdersController,
+  fetchOrdersByDatesController,
 };

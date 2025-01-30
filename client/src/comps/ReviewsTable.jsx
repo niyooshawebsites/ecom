@@ -15,8 +15,6 @@ const ReviewsTable = () => {
         { withCredentials: true }
       );
 
-      console.log(res.data.data);
-
       if (res.data.success) {
         setReviews(res.data.data);
       }
@@ -61,6 +59,61 @@ const ReviewsTable = () => {
     }
   };
 
+  const fetchReviewsByProductName = async (formData) => {
+    const pName = formData.get("pName");
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-reviews-by-product-name/${pName}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setReviews(res.data.data);
+        console.log(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
+  const fetchReviewsByRating = async (formData) => {
+    const rating = formData.get("rating");
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-reviews-by-rating/${rating}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setReviews(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
+  const fetchReviewsByStatus = async (formData) => {
+    const status = formData.get("status");
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-reviews-by-status/${status}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setReviews(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
   useEffect(() => {
     fetchAllReviews();
   }, [reviewStatusUpdation, reviewDeletion]);
@@ -69,18 +122,66 @@ const ReviewsTable = () => {
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
       <div className="flex justify-between items-center mt-10 w-full">
         <div className="flex justify-center items-center">
-          <h1 className="text-4xl py-3 poppins-light mb-2">Reviews</h1>
+          <h1 className="text-4xl py-3 poppins-light mb-2">
+            Reviews (
+            {reviews.length < 10 ? `0${reviews.length}` : reviews.length})
+          </h1>
           <button onClick={fetchAllReviews} className="ml-5">
             <SlRefresh className="text-4xl text-blue-600 hover:text-orange-600" />
           </button>
         </div>
 
-        <div>
-          <form action="" className="">
+        <div className="flex">
+          <form action={fetchReviewsByRating} className="mr-3">
+            <label htmlFor="rating" className="font-semibold">
+              Rating:{" "}
+            </label>
+            <select
+              className="border rounded-lg py-1 px-1 outline-none focus:border-blue-600 mr-2"
+              name="rating"
+              id="rating"
+            >
+              <option value="">Select</option>
+              <option value="1">01</option>
+              <option value="2">02</option>
+              <option value="3">03</option>
+              <option value="4">04</option>
+              <option value="5">05</option>
+            </select>
+
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+
+          <form action={fetchReviewsByStatus} className="mr-3">
+            <label htmlFor="status" className="font-semibold">
+              Status:{" "}
+            </label>
+            <select
+              className="border rounded-lg py-1 px-1 outline-none focus:border-blue-600 mr-2"
+              name="status"
+              id="status"
+            >
+              <option value="">Select</option>s
+              <option value="Pending">Pending</option>
+              <option value="Accepted">Accepted</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+
+          <form action={fetchReviewsByProductName}>
             <input
               type="text"
-              placeholder="Review ID"
+              placeholder="Product name"
+              name="pName"
+              id="pName"
               className="border border-gray-300 rounded p-1 mr-2"
+              required
             />
             <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
               Search

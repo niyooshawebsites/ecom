@@ -59,6 +59,83 @@ const UsersTable = () => {
     }
   };
 
+  const fetchUserByEmail = async (formData) => {
+    try {
+      const userEmail = formData.get("userEmail");
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-user-by-email/${userEmail}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setUsers([res.data.data]);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
+  const fetchUsersByActiveStatus = async (formData) => {
+    try {
+      const activeStatus = formData.get("activeStatus");
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-users-by-active-status/${activeStatus}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setUsers(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
+  const fetchUsersByVerificationStatus = async (formData) => {
+    try {
+      const verificationStatus = formData.get("verificationStatus");
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-users-by-verification-status/${verificationStatus}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setUsers(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
+  const fetchUsersByDates = async (formData) => {
+    try {
+      const startDate = formData.get("startDate");
+      const endDate = formData.get("endDate");
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-users-by-dates/${startDate}/${endDate}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setUsers(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
   useEffect(() => {
     fetchAllUsers();
   }, [activationToggled, userDeleted]);
@@ -67,18 +144,79 @@ const UsersTable = () => {
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
       <div className="flex justify-between items-center mt-10 w-full">
         <div className="flex justify-center items-center">
-          <h1 className="text-4xl py-3 poppins-light mb-2">Users</h1>
+          <h1 className="text-4xl py-3 poppins-light mb-2">
+            Users ({users.length < 10 ? `0${users.length}` : users.length})
+          </h1>
           <button onClick={fetchAllUsers} className="ml-5">
             <SlRefresh className="text-4xl text-blue-600 hover:text-orange-600" />
           </button>
         </div>
 
-        <div>
-          <form action="" className="">
+        <div className="flex items-center">
+          <form action={fetchUsersByDates} className=" flex mr-5">
+            <div className=" border p-1 rounded mr-3">
+              <label htmlFor="startDate" className="font-semibold">
+                From:{" "}
+              </label>
+              <input type="date" name="startDate" id="startDate" />
+            </div>
+
+            <div className=" border p-1 rounded mr-3">
+              <label htmlFor="endDate" className="font-semibold">
+                To:{" "}
+              </label>
+              <input type="date" name="endDate" id="endDate" />
+            </div>
+
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+
+          <form action={fetchUsersByVerificationStatus} className="mr-3">
+            <label htmlFor="verificationStatus" className="font-semibold">
+              Verification:{" "}
+            </label>
+            <select
+              className="border rounded-lg py-1 px-1 outline-none focus:border-blue-600"
+              name="verificationStatus"
+              id="verificationStatus"
+            >
+              <option value="">Select</option>s
+              <option value="Verified">Verified</option>
+              <option value="Unverified">Unverified</option>
+            </select>
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+
+          <form action={fetchUsersByActiveStatus} className="mr-3">
+            <label htmlFor="activeStatus" className="font-semibold">
+              Status:{" "}
+            </label>
+            <select
+              className="border rounded-lg py-1 px-1 outline-none focus:border-blue-600"
+              name="activeStatus"
+              id="activeStatus"
+            >
+              <option value="">Select</option>s
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+
+          <form action={fetchUserByEmail}>
             <input
               type="text"
-              placeholder="User ID"
+              name="userEmail"
+              id="userEmail"
+              placeholder="User email"
               className="border border-gray-300 rounded p-1 mr-2"
+              required
             />
             <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
               Search

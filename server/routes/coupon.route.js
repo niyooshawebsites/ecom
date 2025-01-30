@@ -12,7 +12,7 @@ const couponRouter = express.Router();
 
 couponRouter.post("/create-coupon", auth, createCounponController);
 couponRouter.patch("/update-coupon/:ccid", auth, updateCouponController);
-couponRouter.get("/fetch-coupon/:ccid", auth, fetchCouponController);
+couponRouter.get("/fetch-coupon/:couponCode", auth, fetchCouponController);
 couponRouter.get("/fetch-coupons/:pageNo", auth, fetchAllCouponsController);
 couponRouter.delete("/delete-coupon/:ccid", auth, deleteCouponController);
 couponRouter.post("/apply-coupon/:cartTotal", applyCouponController);

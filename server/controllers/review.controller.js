@@ -1,5 +1,6 @@
 import Review from "../models/review.model.js";
 import response from "../utils/response.js";
+import Product from "../models/product.model.js";
 
 const createReviewController = async (req, res) => {
   try {
@@ -132,10 +133,73 @@ const updateReviewController = async (req, res) => {
   }
 };
 
+const fetchReviewsByProductNameController = async (req, res) => {
+  try {
+    const { pName } = req.params;
+
+    if (!pName) return response(res, 400, false, "No product name. No reviews");
+
+    const product = await Product.findOne({ name: pName });
+
+    if (!product) return response(res, 404, false, "No product. No reviews");
+
+    const reviews = await Review.find({ product: product._id }).populate(
+      "product"
+    );
+
+    if (reviews.length === 0) return response(res, 404, false, "No reviews");
+
+    return response(res, 200, true, "Product Reviews found", reviews);
+  } catch (error) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchReviewsByRatingController = async (req, res) => {
+  try {
+    const { rating } = req.params;
+    if (!rating) return response(res, 400, false, "No rating. No reviews");
+
+    const numberRating = parseInt(rating);
+
+    const reviews = await Review.find({ rating: numberRating }).populate(
+      "product"
+    );
+
+    if (reviews.length === 0) return response(res, 404, false, "No reviews");
+
+    return response(res, 200, true, "Product Reviews found", reviews);
+  } catch (err) {
+    console.log(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchReviewsByStatusController = async (req, res) => {
+  try {
+    const { status } = req.params;
+
+    if (!status) return response(res, 400, false, "No status. No reviews");
+
+    const reviews = await Review.find({ status }).populate("product");
+
+    if (reviews.length === 0) return response(res, 404, false, "No reviews");
+
+    return response(res, 200, true, "Product Reviews found", reviews);
+  } catch (err) {
+    console.log(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createReviewController,
   deleteReviewController,
   fetchReviewsByProductsController,
   fetchReviewsController,
   updateReviewController,
+  fetchReviewsByProductNameController,
+  fetchReviewsByRatingController,
+  fetchReviewsByStatusController,
 };

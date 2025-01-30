@@ -29,10 +29,7 @@ const OrdersTable = () => {
         );
       }
 
-      console.log(res);
-
       if (res.data.success) {
-        console.log(res.data.data);
         setOrders(res.data.data);
       }
     } catch (err) {
@@ -73,6 +70,64 @@ const OrdersTable = () => {
     }
   };
 
+  const fetchOrdersByDates = async (formData) => {
+    try {
+      const startDate = formData.get("startDate");
+      const endDate = formData.get("endDate");
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-orders-by-dates/${startDate}/${endDate}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setOrders(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
+  const fetchOrderByOrderId = async (formData) => {
+    try {
+      const oid = formData.get("oid");
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-order/${oid}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setOrders([res.data.data]);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
+  const fetchOrdersByStatus = async (formData) => {
+    const status = formData.get("status");
+
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-orders-by-status/${status}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setOrders(res.data.data);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
   useEffect(() => {
     fetchAllOrders();
   }, []);
@@ -81,9 +136,13 @@ const OrdersTable = () => {
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
       {orders.length > 0 ? (
         <>
-          <div className="w-full flex justify-between items-center mt-10">
-            <div className="flex justify-center items-center">
-              <h1 className="text-4xl py-3 poppins-light  mb-2">All Orders</h1>
+          <div className="w-full flex-col flex justify-between items-center my-5">
+            <div className="flex justify-center items-center my-5">
+              <h1 className="text-4xl py-3 poppins-light bg-gray-200 rounded-md p-3">
+                Orders (
+                {orders.length < 10 ? `0${orders.length}` : orders.length})
+              </h1>
+
               <button onClick={fetchAllOrders} className="ml-5">
                 <SlRefresh
                   className="text-4xl text-blue-600 hover:text-orange-600"
@@ -93,19 +152,19 @@ const OrdersTable = () => {
             </div>
 
             <div className="flex">
-              <form action="" className=" flex mr-5">
+              <form action={fetchOrdersByDates} className=" flex mr-5">
                 <div className=" border p-1 rounded mr-3">
-                  <label htmlFor="from" className="font-semibold">
+                  <label htmlFor="startDate" className="font-semibold">
                     From:{" "}
                   </label>
-                  <input type="date" />
+                  <input type="date" name="startDate" id="startDate" />
                 </div>
 
                 <div className=" border p-1 rounded mr-3">
-                  <label htmlFor="from" className="font-semibold">
+                  <label htmlFor="endDate" className="font-semibold">
                     To:{" "}
                   </label>
-                  <input type="date" />
+                  <input type="date" name="endDate" id="endDate" />
                 </div>
 
                 <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
@@ -113,9 +172,32 @@ const OrdersTable = () => {
                 </button>
               </form>
 
-              <form action="" className="">
+              <form action={fetchOrdersByStatus} className="mr-3">
+                <label htmlFor="status" className="font-semibold">
+                  Status:{" "}
+                </label>
+                <select
+                  className="border rounded-lg py-1 px-1 outline-none focus:border-blue-600 mr-2"
+                  name="status"
+                  id="status"
+                >
+                  <option value="">Select</option>s
+                  <option value="Pending">On hold</option>
+                  <option value="Accepted">Completed</option>
+                  <option value="Rejected">Cancelled</option>
+                  <option value="Rejected">Cancelled & Refunded</option>
+                </select>
+
+                <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+                  Search
+                </button>
+              </form>
+
+              <form action={fetchOrderByOrderId}>
                 <input
                   type="text"
+                  name="oid"
+                  id="oid"
                   placeholder="Order ID"
                   className="border border-gray-300 rounded p-1 mr-2"
                 />

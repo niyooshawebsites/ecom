@@ -12,6 +12,10 @@ import {
   resetPasswordController,
   updateContactDetailsController,
   updateActivationStatusController,
+  fetchUserByEmailController,
+  fetchUserByActiveStatusController,
+  fetchUserByVerificationStatusController,
+  fetchUserByDatesController,
 } from "../controllers/user.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 import verifyEmail from "../middlewares/verifyEmail.middleware.js";
@@ -44,6 +48,26 @@ userRouter.patch(
   "/update-activation-status/:uid",
   auth,
   updateActivationStatusController
+);
+userRouter.get(
+  "/fetch-user-by-email/:userEmail",
+  auth,
+  fetchUserByEmailController
+);
+userRouter.get(
+  "/fetch-users-by-active-status/:activeStatus",
+  auth,
+  fetchUserByActiveStatusController
+);
+userRouter.get(
+  "/fetch-users-by-verification-status/:verificationStatus",
+  auth,
+  fetchUserByVerificationStatusController
+);
+userRouter.get(
+  "/fetch-users-by-dates/:startDate/:endDate",
+  auth,
+  fetchUserByDatesController
 );
 
 export default userRouter;

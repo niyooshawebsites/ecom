@@ -6,6 +6,7 @@ import {
   fetchAllOrdersController,
   fetchOrderController,
   fetchCustomerOrdersController,
+  fetchOrdersByDatesController,
 } from "../controllers/order.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 
@@ -20,6 +21,11 @@ orderRouter.get(
   "fetch-customer-orders/:uid",
   auth,
   fetchCustomerOrdersController
+);
+orderRouter.get(
+  "/fetch-orders-by-dates/:startDate/:endDate",
+  auth,
+  fetchOrdersByDatesController
 );
 
 export default orderRouter;

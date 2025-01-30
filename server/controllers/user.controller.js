@@ -347,6 +347,89 @@ const updateActivationStatusController = async (req, res) => {
   }
 };
 
+const fetchUserByEmailController = async (req, res) => {
+  try {
+    const { userEmail } = req.params;
+    if (!userEmail) return response(res, 400, false, "User email missing");
+
+    const user = await User.findOne({ email: userEmail }).select("-password");
+    if (!user) return response(res, 404, false, "No user found");
+
+    return response(res, 200, true, "User fetched", user);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchUserByActiveStatusController = async (req, res) => {
+  try {
+    const { activeStatus } = req.params;
+    if (!activeStatus) return response(res, 400, false, "User status missing");
+
+    const booleanStatus = activeStatus == "Active" ? true : false;
+
+    const users = await User.find({ isActive: booleanStatus }).select(
+      "-password"
+    );
+
+    if (users.length === 0) return response(res, 404, false, "No users found");
+
+    return response(res, 200, true, `${activeStatus} users fetched`, users);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchUserByVerificationStatusController = async (req, res) => {
+  try {
+    const { verificationStatus } = req.params;
+
+    if (!verificationStatus)
+      return response(res, 400, false, "User verification status missing");
+
+    const booleanStatus = verificationStatus == "Verified" ? true : false;
+
+    const users = await User.find({ isVerified: booleanStatus }).select(
+      "-password"
+    );
+
+    if (users.length === 0) return response(res, 404, false, "No users found");
+
+    return response(
+      res,
+      200,
+      true,
+      `${verificationStatus} users fetched`,
+      users
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchUserByDatesController = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.params;
+
+    if (!startDate || !endDate)
+      return response(res, 400, false, "Please select the dates");
+
+    const users = await User.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+    }).select("-password");
+
+    if (users.length === 0) return response(res, 404, false, "No users found");
+
+    return response(res, 200, true, "Users found", users);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   registerController,
   loginController,
@@ -360,4 +443,8 @@ export {
   resetPasswordController,
   updateContactDetailsController,
   updateActivationStatusController,
+  fetchUserByEmailController,
+  fetchUserByActiveStatusController,
+  fetchUserByVerificationStatusController,
+  fetchUserByDatesController,
 };
