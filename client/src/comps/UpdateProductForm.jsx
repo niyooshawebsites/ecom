@@ -28,7 +28,7 @@ const UpdateProductForm = () => {
         setCategories(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -43,7 +43,7 @@ const UpdateProductForm = () => {
         setProduct(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

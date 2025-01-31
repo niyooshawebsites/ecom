@@ -30,7 +30,6 @@ const ContactInfoFrom = () => {
       );
 
       if (res.data.success) {
-        console.log(res.data.data.contactDetails);
         setUpdatedContactInfo((prevState) => {
           return {
             ...prevState,

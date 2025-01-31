@@ -21,7 +21,7 @@ const ShopSidebar = () => {
         setCategories(data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -81,7 +81,7 @@ const ShopSidebar = () => {
         })
       );
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -148,7 +148,7 @@ const ShopSidebar = () => {
         })
       );
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

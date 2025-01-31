@@ -19,7 +19,7 @@ const ReviewsTable = () => {
         setReviews(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -35,7 +35,7 @@ const ReviewsTable = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -55,7 +55,7 @@ const ReviewsTable = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

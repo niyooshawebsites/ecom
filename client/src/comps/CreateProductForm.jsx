@@ -15,7 +15,7 @@ const CreateProductForm = () => {
         setCategories(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -37,7 +37,7 @@ const CreateProductForm = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

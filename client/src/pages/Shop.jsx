@@ -70,7 +70,6 @@ const Shop = () => {
 
       // if the product slug filter is not null
       if (filteredProductSlug !== null) {
-        console.log(filteredProductSlug);
         res = await axios.get(
           `http://localhost:8000/api/v1/fetch-all-products-by-slug/${filteredProductSlug}`,
           { withCredentials: true }
@@ -83,7 +82,7 @@ const Shop = () => {
         setProductsData(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       toast.error(err.response.data.msg);
     }
   };
@@ -126,8 +125,6 @@ const Shop = () => {
   ]);
 
   const displayProducts = sortBasis ? sortedProductData : productsData;
-
-  console.log(displayProducts);
 
   return (
     <Layout>

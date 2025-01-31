@@ -76,7 +76,6 @@ const CheckoutForm = () => {
 
       // if account creation is successful
       if (accountRes.data.success) {
-        console.log(accountRes);
         toast.success(accountRes.data.msg);
 
         // update user contact information
@@ -119,7 +118,7 @@ const CheckoutForm = () => {
         }
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       toast.error(err.response.data.msg);
     }
   };

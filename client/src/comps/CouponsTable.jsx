@@ -19,7 +19,7 @@ const CouponsTable = () => {
         setCoupons(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -35,7 +35,7 @@ const CouponsTable = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -52,7 +52,7 @@ const CouponsTable = () => {
         setCoupons([res.data.data]);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       toast.error(err.response.data.msg);
     }
   };

@@ -31,7 +31,7 @@ const UpdateCouponForm = () => {
         });
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -69,7 +69,7 @@ const UpdateCouponForm = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

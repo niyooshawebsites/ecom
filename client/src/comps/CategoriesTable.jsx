@@ -19,7 +19,7 @@ const CategoriesTable = () => {
         setCategories(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -35,7 +35,7 @@ const CategoriesTable = () => {
         setCategoryDeleted((prev) => !prev);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

@@ -19,7 +19,7 @@ const RegisterForm = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       toast.error(err.response.data.msg);
     }
   };

@@ -16,8 +16,6 @@ const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  console.log(location.pathname.split("/")[1]);
-
   const logout = async () => {
     try {
       const res = await axios.get(`http://localhost:8000/api/v1/auth/logout`, {
@@ -30,7 +28,7 @@ const Header = () => {
         navigate("/login");
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

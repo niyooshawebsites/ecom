@@ -142,7 +142,7 @@ const DisplayProduct = () => {
         setProductData(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -157,7 +157,7 @@ const DisplayProduct = () => {
         setReviews(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

@@ -19,7 +19,7 @@ const ProductsTable = () => {
         setCategories(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -34,7 +34,7 @@ const ProductsTable = () => {
         setProducts(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -50,7 +50,7 @@ const ProductsTable = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -65,7 +65,7 @@ const ProductsTable = () => {
         setProducts([res.data.data]);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       toast.error(err.response.data.msg);
     }
   };
@@ -73,7 +73,6 @@ const ProductsTable = () => {
   const fetchAllProductsByCategory = async (formData) => {
     const cid = formData.get("cid");
     try {
-      console.log(cid);
       const res = await axios.get(
         `http://localhost:8000/api/v1/fetch-all-products-by-category/${cid}`
       );

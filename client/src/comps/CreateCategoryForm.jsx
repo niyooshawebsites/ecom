@@ -15,7 +15,7 @@ const CreateCategoryForm = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

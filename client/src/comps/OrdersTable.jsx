@@ -9,8 +9,6 @@ const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
   const { uid, role } = useSelector((state) => state.user_Slice);
 
-  console.log("ROLE", role);
-
   const fetchAllOrders = async () => {
     try {
       let res;
@@ -35,7 +33,7 @@ const OrdersTable = () => {
         setOrders(res.data.data);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -53,7 +51,7 @@ const OrdersTable = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
@@ -68,7 +66,7 @@ const OrdersTable = () => {
         toast.success(res.data.msg);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 
