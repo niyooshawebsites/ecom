@@ -5,12 +5,14 @@ import {
   logoutController,
   fetchAllUsersController,
   fetchUserController,
+  fetchUserAtOrderCreationController,
   updateUserPasswordController,
   deleteUserController,
   verifyUserController,
   forgotPasswordController,
   resetPasswordController,
   updateContactDetailsController,
+  updateContactDetailsWhilePlcingOrderController,
   updateActivationStatusController,
   fetchUserByEmailController,
   fetchUserByActiveStatusController,
@@ -26,6 +28,10 @@ userRouter.post("/auth/login", loginController);
 userRouter.get("/auth/logout", auth, logoutController);
 userRouter.get("/fetch-all-users", auth, fetchAllUsersController);
 userRouter.get("/fetch-user/:uid", auth, fetchUserController);
+userRouter.get(
+  "/fetch-user-at-order-creation/:username/:email",
+  fetchUserAtOrderCreationController
+);
 userRouter.patch(
   "/update-user-password/:uid",
   auth,
@@ -43,6 +49,10 @@ userRouter.patch(
   "/update-contact-details/:uid",
   auth,
   updateContactDetailsController
+);
+userRouter.patch(
+  "/update-contact-details-while-placing-order/:uid",
+  updateContactDetailsWhilePlcingOrderController
 );
 userRouter.patch(
   "/update-activation-status/:uid",

@@ -7,6 +7,7 @@ import { SlRefresh } from "react-icons/sl";
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [productDeleted, setProductDeleted] = useState(false);
 
   const fetchAllCategories = async () => {
     try {
@@ -40,11 +41,13 @@ const ProductsTable = () => {
   const deleteProduct = async (pid) => {
     try {
       const res = await axios.delete(
-        `http"//localhost:8000/api/v1/delete-product/${pid}`
+        `http://localhost:8000/api/v1/delete-product/${pid}`,
+        { withCredentials: true }
       );
 
       if (res.data.success) {
-        toast(res.data.msg);
+        setProductDeleted((prev) => !prev);
+        toast.success(res.data.msg);
       }
     } catch (err) {
       console.log(err);
@@ -88,7 +91,7 @@ const ProductsTable = () => {
   useEffect(() => {
     fetchAllCategories();
     fetchProducts();
-  }, []);
+  }, [productDeleted]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">

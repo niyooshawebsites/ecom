@@ -2,12 +2,15 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CheckoutForm = () => {
   const states = ["Delhi", "Maharashtra", "West Bengal", "Tamil Nadu"];
+  const navigate = useNavigate();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const { uid } = useSelector((state) => state.user_Slice);
 
   const {
     cartProduct,
@@ -19,8 +22,6 @@ const CheckoutForm = () => {
 
   const [cartTotal, setCartTotal] = useState(0);
 
-  const { uid } = useSelector((state) => state.user_Slice);
-
   const calculateCartTotal = () => {
     const intialValue = 0;
     const sumOfCart = cartProductList.reduce(
@@ -31,26 +32,38 @@ const CheckoutForm = () => {
   };
 
   const placeOrder = async (formData) => {
-    const email = formData.get("email");
-    const username = formData.get("username");
-    const password = formData.get("password");
-
-    const fName = formData.get("fname");
-    const lname = formData.get("lname");
-    const contactNo = formData.get("contactNo");
-    const buildingNo = formData.get("buildingNo");
-    const streetNo = formData.get("streetNo");
-    const locality = formData.get("locality");
-    const district = formData.get("district");
-    const landmark = formData.get("landmark");
-    const city = formData.get("city");
-    const state = formData.get("state");
-    const pincode = formData.get("pincode");
-    const orderNote = formData.get("orderNote");
-
     try {
-      // account creation.
+      const email = formData.get("email");
+      const username = formData.get("username");
+      const password = formData.get("password");
 
+      const fName = formData.get("fName");
+      const lName = formData.get("lName");
+      const contactNo = formData.get("contactNo");
+      const buildingNo = formData.get("buildingNo");
+      const streetNo = formData.get("streetNo");
+      const locality = formData.get("locality");
+      const district = formData.get("district");
+      const landmark = formData.get("landmark");
+      const city = formData.get("city");
+      const state = formData.get("state");
+      const pincode = formData.get("pincode");
+      const orderNote = formData.get("orderNote");
+      const paymentMethod = formData.get("paymentMethod");
+
+      // check for exisitng user before placing the order
+      const fetchUserAtOrderCreationRes = await axios.get(
+        `http://localhost:8000/api/v1/fetch-user-at-order-creation/${username}/${email}`
+      );
+
+      // if user already exists
+      if (fetchUserAtOrderCreationRes.data.success) {
+        toast.error(fetchUserAtOrderCreationRes.data.msg);
+        return;
+      }
+
+      // if no exising user found
+      // account creation
       const accountRes = await axios.post(
         `http://localhost:8000/api/v1/register`,
         {
@@ -61,16 +74,17 @@ const CheckoutForm = () => {
         { withCredentials: true }
       );
 
-      // if account creation is successfull
-      if (accountRes.success) {
-        toast.success(accountRes.msg);
+      // if account creation is successful
+      if (accountRes.data.success) {
+        console.log(accountRes);
+        toast.success(accountRes.data.msg);
 
         // update user contact information
-        const userRes = await axios.patch(
-          `http://localhost:8000/api/v1/update-user/${uid}`,
+        const userContactInfoRes = await axios.patch(
+          `http://localhost:8000/api/v1/update-contact-details-while-placing-order/${accountRes.data.data._id}`,
           {
             fName,
-            lname,
+            lName,
             contactNo,
             buildingNo,
             streetNo,
@@ -80,27 +94,33 @@ const CheckoutForm = () => {
             city,
             state,
             pincode,
-          },
-          { withCredentials: true }
+          }
         );
 
         // if user contact information updation is successfull
-        if (userRes.success) {
+        if (userContactInfoRes.data.success) {
+          // create new order
           const orderRes = await axios.post(
-            `http;//localhost:8000/api/v1/create-order/${cartProduct.productId}`,
-            { uid, quantity: cartProduct.productQuantity, orderNote },
+            `http://localhost:8000/api/v1/create-order/${cartProduct.productId}`,
+            {
+              uid: accountRes.data.data._id,
+              quantity: cartProduct.productQuantity,
+              orderNote,
+              paymentMethod,
+            },
             { withCredentials: true }
           );
 
           // if order is successfull
-          if (orderRes.success) {
-            toast.success(orderRes.msg);
+          if (orderRes.data.success) {
+            toast.success(orderRes.data.msg);
+            navigate("/login");
           }
         }
       }
     } catch (err) {
+      console.log(err);
       toast.error(err.response.data.msg);
-      console.log(err.response.data.msg);
     }
   };
 
@@ -118,53 +138,59 @@ const CheckoutForm = () => {
       <form className="w-8/12 mb-3" action={placeOrder}>
         <div className="flex">
           <div className="w-7/12">
-            <h2 className="font-semibold mb-5">Account information</h2>
-            <div className="flex mb-5">
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="username" className="mb-2">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  id="username"
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="Unique username"
-                  required
-                />
-              </div>
+            {uid ? (
+              <></>
+            ) : (
+              <>
+                <h2 className="font-semibold mb-5">Account information</h2>
+                <div className="flex mb-5">
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="username" className="mb-2">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      name="username"
+                      id="username"
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="Unique username"
+                      required
+                    />
+                  </div>
 
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="password" className="mb-2">
-                  Password
-                </label>
-                <div className="flex justify-start items-center">
-                  <input
-                    type={isPasswordVisible ? "text" : "password"}
-                    name="password"
-                    id="password"
-                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                    placeholder="Strong passowrd"
-                    required
-                  />
-                  <Link className="ml-2" onClick={togglePasswordVisibility}>
-                    {isPasswordVisible ? "Hide" : "Show"}
-                  </Link>
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="password" className="mb-2">
+                      Password
+                    </label>
+                    <div className="flex justify-start items-center">
+                      <input
+                        type={isPasswordVisible ? "text" : "password"}
+                        name="password"
+                        id="password"
+                        className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                        placeholder="Strong passowrd"
+                        required
+                      />
+                      <Link className="ml-2" onClick={togglePasswordVisibility}>
+                        {isPasswordVisible ? "Hide" : "Show"}
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
 
             <h2 className="font-semibold mb-5">Billing information</h2>
 
             <div className="flex mb-3">
               <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="fname" className="mb-2">
+                <label htmlFor="fName" className="mb-2">
                   First name
                 </label>
                 <input
                   type="text"
-                  name="fname"
-                  id="fname"
+                  name="fName"
+                  id="fName"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="First name"
                   required
@@ -172,13 +198,13 @@ const CheckoutForm = () => {
               </div>
 
               <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="lname" className="mb-2">
+                <label htmlFor="lName" className="mb-2">
                   Last name
                 </label>
                 <input
                   type="text"
-                  name="lname"
-                  id="lname"
+                  name="lName"
+                  id="lName"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Last name"
                   required
@@ -453,7 +479,7 @@ const CheckoutForm = () => {
                     type="radio"
                     name="paymentMethod"
                     id="online"
-                    value={"Online"}
+                    value="Online"
                     defaultChecked
                   />{" "}
                   Online
@@ -464,7 +490,7 @@ const CheckoutForm = () => {
                     type="radio"
                     name="paymentMethod"
                     id="cod"
-                    value={"COD"}
+                    value="COD"
                   />{" "}
                   Cash on Delivery
                 </label>

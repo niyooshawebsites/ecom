@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { userSliceActions } from "../store/slices/userSlice";
 import axios from "axios";
@@ -9,9 +9,14 @@ import { RiLogoutCircleRLine } from "react-icons/ri";
 
 const Header = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
-  const { uid, username } = useSelector((state) => state.user_Slice);
+  const { uid, isActive, isVerified, username } = useSelector(
+    (state) => state.user_Slice
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  console.log(location.pathname.split("/")[1]);
 
   const logout = async () => {
     try {
@@ -43,9 +48,25 @@ const Header = () => {
             uid ? "w-fit" : "w-6/12"
           }`}
         >
-          {uid ? (
+          {uid && isActive && isVerified ? (
             <>
-              <li className="inline-block mr-3">Welcome, {username}</li>
+              <li className="inline-block mr-5">Welcome, {username}</li>
+              {location.pathname.split("/")[1] === "dashboard" ? (
+                <Link
+                  to="/"
+                  className="mr-5 font-bold bg-orange-600 rounded px-2"
+                >
+                  <li>SHOP</li>
+                </Link>
+              ) : (
+                <Link
+                  to="/dashboard/orders"
+                  className="mr-5 font-bold bg-orange-600 rounded px-2"
+                >
+                  <li>DASHBOARD</li>
+                </Link>
+              )}
+
               <li
                 onClick={logout}
                 className="cursor-pointer inline-block text-2xl align-middle"

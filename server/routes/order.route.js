@@ -18,7 +18,7 @@ orderRouter.delete("/delete-order/:oid", auth, deleteOrderController);
 orderRouter.get("/fetch-all-orders", auth, fetchAllOrdersController);
 orderRouter.get("/fetch-order/:oid", auth, fetchOrderController);
 orderRouter.get(
-  "fetch-customer-orders/:uid",
+  "/fetch-customer-orders/:uid",
   auth,
   fetchCustomerOrdersController
 );

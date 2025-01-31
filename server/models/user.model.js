@@ -17,6 +17,7 @@ const contactSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
+    sparse: true,
     default: (() => {
       return uuidv4();
     })(),

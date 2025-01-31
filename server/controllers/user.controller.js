@@ -39,7 +39,7 @@ const registerController = async (req, res) => {
     // sending verification email
     await verificationEmail(mailOptions);
 
-    return response(res, 201, true, "Registration successful");
+    return response(res, 201, true, "Registration successful", newUser);
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error!");
@@ -137,6 +137,32 @@ const fetchUserController = async (req, res) => {
     if (!user) return response(res, 404, false, "No user found");
 
     return response(res, 200, true, "User found", user);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchUserAtOrderCreationController = async (req, res) => {
+  try {
+    const { username, email } = req.params;
+
+    if (!username) return response(res, 400, false, "Username id missing");
+    if (!email) return response(res, 400, false, "Email id missing");
+
+    const user = await User.findOne({ $or: [{ username }, { email }] }).select(
+      "-password"
+    );
+
+    if (!user) return response(res, 404, false, "No user found");
+
+    return response(
+      res,
+      200,
+      true,
+      "User already exists. Please login to place the order",
+      user
+    );
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
@@ -277,22 +303,96 @@ const updateContactDetailsController = async (req, res) => {
       pincode,
     } = req.body;
 
-    console.log(req.body);
+    if (!fName) return response(res, 400, false, "First name missing");
 
-    if (
-      !fName ||
-      !lName ||
-      !contactNo ||
-      !buildingNo ||
-      !streetNo ||
-      !locality ||
-      !district ||
-      !landmark ||
-      !city ||
-      !state ||
-      !pincode
-    )
-      return response(res, 400, false, "Please fill out all the details");
+    if (!lName) return response(res, 400, false, "Last name missing");
+
+    if (!contactNo) return response(res, 400, false, "Conatct number missing");
+
+    if (!buildingNo)
+      return response(res, 400, false, "Building number missing");
+
+    if (!streetNo) return response(res, 400, false, "Street number missing");
+
+    if (!locality) return response(res, 400, false, "Locality missing");
+
+    if (!district) return response(res, 400, false, "District missing");
+
+    if (!city) return response(res, 400, false, "City missing");
+
+    if (!state) return response(res, 400, false, "State missing");
+
+    if (!pincode) return response(res, 400, false, "Pincode missing");
+
+    const updatedUser = await User.findByIdAndUpdate(
+      uid,
+      {
+        // Update contact details and address as separate sub-documents
+        $set: {
+          "contactDetails.fName": fName,
+          "contactDetails.lName": lName,
+          "contactDetails.contactNo": contactNo,
+          "contactDetails.address.buildingNo": buildingNo,
+          "contactDetails.address.streetNo": streetNo,
+          "contactDetails.address.locality": locality,
+          "contactDetails.address.district": district,
+          "contactDetails.address.landmark": landmark,
+          "contactDetails.address.city": city,
+          "contactDetails.address.state": state,
+          "contactDetails.address.pincode": pincode,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    return response(res, 201, true, "Contact details updated successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const updateContactDetailsWhilePlcingOrderController = async (req, res) => {
+  try {
+    const { uid } = req.params;
+
+    const {
+      fName,
+      lName,
+      contactNo,
+      buildingNo,
+      streetNo,
+      locality,
+      district,
+      landmark,
+      city,
+      state,
+      pincode,
+    } = req.body;
+
+    if (!fName) return response(res, 400, false, "First name missing");
+
+    if (!lName) return response(res, 400, false, "Last name missing");
+
+    if (!contactNo) return response(res, 400, false, "Conatct number missing");
+
+    if (!buildingNo)
+      return response(res, 400, false, "Building number missing");
+
+    if (!streetNo) return response(res, 400, false, "Street number missing");
+
+    if (!locality) return response(res, 400, false, "Locality missing");
+
+    if (!district) return response(res, 400, false, "District missing");
+
+    if (!city) return response(res, 400, false, "City missing");
+
+    if (!state) return response(res, 400, false, "State missing");
+
+    if (!pincode) return response(res, 400, false, "Pincode missing");
 
     const updatedUser = await User.findByIdAndUpdate(
       uid,
@@ -436,12 +536,14 @@ export {
   logoutController,
   fetchAllUsersController,
   fetchUserController,
+  fetchUserAtOrderCreationController,
   updateUserPasswordController,
   deleteUserController,
   verifyUserController,
   forgotPasswordController,
   resetPasswordController,
   updateContactDetailsController,
+  updateContactDetailsWhilePlcingOrderController,
   updateActivationStatusController,
   fetchUserByEmailController,
   fetchUserByActiveStatusController,

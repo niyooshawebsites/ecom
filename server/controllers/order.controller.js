@@ -109,10 +109,13 @@ const fetchOrderController = async (req, res) => {
 const fetchCustomerOrdersController = async (req, res) => {
   try {
     const { uid } = req.params;
+
     if (!uid)
       return response(res, 400, false, "No uid. No orders per customer");
 
-    const orders = await Order.find({ customer: uid }).sort({ createdAt: -1 });
+    const orders = await Order.find({ customer: uid })
+      .sort({ createdAt: -1 })
+      .populate("product");
 
     if (orders.length === 0)
       return response(res, 404, false, "No orders found");

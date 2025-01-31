@@ -60,8 +60,9 @@ const deleteProductController = async (req, res) => {
   try {
     const { pid } = req.params;
     if (!pid) response(res, 400, false, "No product id. No deletion");
-
+    console.log(pid);
     const result = await Product.findByIdAndDelete(pid);
+
     return response(res, 200, true, "Product deleted successfully");
   } catch (err) {
     console.error(err.message);
