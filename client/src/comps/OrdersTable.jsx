@@ -4,19 +4,27 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { SlRefresh } from "react-icons/sl";
 import { useSelector } from "react-redux";
+import Pagination from "./Pagination";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
   const { uid, role } = useSelector((state) => state.user_Slice);
+  const [statusUpdated, setStatusUpdated] = useState(false);
+  const [orderDeleted, setOrderDeleted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchAllOrders = async () => {
+  const fetchAllOrders = async (pageNo) => {
     try {
       let res;
       // if admin
       if (role == "admin") {
-        res = await axios.get(`http://localhost:8000/api/v1/fetch-all-orders`, {
-          withCredentials: true,
-        });
+        res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-all-orders/${pageNo}`,
+          {
+            withCredentials: true,
+          }
+        );
       }
 
       // if customer
@@ -31,6 +39,7 @@ const OrdersTable = () => {
 
       if (res.data.success) {
         setOrders(res.data.data);
+        setTotalPages(res.data.totalPagesCount);
       }
     } catch (err) {
       console.log(err.message);
@@ -48,6 +57,7 @@ const OrdersTable = () => {
       );
 
       if (res.data.success) {
+        setStatusUpdated((prev) => !prev);
         toast.success(res.data.msg);
       }
     } catch (err) {
@@ -63,6 +73,7 @@ const OrdersTable = () => {
       );
 
       if (res.data.success) {
+        setOrderDeleted((prev) => !prev);
         toast.success(res.data.msg);
       }
     } catch (err) {
@@ -129,8 +140,8 @@ const OrdersTable = () => {
   };
 
   useEffect(() => {
-    fetchAllOrders();
-  }, []);
+    fetchAllOrders(currentPage);
+  }, [statusUpdated, orderDeleted, currentPage]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
@@ -181,11 +192,14 @@ const OrdersTable = () => {
                   name="status"
                   id="status"
                 >
-                  <option value="">Select</option>s
-                  <option value="Pending">On hold</option>
-                  <option value="Accepted">Completed</option>
-                  <option value="Rejected">Cancelled</option>
-                  <option value="Rejected">Cancelled & Refunded</option>
+                  <option value="">Select</option>
+                  <option value="Pending">Pending</option>
+                  <option value="On hold">On hold</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                  <option value="Cancelled & Refunded">
+                    Cancelled & Refunded
+                  </option>
                 </select>
 
                 <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
@@ -200,6 +214,7 @@ const OrdersTable = () => {
                   id="oid"
                   placeholder="Order ID"
                   className="border border-gray-300 rounded p-1 mr-2"
+                  required
                 />
                 <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
                   Search
@@ -209,181 +224,203 @@ const OrdersTable = () => {
           </div>
 
           {role === "admin" ? (
-            <table className="w-full border">
-              <thead className="bg-blue-600 text-white h-10 m-10">
-                <tr>
-                  <th className="poppins-light border text-sm p-1">#</th>
-                  <th className="poppins-light border text-sm p-1">Order ID</th>
-                  <th className="poppins-light border text-sm p-1">
-                    Product Name
-                  </th>
-                  <th className="poppins-light border text-sm p-1">
-                    Product Img
-                  </th>
-                  <th className="poppins-light border text-sm p-1">Quantity</th>
-                  <th className="poppins-light border text-sm p-1">
-                    Product Price
-                  </th>
-                  <th className="poppins-light border text-sm p-1">
-                    Order Status
-                  </th>
-                  <th className="poppins-light border text-sm p-1">
-                    Payment Method
-                  </th>
-                  <th className="poppins-light border text-sm p-1">Time</th>
-                  <th className="poppins-light border text-sm p-1">Action</th>
-                  <th className="poppins-light border text-sm p-1">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order, index) => {
-                  return (
-                    <tr
-                      key={order._id}
-                      className="odd:bg-white even:bg-gray-300 h-10 text-center border"
-                    >
-                      <td className="border text-sm p-1">{index + 1}</td>
-                      <td className="border text-sm p-1">{order._id}</td>
-                      <td className="border text-sm p-1">
-                        {order.product?.name}
-                      </td>
-                      <td className="flex justify-center p-1">
-                        <img
-                          src={order.product?.img}
-                          alt={order.product?.name}
-                          width={40}
-                        />
-                      </td>
-                      <td className="border text-sm p-1">{order.quantity}</td>
-                      <td className="border text-sm p-1">
-                        {order.product?.price}
-                      </td>
-                      <td className="border text-sm p-1">{order.status}</td>
-                      <td className="border text-sm p-1">
-                        {order.paymentMethod}
-                      </td>
-                      <td className="border text-sm p-1">
-                        {order.createdAt
-                          .split("T")[0]
-                          .split("-")
-                          .reverse()
-                          .join("-")}
-                      </td>
-                      <td className="border text-sm p-1">
-                        <Link to={`/dashboard/order-details/${order._id}`}>
-                          <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700">
-                            View
-                          </span>
-                        </Link>
-                        <button
-                          className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700 ml-2"
-                          onClick={() => {
-                            deleteOrder(order._id);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                      <td>
-                        <form action={updateOrder}>
-                          <input
-                            type="text"
-                            name="oid"
-                            defaultValue={order._id}
-                            readOnly
-                            className="hidden"
+            <>
+              <table className="w-full border">
+                <thead className="bg-blue-600 text-white h-10 m-10">
+                  <tr>
+                    <th className="poppins-light border text-sm p-1">#</th>
+                    <th className="poppins-light border text-sm p-1">
+                      Order ID
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Name
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Img
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Quantity
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Price
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Order Status
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Payment Method
+                    </th>
+                    <th className="poppins-light border text-sm p-1">Time</th>
+                    <th className="poppins-light border text-sm p-1">Action</th>
+                    <th className="poppins-light border text-sm p-1">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((order, index) => {
+                    return (
+                      <tr
+                        key={order._id}
+                        className="odd:bg-white even:bg-gray-300 h-10 text-center border"
+                      >
+                        <td className="border text-sm p-1">{index + 1}</td>
+                        <td className="border text-sm p-1">{order._id}</td>
+                        <td className="border text-sm p-1">
+                          {order.product?.name}
+                        </td>
+                        <td className="flex justify-center p-1">
+                          <img
+                            src={order.product?.img}
+                            alt={order.product?.name}
+                            width={40}
                           />
-                          <select
-                            name="status"
-                            id="status"
-                            className="border rounded-md mr-2"
-                            required
-                          >
-                            <option>Select status</option>
-                            <option value="On hold">On hold</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Cancelled & Refunded">
-                              Cancelled & Refunded
-                            </option>
-                          </select>
+                        </td>
+                        <td className="border text-sm p-1">{order.quantity}</td>
+                        <td className="border text-sm p-1">
+                          {order.product?.price}
+                        </td>
+                        <td className="border text-sm p-1">{order.status}</td>
+                        <td className="border text-sm p-1">
+                          {order.paymentMethod}
+                        </td>
+                        <td className="border text-sm p-1">
+                          {order.createdAt
+                            .split("T")[0]
+                            .split("-")
+                            .reverse()
+                            .join("-")}
+                        </td>
+                        <td className="border text-sm p-1">
+                          <Link to={`/dashboard/order-details/${order._id}`}>
+                            <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700">
+                              View
+                            </span>
+                          </Link>
                           <button
-                            type="submit"
-                            className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700"
+                            className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700 ml-2"
+                            onClick={() => {
+                              deleteOrder(order._id);
+                            }}
                           >
-                            Update
+                            Delete
                           </button>
-                        </form>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td>
+                          <form action={updateOrder}>
+                            <input
+                              type="text"
+                              name="oid"
+                              defaultValue={order._id}
+                              readOnly
+                              className="hidden"
+                            />
+                            <select
+                              name="status"
+                              id="status"
+                              className="border rounded-md mr-2"
+                              required
+                            >
+                              <option>Select status</option>
+                              <option value="On hold">On hold</option>
+                              <option value="Completed">Completed</option>
+                              <option value="Cancelled">Cancelled</option>
+                              <option value="Cancelled & Refunded">
+                                Cancelled & Refunded
+                              </option>
+                            </select>
+                            <button
+                              type="submit"
+                              className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700"
+                            >
+                              Update
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+              />
+            </>
           ) : (
-            <table className="w-full border">
-              <thead className="bg-blue-600 text-white h-10 m-10">
-                <tr>
-                  <th className="poppins-light border text-sm p-1">#</th>
-                  <th className="poppins-light border text-sm p-1">Order ID</th>
-                  <th className="poppins-light border text-sm p-1">
-                    Product Name
-                  </th>
-                  <th className="poppins-light border text-sm p-1">
-                    Product Img
-                  </th>
-                  <th className="poppins-light border text-sm p-1">Quantity</th>
-                  <th className="poppins-light border text-sm p-1">
-                    Product Price
-                  </th>
-                  <th className="poppins-light border text-sm p-1">
-                    Order Status
-                  </th>
-                  <th className="poppins-light border text-sm p-1">
-                    Payment Method
-                  </th>
-                  <th className="poppins-light border text-sm p-1">Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order, index) => {
-                  return (
-                    <tr
-                      key={order._id}
-                      className="odd:bg-white even:bg-gray-300 h-10 text-center border"
-                    >
-                      <td className="border text-sm p-1">{index + 1}</td>
-                      <td className="border text-sm p-1">{order._id}</td>
-                      <td className="border text-sm p-1">
-                        {order.product?.name}
-                      </td>
-                      <td className="flex justify-center p-1">
-                        <img
-                          src={order.product?.img}
-                          alt={order.product?.name}
-                          width={40}
-                        />
-                      </td>
-                      <td className="border text-sm p-1">{order.quantity}</td>
-                      <td className="border text-sm p-1">
-                        {order.product?.price}
-                      </td>
-                      <td className="border text-sm p-1">{order.status}</td>
-                      <td className="border text-sm p-1">
-                        {order.paymentMethod}
-                      </td>
-                      <td className="border text-sm p-1">
-                        {order.createdAt
-                          .split("T")[0]
-                          .split("-")
-                          .reverse()
-                          .join("-")}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <>
+              <table className="w-full border">
+                <thead className="bg-blue-600 text-white h-10 m-10">
+                  <tr>
+                    <th className="poppins-light border text-sm p-1">#</th>
+                    <th className="poppins-light border text-sm p-1">
+                      Order ID
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Name
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Img
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Quantity
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Price
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Order Status
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Payment Method
+                    </th>
+                    <th className="poppins-light border text-sm p-1">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((order, index) => {
+                    return (
+                      <tr
+                        key={order._id}
+                        className="odd:bg-white even:bg-gray-300 h-10 text-center border"
+                      >
+                        <td className="border text-sm p-1">{index + 1}</td>
+                        <td className="border text-sm p-1">{order._id}</td>
+                        <td className="border text-sm p-1">
+                          {order.product?.name}
+                        </td>
+                        <td className="flex justify-center p-1">
+                          <img
+                            src={order.product?.img}
+                            alt={order.product?.name}
+                            width={40}
+                          />
+                        </td>
+                        <td className="border text-sm p-1">{order.quantity}</td>
+                        <td className="border text-sm p-1">
+                          {order.product?.price}
+                        </td>
+                        <td className="border text-sm p-1">{order.status}</td>
+                        <td className="border text-sm p-1">
+                          {order.paymentMethod}
+                        </td>
+                        <td className="border text-sm p-1">
+                          {order.createdAt
+                            .split("T")[0]
+                            .split("-")
+                            .reverse()
+                            .join("-")}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+              />
+            </>
           )}
         </>
       ) : (

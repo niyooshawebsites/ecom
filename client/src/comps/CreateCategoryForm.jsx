@@ -21,7 +21,7 @@ const CreateCategoryForm = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-light my-10">Create Category</h1>
+      <h1 className="text-4xl py-3 poppins-light my-10">Create category</h1>
       <div className="flex flex-col w-5/12 border rounded-lg p-5">
         <form className="mb-3" action={handleCategoryCreation}>
           <div className="flex flex-col mb-3">
@@ -40,7 +40,7 @@ const CreateCategoryForm = () => {
             type="submit"
             className="bg-blue-600 px-4 py-2 rounded-md text-white hover:bg-blue-700"
           >
-            Create Category
+            Create category
           </button>
         </form>
       </div>

@@ -32,35 +32,84 @@ const CheckoutForm = () => {
   };
 
   const placeOrder = async (formData) => {
+    const email = formData.get("email");
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    const fName = formData.get("fName");
+    const lName = formData.get("lName");
+    const contactNo = formData.get("contactNo");
+    const buildingNo = formData.get("buildingNo");
+    const streetNo = formData.get("streetNo");
+    const locality = formData.get("locality");
+    const district = formData.get("district");
+    const landmark = formData.get("landmark");
+    const city = formData.get("city");
+    const state = formData.get("state");
+    const pincode = formData.get("pincode");
+    const orderNote = formData.get("orderNote");
+    const paymentMethod = formData.get("paymentMethod");
+
     try {
-      const email = formData.get("email");
-      const username = formData.get("username");
-      const password = formData.get("password");
+      // if not logged in
+      if (!uid) {
+        // check for exisitng user before placing the order
+        const fetchUserAtOrderCreationRes = await axios.get(
+          `http://localhost:8000/api/v1/fetch-user-at-order-creation/${username}/${email}`
+        );
 
-      const fName = formData.get("fName");
-      const lName = formData.get("lName");
-      const contactNo = formData.get("contactNo");
-      const buildingNo = formData.get("buildingNo");
-      const streetNo = formData.get("streetNo");
-      const locality = formData.get("locality");
-      const district = formData.get("district");
-      const landmark = formData.get("landmark");
-      const city = formData.get("city");
-      const state = formData.get("state");
-      const pincode = formData.get("pincode");
-      const orderNote = formData.get("orderNote");
-      const paymentMethod = formData.get("paymentMethod");
+        // if user already exists
+        if (fetchUserAtOrderCreationRes.data.success) {
+          toast.error(fetchUserAtOrderCreationRes.data.msg);
+          return;
+        }
+      }
 
-      // check for exisitng user before placing the order
-      const fetchUserAtOrderCreationRes = await axios.get(
-        `http://localhost:8000/api/v1/fetch-user-at-order-creation/${username}/${email}`
+      // update user contact information
+      const userContactInfoRes = await axios.patch(
+        `http://localhost:8000/api/v1/update-contact-details-while-placing-order/${uid}`,
+        {
+          fName,
+          lName,
+          contactNo,
+          buildingNo,
+          streetNo,
+          locality,
+          district,
+          landmark,
+          city,
+          state,
+          pincode,
+        }
       );
 
-      // if user already exists
-      if (fetchUserAtOrderCreationRes.data.success) {
-        toast.error(fetchUserAtOrderCreationRes.data.msg);
-        return;
+      // if user contact information updation is successfull
+      if (userContactInfoRes.data.success) {
+        cartProductList.forEach(async (product) => {
+          try {
+            // create new order
+            const orderRes = await axios.post(
+              `http://localhost:8000/api/v1/create-order/${product.productId}`,
+              {
+                uid: product.productId,
+                quantity: product.productQuantity,
+                orderNote,
+                paymentMethod,
+              },
+              { withCredentials: true }
+            );
+
+            // if order is successfull
+            if (orderRes.data.success) {
+              toast.success(orderRes.data.msg);
+            }
+          } catch (err) {
+            console.log(err.message);
+          }
+        });
       }
+    } catch (err) {
+      console.log(err.message);
 
       // if no exising user found
       // account creation
@@ -98,28 +147,30 @@ const CheckoutForm = () => {
 
         // if user contact information updation is successfull
         if (userContactInfoRes.data.success) {
-          // create new order
-          const orderRes = await axios.post(
-            `http://localhost:8000/api/v1/create-order/${cartProduct.productId}`,
-            {
-              uid: accountRes.data.data._id,
-              quantity: cartProduct.productQuantity,
-              orderNote,
-              paymentMethod,
-            },
-            { withCredentials: true }
-          );
+          cartProductList.forEach(async (product) => {
+            try {
+              // create new order
+              const orderRes = await axios.post(
+                `http://localhost:8000/api/v1/create-order/${product.productId}`,
+                {
+                  uid: product.productId,
+                  quantity: product.productQuantity,
+                  orderNote,
+                  paymentMethod,
+                },
+                { withCredentials: true }
+              );
 
-          // if order is successfull
-          if (orderRes.data.success) {
-            toast.success(orderRes.data.msg);
-            navigate("/login");
-          }
+              // if order is successfull
+              if (orderRes.data.success) {
+                toast.success(orderRes.data.msg);
+              }
+            } catch (err) {
+              console.log(err.message);
+            }
+          });
         }
       }
-    } catch (err) {
-      console.log(err.message);
-      toast.error(err.response.data.msg);
     }
   };
 

@@ -60,7 +60,7 @@ const fetchAllOrdersController = async (req, res) => {
   try {
     const { pageNo } = req.params;
     const currentPageNo = parseInt(pageNo);
-    const limit = 20;
+    const limit = 10;
     const skip = (currentPageNo - 1) * limit;
 
     const orders = await Order.find()
@@ -138,7 +138,26 @@ const fetchOrdersByDatesController = async (req, res) => {
       createdAt: { $gte: startDate, $lte: endDate },
     }).populate("product");
 
-    if (orders.length === 0) return response(res, 404, false, "No users found");
+    if (orders.length === 0)
+      return response(res, 404, false, "No orders found");
+
+    return response(res, 200, true, "Orders fetched", orders);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchOrdersByStatusController = async (req, res) => {
+  try {
+    const { status } = req.params;
+
+    if (!status) return response(res, 400, false, "Status is missing");
+
+    const orders = await Order.find({ status }).populate("product");
+
+    if (orders.length === 0)
+      return response(res, 404, false, "No orders found");
 
     return response(res, 200, true, "Orders fetched", orders);
   } catch (err) {
@@ -152,6 +171,7 @@ export {
   updateOrderController,
   deleteOrderController,
   fetchAllOrdersController,
+  fetchOrdersByStatusController,
   fetchOrderController,
   fetchCustomerOrdersController,
   fetchOrdersByDatesController,

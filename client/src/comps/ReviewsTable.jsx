@@ -120,9 +120,9 @@ const ReviewsTable = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen p-5">
-      <div className="flex justify-between items-center mt-10 w-full">
-        <div className="flex justify-center items-center">
-          <h1 className="text-4xl py-3 poppins-light mb-2">
+      <div className="flex flex-col justify-between items-center my-5 w-full">
+        <div className="flex justify-center items-center my-5">
+          <h1 className="text-4xl py-3 poppins-light bg-gray-200 rounded-md p-3">
             Reviews (
             {reviews.length < 10 ? `0${reviews.length}` : reviews.length})
           </h1>

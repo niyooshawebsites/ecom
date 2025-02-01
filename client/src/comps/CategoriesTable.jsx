@@ -3,20 +3,24 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { SlRefresh } from "react-icons/sl";
+import Pagination from "./Pagination";
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
   const [categoryDeleted, setCategoryDeleted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchAllCategories = async () => {
+  const fetchAllCategories = async (pageNo) => {
     try {
       const res = await axios.get(
-        "http://localhost:8000/api/v1/fetch-all-categories/1",
+        `http://localhost:8000/api/v1/fetch-all-categories/${pageNo}`,
         { withCredentials: true }
       );
 
       if (res.data.success) {
         setCategories(res.data.data);
+        setTotalPages(res.data.totalPagesCount);
       }
     } catch (err) {
       console.log(err.message);
@@ -58,15 +62,15 @@ const CategoriesTable = () => {
   };
 
   useEffect(() => {
-    fetchAllCategories();
-  }, [categoryDeleted]);
+    fetchAllCategories(currentPage);
+  }, [categoryDeleted, currentPage]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
       <div className="w-5/12">
         <div className="flex justify-center items-center mt-10">
           <h1 className="text-4xl text-center py-3 poppins-light bg-gray-200 rounded-md p-3 mb-2">
-            Product Categories (
+            Categories (
             {categories.length < 10
               ? `0${categories.length}`
               : categories.length}
@@ -84,6 +88,7 @@ const CategoriesTable = () => {
               id="cid"
               placeholder="Category ID"
               className="border border-gray-300 rounded p-1 mr-2 w-full"
+              required
             />
             <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
               Search
@@ -141,6 +146,11 @@ const CategoriesTable = () => {
             })}
           </tbody>
         </table>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </div>
   );
