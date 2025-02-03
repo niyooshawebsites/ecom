@@ -2,11 +2,10 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const CheckoutForm = () => {
   const states = ["Delhi", "Maharashtra", "West Bengal", "Tamil Nadu"];
-  const navigate = useNavigate();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -87,6 +86,40 @@ const CheckoutForm = () => {
       if (userContactInfoRes.data.success) {
         cartProductList.forEach(async (product) => {
           try {
+            if (paymentMethod === "Online") {
+              const razorpayOrderRes = await axios.post(
+                `http://localhost:8000/api/v1/create-razorpay-order`,
+                {
+                  amount: cartNetTotal,
+                  currency: "INR",
+                },
+                {
+                  withCredentials: true,
+                }
+              );
+
+              // if order is successfull
+              if (razorpayOrderRes.data.success) {
+                try {
+                  const paymentVerificationRes = await axios.post(
+                    `http://localhost:8000/api/v1/verify-razorpay-payment`,
+                    {
+                      razorpayOrderId: "",
+                      razorpayPaymentId: "",
+                      razorpaySignature: "",
+                    },
+                    { withCredentials: true }
+                  );
+
+                  if (paymentVerificationRes.data.success) {
+                    toast.success(paymentVerificationRes.data.msg);
+                  }
+                } catch (err) {
+                  console.log(err.message);
+                  toast.error(err.response.data.msg);
+                }
+              }
+            }
             // create new order
             const orderRes = await axios.post(
               `http://localhost:8000/api/v1/create-order/${product.productId}`,
@@ -149,6 +182,43 @@ const CheckoutForm = () => {
         if (userContactInfoRes.data.success) {
           cartProductList.forEach(async (product) => {
             try {
+              if (paymentMethod == "Online") {
+                const razorpayOrderRes = await axios.post(
+                  `http://localhost:8000/api/v1/create-razorpay-order`,
+                  {
+                    amount: cartNetTotal,
+                    currency: "INR",
+                  },
+                  {
+                    withCredentials: true,
+                  }
+                );
+
+                console.log(razorpayOrderRes);
+
+                // if order is successfull
+                if (razorpayOrderRes.data.success) {
+                  try {
+                    const paymentVerificationRes = await axios.post(
+                      `http://localhost:8000/api/v1/verify-razorpay-payment`,
+                      {
+                        razorpayOrderId: razorpayOrderRes.data.data.id,
+                        razorpayPaymentId: razorpayOrderRes.data.data.receipt,
+                        razorpaySignature: "",
+                      },
+                      { withCredentials: true }
+                    );
+
+                    if (paymentVerificationRes.data.success) {
+                      toast.success(paymentVerificationRes.data.msg);
+                    }
+                  } catch (err) {
+                    console.log(err.message);
+                    toast.error(err.response.data.msg);
+                  }
+                }
+              }
+
               // create new order
               const orderRes = await axios.post(
                 `http://localhost:8000/api/v1/create-order/${product.productId}`,

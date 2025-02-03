@@ -5,12 +5,14 @@ import cookieParser from "cookie-parser";
 import colors from "colors";
 import morgan from "morgan";
 import cors from "cors";
+import Razorpay from "razorpay";
 import userRouter from "./routes/user.route.js";
 import productRouter from "./routes/product.route.js";
 import categoryRouter from "./routes/category.route.js";
 import orderRouter from "./routes/order.route.js";
 import reviewRouter from "./routes/review.route.js";
-import couponRouter from "./routes/coupon.route.js"
+import couponRouter from "./routes/coupon.route.js";
+import paymentRouter from "./routes/payment.route.js";
 
 dotenv.config();
 connectDB();
@@ -29,6 +31,12 @@ app.use(
 );
 app.use(morgan());
 
+// Intilialize razorpay
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY,
+  key_secret: process.env.RAZORPAY_SECRET,
+});
+
 // routes
 app.use(BASE_URL, userRouter);
 app.use(BASE_URL, productRouter);
@@ -36,6 +44,7 @@ app.use(BASE_URL, categoryRouter);
 app.use(BASE_URL, orderRouter);
 app.use(BASE_URL, reviewRouter);
 app.use(BASE_URL, couponRouter);
+app.use(BASE_URL, paymentRouter);
 
 app.listen(PORT, () =>
   console.log(
