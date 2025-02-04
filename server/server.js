@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import colors from "colors";
 import morgan from "morgan";
 import cors from "cors";
-import Razorpay from "razorpay";
 import userRouter from "./routes/user.route.js";
 import productRouter from "./routes/product.route.js";
 import categoryRouter from "./routes/category.route.js";
@@ -30,12 +29,6 @@ app.use(
   })
 );
 app.use(morgan());
-
-// Intilialize razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY,
-  key_secret: process.env.RAZORPAY_SECRET,
-});
 
 // routes
 app.use(BASE_URL, userRouter);

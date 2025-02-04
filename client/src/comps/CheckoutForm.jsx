@@ -1,23 +1,21 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { paymentMethodSliceActions } from "../store/slices/paymentMethodSlice";
 
 const CheckoutForm = () => {
   const states = ["Delhi", "Maharashtra", "West Bengal", "Tamil Nadu"];
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const { uid } = useSelector((state) => state.user_Slice);
 
-  const {
-    cartProduct,
-    cartProductList,
-    cartDiscount,
-    cartGrossTotal,
-    cartNetTotal,
-  } = useSelector((state) => state.cart_Slice);
+  const { cartProductList, cartDiscount, cartGrossTotal, cartNetTotal } =
+    useSelector((state) => state.cart_Slice);
 
   const [cartTotal, setCartTotal] = useState(0);
 
@@ -86,6 +84,7 @@ const CheckoutForm = () => {
       if (userContactInfoRes.data.success) {
         cartProductList.forEach(async (product) => {
           try {
+            // ONLINE PAYMENT
             if (paymentMethod === "Online") {
               const razorpayOrderRes = await axios.post(
                 `http://localhost:8000/api/v1/create-razorpay-order`,
@@ -101,40 +100,81 @@ const CheckoutForm = () => {
               // if order is successfull
               if (razorpayOrderRes.data.success) {
                 try {
-                  const paymentVerificationRes = await axios.post(
-                    `http://localhost:8000/api/v1/verify-razorpay-payment`,
-                    {
-                      razorpayOrderId: "",
-                      razorpayPaymentId: "",
-                      razorpaySignature: "",
-                    },
-                    { withCredentials: true }
-                  );
+                  const {
+                    id: order_id,
+                    amount,
+                    currency,
+                  } = razorpayOrderRes.data.data;
 
-                  if (paymentVerificationRes.data.success) {
-                    toast.success(paymentVerificationRes.data.msg);
-                  }
+                  // Step 2: Load Razorpay Checkout
+                  const options = {
+                    key: `${import.meta.env.VITE_RAZORPAY_KEY}`,
+                    amount: amount,
+                    currency: currency,
+                    name: "Woodmart",
+                    description: "Test Transaction",
+                    order_id: order_id,
+                    handler: async function (response) {
+                      // Step 3: Verify Payment
+                      const verifyResponse = await axios.post(
+                        "http://localhost:8000/api/v1/verify-razorpay-payment",
+                        {
+                          razorpay_order_id: response.razorpay_order_id,
+                          razorpay_payment_id: response.razorpay_payment_id,
+                          razorpay_signature: response.razorpay_signature,
+                        }
+                      );
+
+                      if (verifyResponse.data.success) {
+                        // if payment is successfull - create new order
+                        const orderRes = await axios.post(
+                          `http://localhost:8000/api/v1/create-order/${product.productId}`,
+                          {
+                            uid: product.productId,
+                            quantity: product.productQuantity,
+                            orderNote,
+                            paymentMethod,
+                            paymentStatus: "Paid",
+                          },
+                          { withCredentials: true }
+                        );
+
+                        // if order is successfull
+                        if (orderRes.data.success) {
+                          dispatch(
+                            paymentMethodSliceActions.populatePaymentStatus({
+                              online: true,
+                              offline: false,
+                            })
+                          );
+                          navigate("/payment-success");
+                        }
+                      } else {
+                        alert("Payment verification failed!");
+                      }
+                    },
+                    prefill: {
+                      name: fName,
+                      email: email,
+                      contact: contactNo,
+                    },
+                    theme: {
+                      color: "#3399cc",
+                    },
+                  };
+
+                  const razor = new window.Razorpay(options);
+                  razor.open();
                 } catch (err) {
                   console.log(err.message);
                   toast.error(err.response.data.msg);
                 }
               }
             }
-            // create new order
-            const orderRes = await axios.post(
-              `http://localhost:8000/api/v1/create-order/${product.productId}`,
-              {
-                uid: product.productId,
-                quantity: product.productQuantity,
-                orderNote,
-                paymentMethod,
-              },
-              { withCredentials: true }
-            );
 
-            // if order is successfull
-            if (orderRes.data.success) {
-              toast.success(orderRes.data.msg);
+            // OFFLINE PAYMENT
+            if (paymentMethod === "COD") {
+              navigate("/order-confirmation");
             }
           } catch (err) {
             console.log(err.message);
@@ -182,6 +222,7 @@ const CheckoutForm = () => {
         if (userContactInfoRes.data.success) {
           cartProductList.forEach(async (product) => {
             try {
+              // ONLINE PAYMENT
               if (paymentMethod == "Online") {
                 const razorpayOrderRes = await axios.post(
                   `http://localhost:8000/api/v1/create-razorpay-order`,
@@ -199,19 +240,71 @@ const CheckoutForm = () => {
                 // if order is successfull
                 if (razorpayOrderRes.data.success) {
                   try {
-                    const paymentVerificationRes = await axios.post(
-                      `http://localhost:8000/api/v1/verify-razorpay-payment`,
-                      {
-                        razorpayOrderId: razorpayOrderRes.data.data.id,
-                        razorpayPaymentId: razorpayOrderRes.data.data.receipt,
-                        razorpaySignature: "",
-                      },
-                      { withCredentials: true }
-                    );
+                    const {
+                      id: order_id,
+                      amount,
+                      currency,
+                    } = razorpayOrderRes.data.data;
 
-                    if (paymentVerificationRes.data.success) {
-                      toast.success(paymentVerificationRes.data.msg);
-                    }
+                    // Step 2: Load Razorpay Checkout
+                    const options = {
+                      key: `${import.meta.env.VITE_RAZORPAY_KEY}`,
+                      amount: amount,
+                      currency: currency,
+                      name: "Woodmart",
+                      description: "Test Transaction",
+                      order_id: order_id,
+                      handler: async function (response) {
+                        // Step 3: Verify Payment
+                        const verifyResponse = await axios.post(
+                          "http://localhost:8000/api/v1/verify-razorpay-payment",
+                          {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                          }
+                        );
+
+                        if (verifyResponse.data.success) {
+                          // if payment is successfull - create new order
+                          const orderRes = await axios.post(
+                            `http://localhost:8000/api/v1/create-order/${product.productId}`,
+                            {
+                              uid: product.productId,
+                              quantity: product.productQuantity,
+                              orderNote,
+                              paymentMethod,
+                              paymentStatus: "Paid",
+                            },
+                            { withCredentials: true }
+                          );
+
+                          // if order is successfull
+                          if (orderRes.data.success) {
+                            dispatch(
+                              paymentMethodSliceActions.populatePaymentStatus({
+                                online: true,
+                                offline: false,
+                              })
+                            );
+                            navigate("/payment-success");
+                          }
+                        } else {
+                          alert("Payment verification failed!");
+                        }
+                      },
+                      prefill: {
+                        name: fName,
+                        email: email,
+                        contact: contactNo,
+                      },
+                      theme: {
+                        color: "#3399cc",
+                      },
+                    };
+
+                    const razor = new window.Razorpay(options);
+                    razor.open();
                   } catch (err) {
                     console.log(err.message);
                     toast.error(err.response.data.msg);
@@ -219,21 +312,9 @@ const CheckoutForm = () => {
                 }
               }
 
-              // create new order
-              const orderRes = await axios.post(
-                `http://localhost:8000/api/v1/create-order/${product.productId}`,
-                {
-                  uid: product.productId,
-                  quantity: product.productQuantity,
-                  orderNote,
-                  paymentMethod,
-                },
-                { withCredentials: true }
-              );
-
-              // if order is successfull
-              if (orderRes.data.success) {
-                toast.success(orderRes.data.msg);
+              // OFFLINE PAYMENT
+              if (paymentMethod === "COD") {
+                navigate("/order-confirmation");
               }
             } catch (err) {
               console.log(err.message);
@@ -250,6 +331,17 @@ const CheckoutForm = () => {
 
   useEffect(() => {
     setCartTotal(calculateCartTotal());
+  }, []);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => {
+      console.log("Razorpay scipt loaded successfully");
+    };
+    script.onerror = () => console.error("Failed to load Razorpay script");
+    document.body.appendChild(script);
   }, []);
 
   return (

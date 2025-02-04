@@ -26,6 +26,8 @@ import Profile from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
 import Users from "./pages/Users";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import OrderCofirmation from "./pages/OrderConfirmation";
 
 const App = () => {
   return (
@@ -41,6 +43,8 @@ const App = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/order-confirmation" element={<OrderCofirmation />} />
           <Route element={<Protect />}>
             <Route
               path="/dashboard/create-category"
