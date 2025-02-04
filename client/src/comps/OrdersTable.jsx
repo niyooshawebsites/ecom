@@ -290,7 +290,9 @@ const OrdersTable = () => {
                             .join("-")}
                         </td>
                         <td className="border text-sm p-1">
-                          <Link to={`/dashboard/order-details/${order._id}`}>
+                          <Link
+                            to={`/dashboard/order-details?oid=${order._id}`}
+                          >
                             <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700">
                               View
                             </span>

@@ -65,10 +65,7 @@ const App = () => {
             />
             <Route path="/dashboard/products" element={<Products />} />
             <Route path="/dashboard/orders" element={<Orders />} />
-            <Route
-              path="/dashboard/order-details/:oid"
-              element={<AdminOrder />}
-            />
+            <Route path="/dashboard/order-details" element={<AdminOrder />} />
             <Route path="/dashboard/create-coupon" element={<CreateCoupon />} />
             <Route
               path="/dashboard/update-coupon/:ccid"

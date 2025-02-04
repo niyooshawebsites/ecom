@@ -97,7 +97,9 @@ const fetchOrderController = async (req, res) => {
     const { oid } = req.params;
     if (!oid) return response(res, 400, false, "No oid. No order details");
 
-    const order = await Order.findById(oid);
+    const order = await Order.findById(oid)
+      .populate("product")
+      .populate("customer");
 
     if (!order) return response(res, 404, false, "No order found");
 
