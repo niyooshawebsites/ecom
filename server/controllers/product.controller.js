@@ -179,6 +179,22 @@ const fetchAllProductsByPriceRangeController = async (req, res) => {
   }
 };
 
+const deleteProductsController = async (req, res) => {
+  try {
+    const { pids } = req.params;
+
+    if (!pids || !Array.isArray(pids) || pids.length === 0)
+      return response(res, 400, false, "No pids. No multiple deletion");
+
+    const result = await Product.deleteMany({ _id: { $in: pids } });
+
+    return response(res, 200, true, "Products deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createProductController,
   updateProductController,
@@ -188,4 +204,5 @@ export {
   fetchAllProductsByCategoryController,
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
+  deleteProductsController,
 };

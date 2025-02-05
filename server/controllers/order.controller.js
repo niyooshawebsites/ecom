@@ -180,6 +180,22 @@ const fetchOrdersByStatusController = async (req, res) => {
   }
 };
 
+const deleteOrdersController = async (req, res) => {
+  try {
+    const { oids } = req.params;
+
+    if (!oids || !Array.isArray(oids) || oids.length === 0)
+      return response(res, 400, false, "No oids. No multiple deletion");
+
+    const result = await Order.deleteMany({ _id: { $in: oids } });
+
+    return response(res, 200, true, "Orders deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createOrderController,
   updateOrderController,
@@ -189,4 +205,5 @@ export {
   fetchOrderController,
   fetchCustomerOrdersController,
   fetchOrdersByDatesController,
+  deleteOrdersController,
 };

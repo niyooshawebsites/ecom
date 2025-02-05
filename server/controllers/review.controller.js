@@ -193,6 +193,22 @@ const fetchReviewsByStatusController = async (req, res) => {
   }
 };
 
+const deleteReiewsController = async (req, res) => {
+  try {
+    const { rids } = req.params;
+
+    if (!rids || !Array.isArray(rids) || rids.length === 0)
+      return response(res, 400, false, "No rids. No multiple deletion");
+
+    const result = await Review.deleteMany({ _id: { $in: rids } });
+
+    return response(res, 200, true, "Reviews deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createReviewController,
   deleteReviewController,
@@ -202,4 +218,5 @@ export {
   fetchReviewsByProductNameController,
   fetchReviewsByRatingController,
   fetchReviewsByStatusController,
+  deleteReiewsController,
 };

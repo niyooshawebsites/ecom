@@ -9,6 +9,7 @@ import {
   fetchAllProductsByCategoryController,
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
+  deleteProductsController,
 } from "../controllers/product.controller.js";
 
 const productRouter = express.Router();
@@ -16,6 +17,7 @@ const productRouter = express.Router();
 productRouter.post("/create-product", auth, createProductController);
 productRouter.patch("/update-product/:pid", auth, updateProductController);
 productRouter.delete("/delete-product/:pid", auth, deleteProductController);
+productRouter.delete("/delete-products/:pids", auth, deleteProductsController);
 productRouter.get("/fetch-all-products/:pageNo", fetchAllProductsController);
 productRouter.get("/fetch-product/:pid", fetchProductController);
 productRouter.get(

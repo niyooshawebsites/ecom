@@ -153,12 +153,14 @@ const CartTable = () => {
 
         // calculate discount amount
         if (data.data.discountType === "percentage") {
-          setDiscount((cartTotal * data.data.discountValue) / 100);
+          setDiscount(Math.round((cartTotal * data.data.discountValue) / 100));
 
           // creating global cart discount state
           dispatch(
             cartSliceActions.populateCartDiscount({
-              discountAmount: (cartTotal * data.data.discountValue) / 100,
+              discountAmount: Math.round(
+                (cartTotal * data.data.discountValue) / 100
+              ),
               couponCode: data.data.couponCode,
               couponDesc: data.data.desc,
             })

@@ -530,6 +530,22 @@ const fetchUserByDatesController = async (req, res) => {
   }
 };
 
+const deleteUsersController = async (req, res) => {
+  try {
+    const { uids } = req.params;
+
+    if (!uids || !Array.isArray(uids) || uids.length === 0)
+      return response(res, 400, false, "No uids. No multiple deletion");
+
+    const result = await User.deleteMany({ _id: { $in: uids } });
+
+    return response(res, 200, true, "Users deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   registerController,
   loginController,
@@ -549,4 +565,5 @@ export {
   fetchUserByActiveStatusController,
   fetchUserByVerificationStatusController,
   fetchUserByDatesController,
+  deleteUsersController,
 };

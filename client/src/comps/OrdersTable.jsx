@@ -228,27 +228,27 @@ const OrdersTable = () => {
               <table className="w-full border">
                 <thead className="bg-blue-600 text-white h-10 m-10">
                   <tr>
+                    <th className="poppins-light border text-sm p-1">
+                      <input
+                        type="checkbox"
+                        name="selectAll"
+                        id="selectAll"
+                        onChn
+                      />
+                    </th>
                     <th className="poppins-light border text-sm p-1">#</th>
                     <th className="poppins-light border text-sm p-1">
                       Order ID
                     </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Product Name
-                    </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Product Img
-                    </th>
+                    <th className="poppins-light border text-sm p-1">Name</th>
+                    <th className="poppins-light border text-sm p-1">Img</th>
                     <th className="poppins-light border text-sm p-1">
                       Quantity
                     </th>
+                    <th className="poppins-light border text-sm p-1">Price</th>
+                    <th className="poppins-light border text-sm p-1">Status</th>
                     <th className="poppins-light border text-sm p-1">
-                      Product Price
-                    </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Order Status
-                    </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Payment Method
+                      Payment
                     </th>
                     <th className="poppins-light border text-sm p-1">Time</th>
                     <th className="poppins-light border text-sm p-1">Action</th>
@@ -262,6 +262,9 @@ const OrdersTable = () => {
                         key={order._id}
                         className="odd:bg-white even:bg-gray-300 h-10 text-center border"
                       >
+                        <td className="border text-sm p-1">
+                          <input type="checkbox" name="" id="" />
+                        </td>
                         <td className="border text-sm p-1">{index + 1}</td>
                         <td className="border text-sm p-1">{order._id}</td>
                         <td className="border text-sm p-1">

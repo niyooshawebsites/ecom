@@ -18,8 +18,6 @@ const AdminOrderDetails = () => {
         { withCredentials: true }
       );
 
-      console.log(res);
-
       if (res.data.success) {
         setOrder(res.data.data);
         setAddress(
@@ -36,13 +34,13 @@ const AdminOrderDetails = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-start items-center min-h-screen">
-      <div className="w-10/12 flex justify-end items-end mt-5">
+    <div className="w-full flex flex-col justify-start items-center min-h-screen">
+      <div className="w-5/12 flex justify-end items-end my-3">
         <Link
-          className="bg-blue-600 px-2 py-1 hover:bg-blue-700 text-white rounded-md"
+          className="bg-green-600 px-2 py-1 hover:bg-green-700 text-white rounded-md"
           to="/dashboard/orders"
         >
-          Back
+          Back to orders
         </Link>
       </div>
 
@@ -133,7 +131,7 @@ const AdminOrderDetails = () => {
               </p>
               <p className="text-lg mb-2">
                 <span className="font-semibold">Txn ID: </span>
-                {order.customer?.email || "N/A"}
+                {order.tnxId || "N/A"}
               </p>
             </div>
           </div>

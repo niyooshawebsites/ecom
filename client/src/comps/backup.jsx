@@ -25,8 +25,6 @@ const CheckoutForm = () => {
     city: "",
     state: "",
     pincode: "",
-    orderNote: "",
-    paymentMethod: "",
   });
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -127,13 +125,31 @@ const CheckoutForm = () => {
     }
   };
 
-  const placeOrder = async () => {
+  const placeOrder = async (formData) => {
+    const email = formData.get("email");
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    const fName = formData.get("fName");
+    const lName = formData.get("lName");
+    const contactNo = formData.get("contactNo");
+    const buildingNo = formData.get("buildingNo");
+    const streetNo = formData.get("streetNo");
+    const locality = formData.get("locality");
+    const district = formData.get("district");
+    const landmark = formData.get("landmark");
+    const city = formData.get("city");
+    const state = formData.get("state");
+    const pincode = formData.get("pincode");
+    const orderNote = formData.get("orderNote");
+    const paymentMethod = formData.get("paymentMethod");
+
     try {
       // if not logged in
       if (!uid) {
         // check for exisitng user before placing the order
         const fetchUserAtOrderCreationRes = await axios.get(
-          `http://localhost:8000/api/v1/fetch-user-at-order-creation/${loggedInUserDetails.username}/${loggedInUserDetails.email}`
+          `http://localhost:8000/api/v1/fetch-user-at-order-creation/${username}/${email}`
         );
 
         // if user already exists
@@ -149,23 +165,23 @@ const CheckoutForm = () => {
         const userContactInfoRes = await axios.patch(
           `http://localhost:8000/api/v1/update-contact-details-while-placing-order/${uid}`,
           {
-            fName: loggedInUserDetails.fName,
-            lName: loggedInUserDetails.lName,
-            contactNo: loggedInUserDetails.contactNo,
-            buildingNo: loggedInUserDetails.buildingNo,
-            streetNo: loggedInUserDetails.streetNo,
-            locality: loggedInUserDetails.locality,
-            district: loggedInUserDetails.district,
-            landmark: loggedInUserDetails.landmark,
-            city: loggedInUserDetails.city,
-            state: loggedInUserDetails.state,
-            pincode: loggedInUserDetails.pincode,
+            fName,
+            lName,
+            contactNo,
+            buildingNo,
+            streetNo,
+            locality,
+            district,
+            landmark,
+            city,
+            state,
+            pincode,
           }
         );
 
         if (userContactInfoRes.data.success) {
           // if payment method is online
-          if (loggedInUserDetails.paymentMethod == "Online") {
+          if (paymentMethod == "Online") {
             // create a RAZORPAT ORDER
             const razorpayOrderRes = await axios.post(
               `http://localhost:8000/api/v1/create-razorpay-order`,
@@ -212,8 +228,8 @@ const CheckoutForm = () => {
                         {
                           uid,
                           quantity: product.productQuantity,
-                          orderNote: loggedInUserDetails.orderNote,
-                          paymentMethod: loggedInUserDetails.paymentMethod,
+                          orderNote,
+                          paymentMethod,
                           tnxId: response.razorpay_payment_id,
                           paymentStatus: "Paid",
                         },
@@ -237,9 +253,9 @@ const CheckoutForm = () => {
                   }
                 },
                 prefill: {
-                  name: loggedInUserDetails.fName,
-                  email: loggedInUserDetails.email,
-                  contact: loggedInUserDetails.contactNo,
+                  name: fName,
+                  email: email,
+                  contact: contactNo,
                 },
                 theme: {
                   color: "#3399cc",
@@ -252,15 +268,15 @@ const CheckoutForm = () => {
           }
 
           // if payment method is offline - COD
-          if (loggedInUserDetails.paymentMethod === "COD") {
+          if (paymentMethod === "COD") {
             cartProductList.map(async (product) => {
               const orderRes = await axios.post(
                 `http://localhost:8000/api/v1/create-order/${product.productId}`,
                 {
                   uid,
                   quantity: product.productQuantity,
-                  orderNote: loggedInUserDetails.orderNote,
-                  paymentMethod: loggedInUserDetails.paymentMethod,
+                  orderNote,
+                  paymentMethod,
                   paymentStatus: "Unpaid",
                 },
                 { withCredentials: true }
@@ -291,9 +307,9 @@ const CheckoutForm = () => {
         const accountRes = await axios.post(
           `http://localhost:8000/api/v1/register`,
           {
-            username: loggedInUserDetails.username,
-            email: loggedInUserDetails.email,
-            password: loggedInUserDetails.password,
+            username,
+            email,
+            password,
           },
           { withCredentials: true }
         );
@@ -306,23 +322,23 @@ const CheckoutForm = () => {
           const userContactInfoRes = await axios.patch(
             `http://localhost:8000/api/v1/update-contact-details-while-placing-order/${accountRes.data.data._id}`,
             {
-              fName: loggedInUserDetails.fName,
-              lName: loggedInUserDetails.lName,
-              contactNo: loggedInUserDetails.contactNo,
-              buildingNo: loggedInUserDetails.buildingNo,
-              streetNo: loggedInUserDetails.streetNo,
-              locality: loggedInUserDetails.locality,
-              district: loggedInUserDetails.district,
-              landmark: loggedInUserDetails.landmark,
-              city: loggedInUserDetails.city,
-              state: loggedInUserDetails.state,
-              pincode: loggedInUserDetails.pincode,
+              fName,
+              lName,
+              contactNo,
+              buildingNo,
+              streetNo,
+              locality,
+              district,
+              landmark,
+              city,
+              state,
+              pincode,
             }
           );
 
           if (userContactInfoRes.data.success) {
             // if payment method is online
-            if (loggedInUserDetails.paymentMethod === "Online") {
+            if (paymentMethod === "Online") {
               // create a RAZORPAT ORDER
               const razorpayOrderRes = await axios.post(
                 `http://localhost:8000/api/v1/create-razorpay-order`,
@@ -369,8 +385,8 @@ const CheckoutForm = () => {
                           {
                             uid: accountRes.data.data._id,
                             quantity: product.productQuantity,
-                            orderNote: loggedInUserDetails.orderNote,
-                            paymentMethod: loggedInUserDetails.paymentMethod,
+                            orderNote,
+                            paymentMethod,
                             tnxId: response.razorpay_payment_id,
                             paymentStatus: "Paid",
                           },
@@ -394,9 +410,9 @@ const CheckoutForm = () => {
                     }
                   },
                   prefill: {
-                    name: loggedInUserDetails.fName,
-                    email: loggedInUserDetails.email,
-                    contact: loggedInUserDetails.contactNo,
+                    name: fName,
+                    email: email,
+                    contact: contactNo,
                   },
                   theme: {
                     color: "#3399cc",
@@ -409,15 +425,15 @@ const CheckoutForm = () => {
             }
 
             // if payment method is offline - COD
-            if (loggedInUserDetails.paymentMethod === "COD") {
+            if (paymentMethod === "COD") {
               cartProductList.map(async (product) => {
                 const orderRes = await axios.post(
                   `http://localhost:8000/api/v1/create-order/${product.productId}`,
                   {
                     uid: accountRes.data.data._id,
                     quantity: product.productQuantity,
-                    orderNote: loggedInUserDetails.orderNote,
-                    paymentMethod: loggedInUserDetails.paymentMethod,
+                    orderNote,
+                    paymentMethod,
                     paymentStatus: "Unpaid",
                   },
                   { withCredentials: true }
@@ -526,7 +542,7 @@ const CheckoutForm = () => {
               </>
             )}
 
-            <h2 className="font-semibold mb-5">Shipping information</h2>
+            <h2 className="font-semibold mb-5">Billing information</h2>
 
             <div className="flex mb-3">
               <div className="w-6/12 flex flex-col px-2">
@@ -709,8 +725,6 @@ const CheckoutForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   name="state"
                   id="state"
-                  value={loggedInUserDetails.state}
-                  onChange={handleChange}
                   required
                 >
                   {states.map((state, index) => (
@@ -747,8 +761,6 @@ const CheckoutForm = () => {
                 id="orderNote"
                 className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                 rows={3}
-                value={loggedInUserDetails.orderNote}
-                onChange={handleChange}
                 placeholder="Share order note, if any"
               ></textarea>
             </div>
@@ -853,7 +865,6 @@ const CheckoutForm = () => {
                     name="paymentMethod"
                     id="online"
                     value="Online"
-                    onChange={handleChange}
                     defaultChecked
                   />{" "}
                   Online
@@ -865,7 +876,6 @@ const CheckoutForm = () => {
                     name="paymentMethod"
                     id="cod"
                     value="COD"
-                    onChange={handleChange}
                   />{" "}
                   Cash on Delivery
                 </label>

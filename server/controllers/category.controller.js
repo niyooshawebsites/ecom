@@ -132,6 +132,22 @@ const fetchCategoryController = async (req, res) => {
   }
 };
 
+const deleteCategoriesController = async (req, res) => {
+  try {
+    const { cids } = req.params;
+
+    if (!cids || !Array.isArray(cids) || cids.length === 0)
+      return response(res, 400, false, "No cids. No multiple deletion");
+
+    const result = await Category.deleteMany({ _id: { $in: cids } });
+
+    return response(res, 200, true, "Categories deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createCategoryController,
   updateCategoryController,
@@ -139,4 +155,5 @@ export {
   fetchAllCategoriesController,
   fetchAllCategoriesAtOnceController,
   fetchCategoryController,
+  deleteCategoriesController,
 };

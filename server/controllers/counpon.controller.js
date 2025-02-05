@@ -181,6 +181,22 @@ const applyCouponController = async (req, res) => {
   }
 };
 
+const deleteCouponsController = async (req, res) => {
+  try {
+    const { ccids } = req.params;
+
+    if (!ccids || !Array.isArray(ccids) || ccids.length === 0)
+      return response(res, 400, false, "No cids. No multiple deletion");
+
+    const result = await Coupon.deleteMany({ _id: { $in: ccids } });
+
+    return response(res, 200, true, "Coupons deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createCounponController,
   updateCouponController,
@@ -188,4 +204,5 @@ export {
   fetchAllCouponsController,
   deleteCouponController,
   applyCouponController,
+  deleteCouponsController,
 };

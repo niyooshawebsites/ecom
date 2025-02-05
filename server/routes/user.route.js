@@ -18,6 +18,7 @@ import {
   fetchUserByActiveStatusController,
   fetchUserByVerificationStatusController,
   fetchUserByDatesController,
+  deleteUsersController,
 } from "../controllers/user.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 import verifyEmail from "../middlewares/verifyEmail.middleware.js";
@@ -38,6 +39,7 @@ userRouter.patch(
   updateUserPasswordController
 );
 userRouter.delete("/delete-user/:uid", auth, deleteUserController);
+userRouter.delete("/delete-users/:uids", auth, deleteUsersController);
 userRouter.get("/verify-email/:authToken", verifyEmail, verifyUserController);
 userRouter.post("/forgot-password", forgotPasswordController);
 userRouter.patch(

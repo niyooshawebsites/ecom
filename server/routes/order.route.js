@@ -8,6 +8,7 @@ import {
   fetchOrderController,
   fetchCustomerOrdersController,
   fetchOrdersByDatesController,
+  deleteOrdersController,
 } from "../controllers/order.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 
@@ -16,6 +17,7 @@ const orderRouter = express.Router();
 orderRouter.post("/create-order/:pid", createOrderController);
 orderRouter.patch("/update-order/:oid", auth, updateOrderController);
 orderRouter.delete("/delete-order/:oid", auth, deleteOrderController);
+orderRouter.delete("/delete-orders/:oids", auth, deleteOrdersController);
 orderRouter.get("/fetch-all-orders/:pageNo", auth, fetchAllOrdersController);
 orderRouter.get("/fetch-order/:oid", auth, fetchOrderController);
 orderRouter.get(
