@@ -37,23 +37,24 @@ const createRazorpayOrderController = async (req, res) => {
 
 const verifyPaymentController = async (req, res) => {
   try {
-    const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
 
-    if (!razorpayOrderId)
+    if (!razorpay_order_id)
       return response(res, 400, false, "Razorpay order ID is missing");
 
-    if (!razorpayPaymentId)
+    if (!razorpay_payment_id)
       return response(res, 400, false, "Razorpay payment ID is missing");
 
-    if (!razorpaySignature)
+    if (!razorpay_signature)
       return response(res, 400, false, "Razorpay signature is missing");
 
     const generatedRazorpaySignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
-      .update(razorpayOrderId + "|" + razorpayPaymentId)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex");
 
-    if (generatedRazorpaySignature !== razorpaySignature)
+    if (generatedRazorpaySignature !== razorpay_signature)
       return response(res, 400, false, "Razorpay payment verfication failed");
 
     return response(res, 200, true, "Razorpay payment verification successful");

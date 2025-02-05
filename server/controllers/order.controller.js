@@ -4,8 +4,15 @@ import response from "../utils/response.js";
 const createOrderController = async (req, res) => {
   try {
     const { pid } = req.params;
-    const { uid, quantity, orderNote, paymentMethod, cartNetTotal, currency } =
-      req.body;
+    const {
+      uid,
+      quantity,
+      orderNote,
+      paymentMethod,
+      paymentStatus,
+      cartNetTotal,
+      currency,
+    } = req.body;
 
     if (!pid) return response(res, 400, false, "No pid. No order");
     if (!uid) return response(res, 400, false, "No uid. No order");
@@ -16,6 +23,7 @@ const createOrderController = async (req, res) => {
       quantity,
       orderNote: orderNote || null,
       paymentMethod,
+      paymentStatus,
     }).save();
 
     return response(res, 201, true, "New order created", order);
