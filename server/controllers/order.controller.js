@@ -10,6 +10,7 @@ const createOrderController = async (req, res) => {
       orderNote,
       paymentMethod,
       paymentStatus,
+      tnxId,
       cartNetTotal,
       currency,
     } = req.body;
@@ -24,6 +25,7 @@ const createOrderController = async (req, res) => {
       orderNote: orderNote || null,
       paymentMethod,
       paymentStatus,
+      tnxId,
     }).save();
 
     return response(res, 201, true, "New order created", order);

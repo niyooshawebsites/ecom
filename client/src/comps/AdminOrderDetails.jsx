@@ -4,7 +4,7 @@ import axios from "axios";
 
 const AdminOrderDetails = () => {
   const [order, setOrder] = useState({});
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(``);
   const location = useLocation();
 
   const queryString = new URLSearchParams(location.search);
@@ -23,7 +23,7 @@ const AdminOrderDetails = () => {
       if (res.data.success) {
         setOrder(res.data.data);
         setAddress(
-          `${order.customer?.customerDetails?.address?.buildingNo}, ${order.customer?.customerDetails?.address?.streetNo}, ${order.customer?.customerDetails?.address?.buildingNo}, ${order.customer?.customerDetails?.address?.locality}, ${order.customer?.customerDetails?.address?.district}, ${order.customer?.customerDetails?.address?.city}, ${order.customer?.customerDetails?.address?.state}, ${order.customer?.customerDetails?.address?.pincode}`
+          `${res.data.data.customer?.contactDetails?.address?.buildingNo}, ${res.data.data.customer?.contactDetails?.address?.streetNo}, ${res.data.data.customer?.contactDetails?.address?.locality}, ${res.data.data.customer?.contactDetails?.address?.district}, ${res.data.data.customer?.contactDetails?.address?.city}, ${res.data.data.customer?.contactDetails?.address?.state} - ${res.data.data.customer?.contactDetails?.address?.pincode}`
         );
       }
     } catch (err) {
@@ -46,32 +46,34 @@ const AdminOrderDetails = () => {
         </Link>
       </div>
 
-      <div className="flex">
-        <div>
-          <h1 className="text-4xl py-3 poppins-regular my-5">Order details</h1>
-          <div className="flex border rounded-lg p-5 bg-gray-100">
+      <div className="flex flex-col">
+        <div className="w-full m-1">
+          <div className="flex justify-center items-center border rounded-lg p-2 bg-gray-100">
             <div>
               <img
                 src={order.product?.img}
                 alt={order.product?.name}
-                style={{ width: "120px" }}
+                style={{ width: "140px" }}
                 className="rounded-md"
               />
             </div>
-            <div className="flex flex-col p-5">
-              <p className="text-xl mb-2">
+            <div className="flex flex-col px-5">
+              <h1 className="text-2xl poppins-regular mb-2 text-orange-600">
+                Order details
+              </h1>
+              <p className="text-lg mb-2">
                 <span className="font-semibold">Product ID: </span>
                 {order.product?._id}
               </p>
-              <p className="text-xl mb-2">
+              <p className="text-lg mb-2">
                 <span className="font-semibold">Product name: </span>
                 {order.product?.name}
               </p>
-              <p className="text-xl mb-2">
+              <p className="text-lg mb-2">
                 <span className="font-semibold">Price: </span>
                 {order.product?.price}
               </p>
-              <p className="text-xl">
+              <p className="text-lg">
                 <span className="font-semibold">Quantity: </span>{" "}
                 {order.quantity}
               </p>
@@ -79,36 +81,59 @@ const AdminOrderDetails = () => {
           </div>
         </div>
 
-        <div>
-          <h1 className="text-4xl py-3 poppins-regular my-5">
-            Contact details
-          </h1>
-          <div className="flex border rounded-lg p-5 bg-gray-100">
+        <div className="w-full m-1">
+          <div className="flex flex-col border rounded-lg px-5 bg-gray-100">
             <div>
-              <h1>Basic Info</h1>
-              <p className="text-xl mb-2">
+              <h1 className="text-2xl py-3 poppins-regular text-orange-600">
+                Contact details
+              </h1>
+              <p className="text-lg mb-2">
                 <span className="font-semibold">First name: </span>
-                {order.customer?.customerDetails?.fName || "N/A"}
+                {order.customer?.contactDetails?.fName || "N/A"}
+                {console.log(JSON.stringify(order))}
               </p>
-              <p className="text-xl mb-2">
+              <p className="text-lg mb-2">
                 <span className="font-semibold">Last name: </span>
-                {order.customer?.customerDetails?.lName || "N/A"}
+                {order.customer?.contactDetails?.lName || "N/A"}
               </p>
-              <p className="text-xl mb-2">
+              <p className="text-lg mb-2">
                 <span className="font-semibold">Email: </span>
                 {order.customer?.email || "N/A"}
               </p>
-              <p className="text-xl">
-                <span className="font-semibold">Phone: </span>{" "}
-                {order.customer?.customerDetails?.contactNo || "N/A"}
+              <p className="text-lg mb-2">
+                <span className="font-semibold">Phone: </span>
+                {order.customer?.contactDetails?.contactNo || "N/A"}
+              </p>
+              <p className="text-lg mb-2">
+                <span className="font-semibold">Landmark: </span>
+                {order.customer?.contactDetails?.address?.landmark || "N/A"}
+              </p>
+              <p className="text-lg">
+                <span className="font-semibold">Address: </span>
+                {address || "N/A"}
               </p>
             </div>
-            <div className="flex flex-col p-5">
-              <h1>Address:</h1>
-              <p className="text-xl mb-2">{address || "N/A"}</p>
-              <h1>Landmark: </h1>
-              <p>
-                {order.customer?.customerDetails?.address?.buildingNo || "N/A"}
+          </div>
+        </div>
+
+        <div className="w-full m-1">
+          <div className="flex flex-col border rounded-lg px-5 bg-gray-100">
+            <div>
+              <h1 className="text-2xl py-3 poppins-regular text-orange-600">
+                Payment details
+              </h1>
+              <p className="text-lg mb-2">
+                <span className="font-semibold">Payment mode: </span>
+                {order.paymentMethod || "N/A"}
+                {console.log(JSON.stringify(order))}
+              </p>
+              <p className="text-lg mb-2">
+                <span className="font-semibold">Payment status: </span>
+                {order.paymentStatus || "N/A"}
+              </p>
+              <p className="text-lg mb-2">
+                <span className="font-semibold">Txn ID: </span>
+                {order.customer?.email || "N/A"}
               </p>
             </div>
           </div>

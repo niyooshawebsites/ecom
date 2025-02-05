@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { paymentMethodSliceActions } from "../store/slices/paymentMethodSlice";
+import { cartSliceActions } from "../store/slices/cartSlice";
 
 const CheckoutForm = () => {
   const states = ["Delhi", "Maharashtra", "West Bengal", "Tamil Nadu"];
@@ -26,6 +27,45 @@ const CheckoutForm = () => {
       intialValue
     );
     return sumOfCart;
+  };
+
+  const resetCart = () => {
+    dispatch(
+      cartSliceActions.populateCartProduct({
+        productId: null,
+        productName: null,
+        productPrice: null,
+        productCategory: null,
+        productQuantity: null,
+        productTotalAmount: null,
+      })
+    );
+
+    dispatch(
+      cartSliceActions.populateCartList({
+        cartProductList: [],
+      })
+    );
+
+    dispatch(
+      cartSliceActions.populateCartGrossTotal({
+        cartGrossTotal: 0,
+      })
+    );
+
+    dispatch(
+      cartSliceActions.populateCartDiscount({
+        discountAmount: 0,
+        couponCode: null,
+        couponDesc: null,
+      })
+    );
+
+    dispatch(
+      cartSliceActions.populateCartNetTotal({
+        cartNetTotal: 0,
+      })
+    );
   };
 
   const placeOrder = async (formData) => {
@@ -133,6 +173,7 @@ const CheckoutForm = () => {
                           quantity: product.productQuantity,
                           orderNote,
                           paymentMethod,
+                          tnxId: response.razorpay_payment_id,
                           paymentStatus: "Paid",
                         },
                         { withCredentials: true }
@@ -146,6 +187,9 @@ const CheckoutForm = () => {
                             offline: false,
                           })
                         );
+
+                        // reset the cart
+                        resetCart();
                         navigate("/payment-success");
                       }
                     });
@@ -189,6 +233,9 @@ const CheckoutForm = () => {
                     offline: true,
                   })
                 );
+
+                // reset the cart
+                resetCart();
                 navigate("/order-confirmation");
               }
             });
@@ -281,6 +328,7 @@ const CheckoutForm = () => {
                             quantity: product.productQuantity,
                             orderNote,
                             paymentMethod,
+                            tnxId: response.razorpay_payment_id,
                             paymentStatus: "Paid",
                           },
                           { withCredentials: true }
@@ -294,6 +342,9 @@ const CheckoutForm = () => {
                               offline: false,
                             })
                           );
+
+                          // reset the cart
+                          resetCart();
                           navigate("/payment-success");
                         }
                       });
@@ -337,6 +388,9 @@ const CheckoutForm = () => {
                       offline: true,
                     })
                   );
+
+                  // reset the cart
+                  resetCart();
                   navigate("/order-confirmation");
                 }
               });

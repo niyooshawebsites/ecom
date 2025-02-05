@@ -27,7 +27,7 @@ const PaymentSuccessMsg = () => {
         <h2 className="text-xl mb-2">
           Thank you for placing your order with us
         </h2>
-        <p className="mb-4">Longin to check your order details</p>
+        <p className="mb-4">Lonin to check your order details</p>
         <Link
           className="bg-blue-600 px-2 py-1 text-white hover:bg-blue-700 rounded"
           onClick={goToLoginPage}
