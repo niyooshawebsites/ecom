@@ -1,5 +1,35 @@
-const CreateTaxForm = () => {
-  const handleTaxCreation = () => {};
+import axios from "axios";
+import { toast } from "react-toastify";
+
+const CreateTaxForm = ({ setTaxCreated }) => {
+  const handleTaxCreation = async (formData) => {
+    const country = formData.get("country");
+    const state = formData.get("state");
+    const name = formData.get("name");
+    const rate = formData.get("rate");
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/create-tax`,
+        {
+          country,
+          state,
+          name,
+          rate,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        setTaxCreated((prev) => !prev);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
     <div className="w-10/12 flex flex-col justify-start items-center">
       <h1 className="text-4xl py-3 poppins-light mt-10 mb-5">Create Tax</h1>
@@ -38,7 +68,7 @@ const CreateTaxForm = () => {
 
           <div className="w-3/12 flex flex-col px-2">
             <label htmlFor="name" className="mb-2">
-              State
+              Tax
             </label>
             <input
               type="text"

@@ -9,9 +9,6 @@ const createTaxController = async (req, res) => {
     if (!state) return response(res, 400, false, "State is missing");
     if (!rate) return response(res, 400, false, "Rate is missing");
 
-    const tax = await Tax.findOne({ state });
-    if (tax) return response(res, 409, false, "Tax already exists");
-
     const newTax = await new Tax({ country, state, name, rate }).save();
 
     return response(res, 201, true, "Tax created successfully", newTax);

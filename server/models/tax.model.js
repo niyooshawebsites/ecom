@@ -5,19 +5,16 @@ const taxSchema = new mongoose.Schema(
     country: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
     state: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
     name: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
     rate: {

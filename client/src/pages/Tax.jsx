@@ -1,7 +1,7 @@
 import Layout from "../comps/Layout";
 import CreateTaxForm from "../comps/CreateTaxForm";
 import AdminSidebar from "../comps/AdminSidebar";
-import Taxtable from "../comps/Taxtable";
+import TaxTable from "../comps/TaxTable";
 import { useState } from "react";
 
 const Tax = () => {
@@ -10,9 +10,9 @@ const Tax = () => {
     <Layout>
       <div className="flex">
         <AdminSidebar />
-        <div className="w-full flex flex-col justify-start items-center min-h-screen border border-red-500">
+        <div className="w-full flex flex-col justify-start items-center min-h-screen">
           <CreateTaxForm setTaxCreated={setTaxCreated} />
-          <Taxtable taxCreated={taxCreated} />
+          <TaxTable taxCreated={taxCreated} />
         </div>
       </div>
     </Layout>

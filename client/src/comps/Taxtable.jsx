@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { SlRefresh } from "react-icons/sl";
 import Pagination from "./Pagination";
 
-const Taxtable = () => {
+const TaxTable = ({ taxCreated }) => {
   const [taxes, setTaxes] = useState([]);
   const [taxDeleted, setTaxDeleted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +63,7 @@ const Taxtable = () => {
 
   useEffect(() => {
     fetchAllTaxes(currentPage);
-  }, [taxDeleted, currentPage]);
+  }, [taxDeleted, currentPage, taxCreated]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center">
@@ -129,7 +129,14 @@ const Taxtable = () => {
                     {index + 1}
                   </td>
                   <td className="text-center border text-sm p-1">{tax._id}</td>
+                  <td className="text-center border text-sm p-1">
+                    {tax.country}
+                  </td>
+                  <td className="text-center border text-sm p-1">
+                    {tax.state}
+                  </td>
                   <td className="text-center border text-sm p-1">{tax.name}</td>
+                  <td className="text-center border text-sm p-1">{tax.rate}</td>
                   <td className="text-center border text-sm">
                     <Link to={`/dashboard/update-category/${tax._id}`}>
                       <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 mr-2">
@@ -160,4 +167,4 @@ const Taxtable = () => {
   );
 };
 
-export default Taxtable;
+export default TaxTable;
