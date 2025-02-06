@@ -1,4 +1,5 @@
 import Order from "../models/order.model.js";
+import generateInvoice from "../utils/invoice.js";
 import response from "../utils/response.js";
 
 const createOrderController = async (req, res) => {

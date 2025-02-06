@@ -290,6 +290,8 @@ const updateContactDetailsController = async (req, res) => {
     const { uid } = req.params;
 
     const {
+      bName,
+      website,
       fName,
       lName,
       contactNo,
@@ -302,6 +304,10 @@ const updateContactDetailsController = async (req, res) => {
       state,
       pincode,
     } = req.body;
+
+    if (!bName) return response(res, 400, false, "Business name missing");
+
+    if (!website) return response(res, 400, false, "Website missing");
 
     if (!fName) return response(res, 400, false, "First name missing");
 
@@ -329,6 +335,8 @@ const updateContactDetailsController = async (req, res) => {
       {
         // Update contact details and address as separate sub-documents
         $set: {
+          "contactDetails.bName": bName,
+          "contactDetails.website": website,
           "contactDetails.fName": fName,
           "contactDetails.lName": lName,
           "contactDetails.contactNo": contactNo,

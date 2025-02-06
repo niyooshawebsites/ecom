@@ -139,6 +139,17 @@ const OrdersTable = () => {
     }
   };
 
+  const downloadInvoice = async (oid) => {
+    try {
+      window.open(
+        `http://localhost:8000/api/v1/generate-invoice/${oid}`,
+        "_blank"
+      );
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   useEffect(() => {
     fetchAllOrders(currentPage);
   }, [statusUpdated, orderDeleted, currentPage]);
@@ -229,12 +240,7 @@ const OrdersTable = () => {
                 <thead className="bg-blue-600 text-white h-10 m-10">
                   <tr>
                     <th className="poppins-light border text-sm p-1">
-                      <input
-                        type="checkbox"
-                        name="selectAll"
-                        id="selectAll"
-                        onChn
-                      />
+                      <input type="checkbox" name="selectAll" id="selectAll" />
                     </th>
                     <th className="poppins-light border text-sm p-1">#</th>
                     <th className="poppins-light border text-sm p-1">
@@ -242,17 +248,17 @@ const OrdersTable = () => {
                     </th>
                     <th className="poppins-light border text-sm p-1">Name</th>
                     <th className="poppins-light border text-sm p-1">Img</th>
-                    <th className="poppins-light border text-sm p-1">
-                      Quantity
-                    </th>
+                    <th className="poppins-light border text-sm p-1">Qnty</th>
                     <th className="poppins-light border text-sm p-1">Price</th>
                     <th className="poppins-light border text-sm p-1">Status</th>
                     <th className="poppins-light border text-sm p-1">
                       Payment
                     </th>
-                    <th className="poppins-light border text-sm p-1">Time</th>
+                    <th className="poppins-light border text-sm p-1">Date</th>
                     <th className="poppins-light border text-sm p-1">Action</th>
-                    <th className="poppins-light border text-sm p-1">Status</th>
+                    <th className="poppins-light border text-sm p-1">
+                      Update status
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -360,25 +366,18 @@ const OrdersTable = () => {
                     <th className="poppins-light border text-sm p-1">
                       Order ID
                     </th>
+                    <th className="poppins-light border text-sm p-1">Name</th>
+                    <th className="poppins-light border text-sm p-1">Img</th>
+                    <th className="poppins-light border text-sm p-1">Qnty</th>
+                    <th className="poppins-light border text-sm p-1">Price</th>
+                    <th className="poppins-light border text-sm p-1">Status</th>
                     <th className="poppins-light border text-sm p-1">
-                      Product Name
+                      Payment
                     </th>
+                    <th className="poppins-light border text-sm p-1">Date</th>
                     <th className="poppins-light border text-sm p-1">
-                      Product Img
+                      Invoice
                     </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Quantity
-                    </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Product Price
-                    </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Order Status
-                    </th>
-                    <th className="poppins-light border text-sm p-1">
-                      Payment Method
-                    </th>
-                    <th className="poppins-light border text-sm p-1">Time</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -414,6 +413,16 @@ const OrdersTable = () => {
                             .split("-")
                             .reverse()
                             .join("-")}
+                        </td>
+                        <td className="border text-sm p-1">
+                          <button
+                            className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 ml-2"
+                            onClick={() => {
+                              downloadInvoice(order._id);
+                            }}
+                          >
+                            Download
+                          </button>
                         </td>
                       </tr>
                     );

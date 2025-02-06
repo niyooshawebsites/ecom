@@ -2,6 +2,16 @@ import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
 const contactSchema = new mongoose.Schema({
+  bName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  website: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   fName: {
     type: String,
     required: true,

@@ -12,6 +12,8 @@ import orderRouter from "./routes/order.route.js";
 import reviewRouter from "./routes/review.route.js";
 import couponRouter from "./routes/coupon.route.js";
 import paymentRouter from "./routes/payment.route.js";
+import invoiceRouter from "./routes/invoice.route.js";
+import taxRouter from "./routes/tax.route.js";
 
 dotenv.config();
 connectDB();
@@ -38,6 +40,8 @@ app.use(BASE_URL, orderRouter);
 app.use(BASE_URL, reviewRouter);
 app.use(BASE_URL, couponRouter);
 app.use(BASE_URL, paymentRouter);
+app.use(BASE_URL, invoiceRouter);
+app.use(BASE_URL, taxRouter);
 
 app.listen(PORT, () =>
   console.log(

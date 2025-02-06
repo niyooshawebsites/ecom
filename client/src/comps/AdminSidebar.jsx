@@ -7,6 +7,8 @@ const AdminSidebar = () => {
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
   const [showProductMenu, setShowProductMenu] = useState(false);
   const [showCouponMenu, setShowCouponMenu] = useState(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+
   const { role } = useSelector((state) => state.user_Slice);
 
   const toggleShowCategoryMenu = () => {
@@ -19,6 +21,10 @@ const AdminSidebar = () => {
 
   const toggleShowCouponMenu = () => {
     setShowCouponMenu((prevState) => !prevState);
+  };
+
+  const toggleShowSettingsMenu = () => {
+    setShowSettingsMenu((prevState) => !prevState);
   };
 
   return (
@@ -96,9 +102,32 @@ const AdminSidebar = () => {
           <Link to="/dashboard/users">
             <li className="px-2 py-2 hover:bg-blue-600 ">Users</li>
           </Link>
-          <Link to="/dashboard/profile">
-            <li className="px-2 py-2 hover:bg-blue-600">Profile</li>
-          </Link>
+          <li
+            onClick={toggleShowSettingsMenu}
+            className="cursor-pointer flex items-center px-2 my-2"
+          >
+            Settings <IoIosArrowDown />
+          </li>
+          {showSettingsMenu ? (
+            <ul>
+              <Link to="/dashboard/profile">
+                <li className="px-3 py-2 text-white hover:bg-blue-600">
+                  Profile
+                </li>
+              </Link>
+              <Link to="/dashboard/tax">
+                <li className="px-3 py-2 hover:bg-blue-600 text-white">Tax</li>
+              </Link>
+              <Link to="/dashboard/categories">
+                <li className="px-3 py-2 hover:bg-blue-600 text-white">Logo</li>
+              </Link>
+              <Link to="/dashboard/contact-info">
+                <li className="px-3 py-2 hover:bg-blue-600 text-white">
+                  Contact Details
+                </li>
+              </Link>
+            </ul>
+          ) : null}
         </ul>
       ) : (
         <ul>
@@ -109,7 +138,7 @@ const AdminSidebar = () => {
           </Link>
           <Link to="/dashboard/contact-info">
             <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
-              Contact Information
+              Contact details
             </li>
           </Link>
           <Link to="/dashboard/profile">

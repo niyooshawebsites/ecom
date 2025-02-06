@@ -28,6 +28,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Users from "./pages/Users";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderCofirmation from "./pages/OrderConfirmation";
+import Tax from "./pages/Tax";
 
 const App = () => {
   return (
@@ -76,6 +77,7 @@ const App = () => {
             <Route path="/dashboard/reviews" element={<Reviews />} />
             <Route path="/dashboard/contact-info" element={<ContactInfo />} />
             <Route path="/dashboard/profile" element={<Profile />} />
+            <Route path="/dashboard/tax" element={<Tax />} />
           </Route>
         </Routes>
       </BrowserRouter>
