@@ -78,7 +78,7 @@ const fetchAllTaxesController = async (req, res) => {
 const fetchTaxController = async (req, res) => {
   try {
     const { tid } = req.params;
-    if (!tid) return response(res, 400, false, "No tid. No updation");
+    if (!tid) return response(res, 400, false, "No tid. No tax");
 
     const tax = await Tax.findById(tid);
     if (!tax) return response(res, 404, false, "No tax found");
@@ -121,6 +121,36 @@ const deleteTaxesController = async (req, res) => {
   }
 };
 
+const fetchTaxByStateController = async (req, res) => {
+  try {
+    const { state } = req.params;
+    if (!state) return response(res, 400, false, "No state. No updation");
+
+    const tax = await Tax.find({ state });
+    if (tax.length === 0) return response(res, 404, false, "No tax found");
+
+    return response(res, 200, true, "Tax found successfully", tax);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchTaxByStateWithoutLoginController = async (req, res) => {
+  try {
+    const { state } = req.params;
+    if (!state) return response(res, 400, false, "No state. No updation");
+
+    const tax = await Tax.find({ state });
+    if (tax.length === 0) return response(res, 404, false, "No tax found");
+
+    return response(res, 200, true, "Tax found successfully", tax);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createTaxController,
   updateTaxController,
@@ -128,4 +158,6 @@ export {
   fetchTaxController,
   deleteTaxController,
   deleteTaxesController,
+  fetchTaxByStateController,
+  fetchTaxByStateWithoutLoginController,
 };

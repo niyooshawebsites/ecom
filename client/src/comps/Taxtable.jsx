@@ -27,6 +27,26 @@ const TaxTable = ({ taxCreated }) => {
     }
   };
 
+  const fetchTaxByState = async (formData) => {
+    const state = formData.get("state");
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-tax-by-state/${state}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        setTaxes(res.data.data);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+    }
+  };
+
   const deleteTax = async (tid) => {
     try {
       const res = await axios.delete(
@@ -48,7 +68,10 @@ const TaxTable = ({ taxCreated }) => {
       const tid = formData.get("tid");
 
       const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-tax/${tid}`
+        `http://localhost:8000/api/v1/fetch-tax/${tid}`,
+        {
+          withCredentials: true,
+        }
       );
 
       if (res.data.success) {
@@ -79,6 +102,20 @@ const TaxTable = ({ taxCreated }) => {
         </div>
 
         <div className="flex my-3">
+          <form action={fetchTaxByState} className="flex w-full mr-3">
+            <input
+              type="text"
+              name="state"
+              id="state"
+              placeholder="State"
+              className="border border-gray-300 rounded p-1 mr-2 w-full"
+              required
+            />
+            <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
+              Search
+            </button>
+          </form>
+
           <form action={fetchTax} className="flex w-full">
             <input
               type="text"
@@ -138,7 +175,7 @@ const TaxTable = ({ taxCreated }) => {
                   <td className="text-center border text-sm p-1">{tax.name}</td>
                   <td className="text-center border text-sm p-1">{tax.rate}</td>
                   <td className="text-center border text-sm">
-                    <Link to={`/dashboard/update-category/${tax._id}`}>
+                    <Link to={`/dashboard/update-tax?tid=${tax._id}`}>
                       <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 mr-2">
                         Edit
                       </span>

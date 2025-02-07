@@ -1,10 +1,13 @@
 import Order from "../models/order.model.js";
-import generateInvoice from "../utils/invoice.js";
+import Product from "../models/product.model.js";
+import User from "../models/user.model.js";
 import response from "../utils/response.js";
+import Tax from "../models/tax.model.js";
 
 const createOrderController = async (req, res) => {
   try {
     const { pid } = req.params;
+
     const {
       uid,
       quantity,
@@ -12,12 +15,44 @@ const createOrderController = async (req, res) => {
       paymentMethod,
       paymentStatus,
       tnxId,
-      cartNetTotal,
-      currency,
+      CGSTRate,
+      SGSTRate,
+      CGST,
+      SGST,
+      totalTax,
+      netPayable,
     } = req.body;
 
     if (!pid) return response(res, 400, false, "No pid. No order");
     if (!uid) return response(res, 400, false, "No uid. No order");
+
+    if (!quantity) return response(res, 400, false, "No quantity. No order");
+    if (!paymentMethod)
+      return response(res, 400, false, "No payment method. No order");
+    if (!paymentStatus)
+      return response(res, 400, false, "No payment status. No order");
+    if (!CGSTRate) return response(res, 400, false, "No CGST rate. No order");
+    if (!SGSTRate) return response(res, 400, false, "No SGST rate. No order");
+    if (!CGST) return response(res, 400, false, "No SGST. No order");
+    if (!SGST) return response(res, 400, false, "No SGST. No order");
+    if (!totalTax) return response(res, 400, false, "No total tax. No order");
+    if (!netPayable)
+      return response(res, 400, false, "No net payable. No order");
+
+    // const product = await Product.findById(pid);
+
+    // if (!product)
+    //   return response(res, 404, false, "Product not found. No order");
+
+    const customer = await User.findById(uid);
+
+    if (!customer)
+      return response(res, 404, false, "Cusotmer not found. No order");
+
+    const state = customer.contactDetails?.address?.state;
+    if (!state) return response(res, 404, false, "State not found. No order");
+
+    const tax = await Tax.find({ state });
 
     const order = await new Order({
       product: pid,
@@ -27,6 +62,12 @@ const createOrderController = async (req, res) => {
       paymentMethod,
       paymentStatus,
       tnxId,
+      CGSTRate,
+      SGSTRate,
+      CGST,
+      SGST,
+      totalTax,
+      netPayable,
     }).save();
 
     return response(res, 201, true, "New order created", order);

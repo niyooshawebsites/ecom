@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
+import BackBtn from "./BackBtn";
 
 const AdminOrderDetails = () => {
   const [order, setOrder] = useState({});
@@ -35,14 +36,7 @@ const AdminOrderDetails = () => {
 
   return (
     <div className="w-full flex flex-col justify-start items-center min-h-screen">
-      <div className="w-5/12 flex justify-end items-end my-3">
-        <Link
-          className="bg-green-600 px-2 py-1 hover:bg-green-700 text-white rounded-md"
-          to="/dashboard/orders"
-        >
-          Back to orders
-        </Link>
-      </div>
+      <BackBtn link={"/dashboard/orders"} />
 
       <div className="flex flex-col">
         <div className="w-full m-1">

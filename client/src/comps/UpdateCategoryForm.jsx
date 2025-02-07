@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import BackBtn from "./BackBtn";
 
 const UpdateCategoryForm = () => {
   const { cid } = useParams();
@@ -46,7 +47,8 @@ const UpdateCategoryForm = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-light my-10">Update Category</h1>
+      <BackBtn link={"/dashboard/categories"} />
+      <h1 className="text-4xl py-3 poppins-light mb-5">Update Category</h1>
       <div className="flex flex-col w-6/12 border rounded-lg p-5">
         <form className="mb-3" action={updateCategory}>
           <div className="flex flex-col mb-3">

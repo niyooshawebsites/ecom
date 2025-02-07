@@ -7,9 +7,17 @@ import { paymentMethodSliceActions } from "../store/slices/paymentMethodSlice";
 import { cartSliceActions } from "../store/slices/cartSlice";
 
 const CheckoutForm = () => {
-  const states = ["Delhi", "Maharashtra", "West Bengal", "Tamil Nadu"];
+  const states = [
+    "Delhi",
+    "Uttar Pradesh",
+    "Maharashtra",
+    "West Bengal",
+    "Tamil Nadu",
+  ];
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [loggedInUserDetails, setLoggedInUserDetails] = useState({
     fName: "",
     lName: "",
@@ -29,6 +37,8 @@ const CheckoutForm = () => {
     paymentMethod: "",
   });
 
+  const [taxes, setTaxes] = useState([]);
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const { uid } = useSelector((state) => state.user_Slice);
@@ -36,7 +46,42 @@ const CheckoutForm = () => {
   const { cartProductList, cartDiscount, cartGrossTotal, cartNetTotal } =
     useSelector((state) => state.cart_Slice);
 
+  const [netPayable, setNetPayable] = useState(cartNetTotal);
+
   const [cartTotal, setCartTotal] = useState(0);
+
+  const calcTax = async (e) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-tax-by-state-without-login/${e.target.value}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        setTaxes(res.data.data);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const calcNetPayable = () => {
+    // created an array from tax rates
+    const actualtaxes = taxes.map((tax) => {
+      return Math.round((tax.rate * cartNetTotal) / 100);
+    });
+
+    const initialValue = 0;
+    const totalTax = actualtaxes.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      initialValue
+    );
+
+    const totalAmountToBePaid = cartNetTotal + totalTax;
+    setNetPayable(totalAmountToBePaid);
+  };
 
   const calculateCartTotal = () => {
     const intialValue = 0;
@@ -170,7 +215,7 @@ const CheckoutForm = () => {
             const razorpayOrderRes = await axios.post(
               `http://localhost:8000/api/v1/create-razorpay-order`,
               {
-                amount: cartNetTotal,
+                amount: netPayable,
                 currency: "INR",
               },
               {
@@ -327,7 +372,7 @@ const CheckoutForm = () => {
               const razorpayOrderRes = await axios.post(
                 `http://localhost:8000/api/v1/create-razorpay-order`,
                 {
-                  amount: cartNetTotal,
+                  amount: netPayable,
                   currency: "INR",
                 },
                 {
@@ -455,12 +500,7 @@ const CheckoutForm = () => {
     setIsPasswordVisible((prevState) => !prevState);
   };
 
-  useEffect(() => {
-    setCartTotal(calculateCartTotal());
-    fetchLoggedUserDetailsonPageLoad(uid);
-  }, []);
-
-  useEffect(() => {
+  const loadPaymentGatewayScript = () => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
@@ -469,7 +509,14 @@ const CheckoutForm = () => {
     };
     script.onerror = () => console.error("Failed to load Razorpay script");
     document.body.appendChild(script);
-  }, []);
+  };
+
+  useEffect(() => {
+    setCartTotal(calculateCartTotal());
+    fetchLoggedUserDetailsonPageLoad(uid);
+    calcNetPayable();
+    loadPaymentGatewayScript();
+  }, [taxes, cartNetTotal]);
 
   return (
     <div className=" flex flex-col justify-start items-center min-h-screen">
@@ -710,9 +757,14 @@ const CheckoutForm = () => {
                   name="state"
                   id="state"
                   value={loggedInUserDetails.state}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    calcTax(e);
+                    calcNetPayable(e);
+                  }}
                   required
                 >
+                  <option>Select</option>
                   {states.map((state, index) => (
                     <option key={index} value={state}>
                       {state}
@@ -805,12 +857,13 @@ const CheckoutForm = () => {
                       <tbody>
                         <tr className="border-b">
                           <td className="border text-sm p-1 font-bold">
-                            Gross amount
+                            Gross total
                           </td>
                           <td className="poppins-light border text-sm p-1 text-center">
                             Rs {cartGrossTotal || 0}
                           </td>
                         </tr>
+
                         <tr className="border-b">
                           <td className="border text-sm p-1 font-bold">
                             Discount:
@@ -819,12 +872,36 @@ const CheckoutForm = () => {
                             Rs ({cartDiscount.discountAmount || 0})
                           </td>
                         </tr>
+
                         <tr className="border-b">
                           <td className="border text-sm p-1 font-bold">
-                            Net amount
+                            Net total
                           </td>
                           <td className="poppins-light border text-sm p-1 text-center">
                             Rs {cartNetTotal || 0}
+                          </td>
+                        </tr>
+
+                        {taxes.map((tax) => {
+                          return (
+                            <tr className="border-b" key={tax.id}>
+                              <td className="border text-sm p-1 font-bold">
+                                {tax.name} ({tax.rate}%)
+                              </td>
+                              <td className="poppins-light border text-sm p-1 text-center">
+                                Rs
+                                {Math.round((cartGrossTotal * tax.rate) / 100)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+
+                        <tr className="border-b">
+                          <td className="border text-sm p-1 font-bold">
+                            Net Payable
+                          </td>
+                          <td className="poppins-light border text-sm p-1 text-center">
+                            Rs {netPayable || 0}
                           </td>
                         </tr>
                       </tbody>

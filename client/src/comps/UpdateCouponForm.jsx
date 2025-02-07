@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import BackBtn from "./BackBtn";
 
 const UpdateCouponForm = () => {
   const [coupon, setCoupon] = useState({});
@@ -79,7 +80,8 @@ const UpdateCouponForm = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-light my-10">Update Coupon</h1>
+      <BackBtn link={"/dashboard/coupons"} />
+      <h1 className="text-4xl py-3 poppins-light mb-5">Update Coupon</h1>
       <div className="flex flex-col w-6/12 border rounded-lg p-5 mb-10">
         <form className="mb-3" action={handleCouponUpdation}>
           <div className="flex flex-col mb-3">

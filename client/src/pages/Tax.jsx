@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const Tax = () => {
   const [taxCreated, setTaxCreated] = useState(false);
+
   return (
     <Layout>
       <div className="flex">

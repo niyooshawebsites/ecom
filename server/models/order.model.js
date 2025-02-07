@@ -32,6 +32,26 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    CGSTRate: {
+      type: Number,
+      default: 0,
+    },
+    SGSTRate: {
+      type: Number,
+      default: 0,
+    },
+    CGST: {
+      type: Number,
+      default: 0,
+    },
+    SGST: {
+      type: Number,
+      default: 0,
+    },
+    totalTax: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: [
