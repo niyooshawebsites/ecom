@@ -6,10 +6,9 @@ import BackBtn from "./BackBtn";
 
 const UpdateTaxForm = () => {
   const [tax, setTax] = useState({
-    country: "",
     state: "",
-    name: "",
-    rate: "",
+    CGSTRate: "",
+    SGSTRate: "",
   });
 
   const location = useLocation();
@@ -27,10 +26,9 @@ const UpdateTaxForm = () => {
 
       if (res.data.success) {
         setTax({
-          country: res.data.data.country,
           state: res.data.data.state,
-          name: res.data.data.name,
-          rate: res.data.data.rate,
+          CGSTRate: res.data.data.CGSTRate,
+          SGSTRate: res.data.data.SGSTRate,
         });
       }
     } catch (err) {
@@ -82,22 +80,6 @@ const UpdateTaxForm = () => {
           onSubmit={handleTaxUpdation}
         >
           <div className="w-3/12 flex flex-col px-2">
-            <label htmlFor="country" className="mb-2">
-              Country
-            </label>
-            <input
-              type="text"
-              name="country"
-              id="country"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              value={tax.country}
-              onChange={handleChange}
-              placeholder="India"
-              required
-            />
-          </div>
-
-          <div className="w-3/12 flex flex-col px-2">
             <label htmlFor="state" className="mb-2">
               State
             </label>
@@ -115,29 +97,29 @@ const UpdateTaxForm = () => {
 
           <div className="w-3/12 flex flex-col px-2">
             <label htmlFor="name" className="mb-2">
-              Tax
+              CGST Rate (%)
             </label>
             <input
               type="text"
-              name="name"
-              id="name"
-              value={tax.name}
+              name="CGSTRate"
+              id="CGSTRate"
+              value={tax.CGSTRate}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="CGST"
+              placeholder="18"
               required
             />
           </div>
 
           <div className="w-1/12 flex flex-col px-2">
             <label htmlFor="rate" className="mb-2">
-              Rate (%)
+              SGST Rate (%)
             </label>
             <input
               type="number"
-              name="rate"
-              id="rate"
-              value={tax.rate}
+              name="SGSTRate"
+              id="SGSTRate"
+              value={tax.SGSTRate}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="18"

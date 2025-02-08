@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const generateInvoice = (order, res) => {
+const generateInvoice = (order, user, res) => {
   const doc = new PDFDocument({ margin: 50 });
 
   // Ensure invoices directory exists
@@ -89,8 +89,8 @@ const generateInvoice = (order, res) => {
   doc.font("Helvetica");
   let yPos = tableTop + 25;
   const total = order.quantity * order.product?.price;
-  const cgst = total * 0.18;
-  const sgst = total * 0.18;
+  const cgst = order.CGST;
+  const sgst = order.SGST;
   const grandTotal = total + cgst + sgst;
 
   doc.rect(50, yPos, 510, 20).stroke();
@@ -117,7 +117,7 @@ const generateInvoice = (order, res) => {
   doc
     .fontSize(12)
     .font("Helvetica-Bold")
-    .text("Your Company Name", 50, bottomY, {
+    .text(`${user.contactDetails.bName}`, 50, bottomY, {
       align: "center",
       width: 510,
       underline: true,
@@ -126,7 +126,7 @@ const generateInvoice = (order, res) => {
   doc
     .fontSize(10)
     .font("Helvetica-Bold")
-    .text("www.yourcompany.com | contact@yourcompany.com", 50, bottomY + 15, {
+    .text(`${user.contactDetails.website} | ${user.email}`, 50, bottomY + 15, {
       align: "center",
       width: 510,
     });

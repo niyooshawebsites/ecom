@@ -2,28 +2,30 @@ import mongoose from "mongoose";
 
 const taxSchema = new mongoose.Schema(
   {
-    country: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     state: {
       type: String,
       required: true,
       trim: true,
       enum: [
+        "Andaman and Nicobar Islands",
         "Andhra Pradesh",
         "Arunachal Pradesh",
         "Assam",
         "Bihar",
+        "Chandigarh",
         "Chhattisgarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
         "Goa",
         "Gujarat",
         "Haryana",
         "Himachal Pradesh",
+        "Jammu and Kashmir",
         "Jharkhand",
         "Karnataka",
         "Kerala",
+        "Ladakh",
+        "Lakshadweep",
         "Madhya Pradesh",
         "Maharashtra",
         "Manipur",
@@ -31,6 +33,7 @@ const taxSchema = new mongoose.Schema(
         "Mizoram",
         "Nagaland",
         "Odisha",
+        "Puducherry",
         "Punjab",
         "Rajasthan",
         "Sikkim",
@@ -41,18 +44,6 @@ const taxSchema = new mongoose.Schema(
         "Uttarakhand",
         "West Bengal",
       ],
-    },
-    CGSTName: {
-      type: String,
-      required: true,
-      trim: true,
-      default: "CGST",
-    },
-    SGSTName: {
-      type: String,
-      required: true,
-      trim: true,
-      default: "SGST",
     },
     CGSTRate: {
       type: Number,

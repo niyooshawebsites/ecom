@@ -3,13 +3,16 @@ import response from "../utils/response.js";
 
 const createTaxController = async (req, res) => {
   try {
-    const { country, state, name, rate } = req.body;
-    if (!country) return response(res, 400, false, "Country is missing");
-    if (!name) return response(res, 400, false, "Tax name is missing");
-    if (!state) return response(res, 400, false, "State is missing");
-    if (!rate) return response(res, 400, false, "Rate is missing");
+    const { state, CGSTRate, SGSTRate } = req.body;
 
-    const newTax = await new Tax({ country, state, name, rate }).save();
+    if (!state) return response(res, 400, false, "State is missing");
+    if (!CGSTRate) return response(res, 400, false, "CGSTRate is missing");
+    if (!SGSTRate) return response(res, 400, false, "SGSTRate is missing");
+
+    const tax = await Tax.findOne({ state });
+    if (tax) return response(res, 409, false, "Tax already exists");
+
+    const newTax = await new Tax({ state, CGSTRate, SGSTRate }).save();
 
     return response(res, 201, true, "Tax created successfully", newTax);
   } catch (err) {
@@ -21,17 +24,16 @@ const createTaxController = async (req, res) => {
 const updateTaxController = async (req, res) => {
   try {
     const { tid } = req.params;
-    const { country, state, name, rate } = req.body;
+    const { state, CGSTRate, SGSTRate } = req.body;
 
     if (!tid) return response(res, 400, false, "No tid. No updation");
-    if (!country) return response(res, 400, false, "Country is missing");
-    if (!name) return response(res, 400, false, "Tax name is missing");
     if (!state) return response(res, 400, false, "State is missing");
-    if (!rate) return response(res, 400, false, "Rate is missing");
+    if (!CGSTRate) return response(res, 400, false, "CGSTRate is missing");
+    if (!SGSTRate) return response(res, 400, false, "SGSTRate is missing");
 
     const updatedTax = await Tax.findByIdAndUpdate(
       tid,
-      { country, state, name, rate },
+      { state, CGSTRate, SGSTRate },
       { new: true }
     );
 
@@ -126,8 +128,8 @@ const fetchTaxByStateController = async (req, res) => {
     const { state } = req.params;
     if (!state) return response(res, 400, false, "No state. No updation");
 
-    const tax = await Tax.find({ state });
-    if (tax.length === 0) return response(res, 404, false, "No tax found");
+    const tax = await Tax.findOne({ state });
+    if (!tax) return response(res, 404, false, "No tax found");
 
     return response(res, 200, true, "Tax found successfully", tax);
   } catch (err) {
@@ -141,8 +143,8 @@ const fetchTaxByStateWithoutLoginController = async (req, res) => {
     const { state } = req.params;
     if (!state) return response(res, 400, false, "No state. No updation");
 
-    const tax = await Tax.find({ state });
-    if (tax.length === 0) return response(res, 404, false, "No tax found");
+    const tax = await Tax.findOne({ state });
+    if (!tax) return response(res, 404, false, "No tax found");
 
     return response(res, 200, true, "Tax found successfully", tax);
   } catch (err) {

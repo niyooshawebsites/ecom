@@ -7,12 +7,43 @@ import { paymentMethodSliceActions } from "../store/slices/paymentMethodSlice";
 import { cartSliceActions } from "../store/slices/cartSlice";
 
 const CheckoutForm = () => {
-  const states = [
+  const indianRegions = [
+    "Andaman and Nicobar Islands",
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chandigarh",
+    "Chhattisgarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
     "Delhi",
-    "Uttar Pradesh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jammu and Kashmir",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Ladakh",
+    "Lakshadweep",
+    "Madhya Pradesh",
     "Maharashtra",
-    "West Bengal",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Puducherry",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
     "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
   ];
 
   const navigate = useNavigate();
@@ -37,7 +68,11 @@ const CheckoutForm = () => {
     paymentMethod: "",
   });
 
-  const [taxes, setTaxes] = useState([]);
+  const [taxes, setTaxes] = useState({
+    state: "",
+    CGSTRate: "",
+    SGSTRate: "",
+  });
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -60,7 +95,12 @@ const CheckoutForm = () => {
       );
 
       if (res.data.success) {
-        setTaxes(res.data.data);
+        setTaxes((prev) => ({
+          ...prev,
+          state: res.data.data.state,
+          CGSTRate: res.data.data.CGSTRate,
+          SGSTRate: res.data.data.SGSTRate,
+        }));
       }
     } catch (err) {
       console.log(err.message);
@@ -68,18 +108,10 @@ const CheckoutForm = () => {
   };
 
   const calcNetPayable = () => {
-    // created an array from tax rates
-    const actualtaxes = taxes.map((tax) => {
-      return Math.round((tax.rate * cartNetTotal) / 100);
-    });
+    const CGST = Math.round((cartNetTotal * taxes.CGSTRate) / 100);
+    const SGST = Math.round((cartNetTotal * taxes.SGSTRate) / 100);
 
-    const initialValue = 0;
-    const totalTax = actualtaxes.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      initialValue
-    );
-
-    const totalAmountToBePaid = cartNetTotal + totalTax;
+    const totalAmountToBePaid = cartNetTotal + CGST + SGST;
     setNetPayable(totalAmountToBePaid);
   };
 
@@ -187,7 +219,7 @@ const CheckoutForm = () => {
         }
       }
 
-      // if not uid all the followin will be ignored as control will flow to the catch part
+      // if uid all the following will be ignored as control will flow to the catch part
       // if the user is logged in
       if (uid) {
         // update user contact information
@@ -235,7 +267,7 @@ const CheckoutForm = () => {
                 key: `${import.meta.env.VITE_RAZORPAY_KEY}`,
                 amount: amount,
                 currency: currency,
-                name: "Woodmart",
+                name: "Hare Krishna Store",
                 description: "Test Transaction",
                 order_id: order_id,
                 handler: async function (response) {
@@ -261,6 +293,16 @@ const CheckoutForm = () => {
                           paymentMethod: loggedInUserDetails.paymentMethod,
                           tnxId: response.razorpay_payment_id,
                           paymentStatus: "Paid",
+                          CGSTRate: taxes.CGSTRate,
+                          SGSTRate: taxes.SGSTRate,
+                          CGST: Math.round(
+                            (cartNetTotal * taxes.CGSTRate) / 100
+                          ),
+                          SGST: Math.round(
+                            (cartNetTotal * taxes.SGSTRate) / 100
+                          ),
+                          totalTax: this.CGST + this.SGST,
+                          netPayable,
                         },
                         { withCredentials: true }
                       );
@@ -307,6 +349,12 @@ const CheckoutForm = () => {
                   orderNote: loggedInUserDetails.orderNote,
                   paymentMethod: loggedInUserDetails.paymentMethod,
                   paymentStatus: "Unpaid",
+                  CGSTRate: taxes.CGSTRate,
+                  SGSTRate: taxes.SGSTRate,
+                  CGST: Math.round((cartNetTotal * taxes.CGSTRate) / 100),
+                  SGST: Math.round((cartNetTotal * taxes.SGSTRate) / 100),
+                  totalTax: this.CGST + this.SGST,
+                  netPayable,
                 },
                 { withCredentials: true }
               );
@@ -418,6 +466,16 @@ const CheckoutForm = () => {
                             paymentMethod: loggedInUserDetails.paymentMethod,
                             tnxId: response.razorpay_payment_id,
                             paymentStatus: "Paid",
+                            CGSTRate: taxes.CGSTRate,
+                            SGSTRate: taxes.SGSTRate,
+                            CGST: Math.round(
+                              (cartNetTotal * taxes.CGSTRate) / 100
+                            ),
+                            SGST: Math.round(
+                              (cartNetTotal * taxes.SGSTRate) / 100
+                            ),
+                            totalTax: this.CGST + this.SGST,
+                            netPayable,
                           },
                           { withCredentials: true }
                         );
@@ -464,6 +522,12 @@ const CheckoutForm = () => {
                     orderNote: loggedInUserDetails.orderNote,
                     paymentMethod: loggedInUserDetails.paymentMethod,
                     paymentStatus: "Unpaid",
+                    CGSTRate: taxes.CGSTRate,
+                    SGSTRate: taxes.SGSTRate,
+                    CGST: Math.round((cartNetTotal * taxes.CGSTRate) / 100),
+                    SGST: Math.round((cartNetTotal * taxes.SGSTRate) / 100),
+                    totalTax: this.CGST + this.SGST,
+                    netPayable,
                   },
                   { withCredentials: true }
                 );
@@ -512,10 +576,13 @@ const CheckoutForm = () => {
   };
 
   useEffect(() => {
+    loadPaymentGatewayScript();
+  }, []);
+
+  useEffect(() => {
     setCartTotal(calculateCartTotal());
     fetchLoggedUserDetailsonPageLoad(uid);
     calcNetPayable();
-    loadPaymentGatewayScript();
   }, [taxes, cartNetTotal]);
 
   return (
@@ -765,9 +832,9 @@ const CheckoutForm = () => {
                   required
                 >
                   <option>Select</option>
-                  {states.map((state, index) => (
-                    <option key={index} value={state}>
-                      {state}
+                  {indianRegions.map((region, index) => (
+                    <option key={index} value={region}>
+                      {region}
                     </option>
                   ))}
                 </select>
@@ -882,19 +949,25 @@ const CheckoutForm = () => {
                           </td>
                         </tr>
 
-                        {taxes.map((tax) => {
-                          return (
-                            <tr className="border-b" key={tax.id}>
-                              <td className="border text-sm p-1 font-bold">
-                                {tax.name} ({tax.rate}%)
-                              </td>
-                              <td className="poppins-light border text-sm p-1 text-center">
-                                Rs
-                                {Math.round((cartGrossTotal * tax.rate) / 100)}
-                              </td>
-                            </tr>
-                          );
-                        })}
+                        <tr className="border-b">
+                          <td className="border text-sm p-1 font-bold">
+                            CGST ({taxes.CGSTRate}%)
+                          </td>
+                          <td className="poppins-light border text-sm p-1 text-center">
+                            Rs
+                            {Math.round((cartNetTotal * taxes.CGSTRate) / 100)}
+                          </td>
+                        </tr>
+
+                        <tr className="border-b">
+                          <td className="border text-sm p-1 font-bold">
+                            SGST ({taxes.SGSTRate}%)
+                          </td>
+                          <td className="poppins-light border text-sm p-1 text-center">
+                            Rs
+                            {Math.round((cartNetTotal * taxes.SGSTRate) / 100)}
+                          </td>
+                        </tr>
 
                         <tr className="border-b">
                           <td className="border text-sm p-1 font-bold">
@@ -930,6 +1003,7 @@ const CheckoutForm = () => {
                     name="paymentMethod"
                     id="online"
                     value="Online"
+                    checked={loggedInUserDetails.paymentMethod === "Online"}
                     onChange={handleChange}
                     defaultChecked
                   />{" "}
@@ -942,6 +1016,7 @@ const CheckoutForm = () => {
                     name="paymentMethod"
                     id="cod"
                     value="COD"
+                    checked={loggedInUserDetails.paymentMethod === "COD"}
                     onChange={handleChange}
                   />{" "}
                   Cash on Delivery

@@ -2,19 +2,57 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const CreateTaxForm = ({ setTaxCreated }) => {
+  const indianRegions = [
+    "Andaman and Nicobar Islands",
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chandigarh",
+    "Chhattisgarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jammu and Kashmir",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Ladakh",
+    "Lakshadweep",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Puducherry",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+  ];
+
   const handleTaxCreation = async (formData) => {
-    const country = formData.get("country");
     const state = formData.get("state");
-    const name = formData.get("name");
-    const rate = formData.get("rate");
+    const CGSTRate = formData.get("CGSTRate");
+    const SGSTRate = formData.get("SGSTRate");
+
     try {
       const res = await axios.post(
         `http://localhost:8000/api/v1/create-tax`,
         {
-          country,
           state,
-          name,
-          rate,
+          CGSTRate,
+          SGSTRate,
         },
         {
           withCredentials: true,
@@ -39,55 +77,46 @@ const CreateTaxForm = ({ setTaxCreated }) => {
           action={handleTaxCreation}
         >
           <div className="w-3/12 flex flex-col px-2">
-            <label htmlFor="country" className="mb-2">
-              Country
-            </label>
-            <input
-              type="text"
-              name="country"
-              id="country"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="India"
-              required
-            />
-          </div>
-
-          <div className="w-3/12 flex flex-col px-2">
             <label htmlFor="state" className="mb-2">
               State
             </label>
-            <input
-              type="text"
+            <select
+              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               name="state"
               id="state"
+              required
+            >
+              <option>Select</option>
+              {indianRegions.map((region, index) => (
+                <option key={index} value={region}>
+                  {region}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="w-3/12 flex flex-col px-2">
+            <label htmlFor="CGSTRate" className="mb-2">
+              CGST Rate (%)
+            </label>
+            <input
+              type="number"
+              name="CGSTRate"
+              id="CGSTRate"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Uttar Pradesh"
+              placeholder="18"
               required
             />
           </div>
 
           <div className="w-3/12 flex flex-col px-2">
-            <label htmlFor="name" className="mb-2">
-              Tax
-            </label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="CGST"
-              required
-            />
-          </div>
-
-          <div className="w-1/12 flex flex-col px-2">
-            <label htmlFor="rate" className="mb-2">
-              Rate (%)
+            <label htmlFor="SGSTRate" className="mb-2">
+              SGST Rate (%)
             </label>
             <input
               type="number"
-              name="rate"
-              id="rate"
+              name="SGSTRate"
+              id="SGSTRate"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="18"
               required
