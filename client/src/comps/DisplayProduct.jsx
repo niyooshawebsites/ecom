@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { cartSliceActions } from "../store/slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import CreateReviewForm from "./CreateReviewForm";
 import { FaStar } from "react-icons/fa";
@@ -9,7 +9,10 @@ import { FaStar } from "react-icons/fa";
 const DisplayProduct = () => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
-  const { pid } = useParams();
+  // const { pid } = useParams();
+  const location = useLocation();
+  const queryStrings = new URLSearchParams(location.search);
+  const pid = queryStrings.get("pid");
   const [productData, setProductData] = useState({});
   const [reviews, setReviews] = useState([]);
   const { cartProductList } = useSelector((state) => state.cart_Slice);
@@ -178,7 +181,7 @@ const DisplayProduct = () => {
   return (
     <main className="w-9/12 mx-auto mt-5">
       <div className={`${cartProductList.length > 0 ? "block" : "hidden"}`}>
-        <p className=" border text-center py-3">
+        <p className="border-b-2  border-t-2 text-center py-3">
           Your cart has products.{" "}
           <Link
             className="bg-orange-600 py-1 px-1 rounded-md  text-gray-100 hover:bg-orange-700"
@@ -202,14 +205,14 @@ const DisplayProduct = () => {
             <h2 className="text-2xl mb-5">Short product description</h2>
             <p className="w-6/12">{productData.shortDesc}</p>
           </section>
-          <section className="w-5/12 flex justify-evenly items-center">
+          <section className="w-6/12 flex justify-evenly items-center">
             <button
-              className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300"
+              className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300 "
               onClick={decrement}
             >
               -
             </button>
-            <span>{count}</span>
+            <span className="mx-1">{count}</span>
             <button
               className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300"
               onClick={increment}
@@ -217,7 +220,7 @@ const DisplayProduct = () => {
               +
             </button>
             <button
-              className="bg-blue-600 py-2 px-4 border rounded-md text-xl text-gray-100 hover:bg-blue-700"
+              className="bg-blue-600 py-2 px-4 border rounded-md text-xl text-gray-100 hover:bg-blue-700 "
               onClick={addToCart}
             >
               Add to cart
@@ -231,32 +234,41 @@ const DisplayProduct = () => {
         <p>{productData.longDesc}</p>
       </section>
       <section className="p-10">
-        <h2 className="text-3xl mb-5">Write a Review</h2>
-        <CreateReviewForm />
+        <div className="mb-5">
+          <h2 className="text-3xl mb-2">Write a Review</h2>
+          <p className="text-gray-400">Please login to leave a comment</p>
+        </div>
+        <CreateReviewForm pid={pid} />
       </section>
       <section className="p-10">
         <h2 className="text-3xl mb-5">Product Reviews</h2>
-        {reviews.map((review) => {
-          return (
-            <div key={review._id} className="border p-3 rounded-lg mb-3">
-              {createRatingArray(review.rating).map((rating, index) => {
-                return (
-                  <FaStar
-                    key={index}
-                    className="inline text-xl text-yellow-500 mb-3"
-                  />
-                );
-              })}
-              <p className="mb-3">{review.reviewMsg}</p>
-              <p className="mb-3">
-                {review.createdAt.split("T")[0].split("-").reverse().join("-")}
-                {" | "}
-                {review.createdAt.split("T")[1].slice(0, 8)}
-              </p>
-              <p className="font-medium">{review.reviewer.username}</p>
-            </div>
-          );
-        })}
+        {reviews.length > 0
+          ? reviews.map((review) => {
+              return (
+                <div key={review._id} className="border p-3 rounded-lg mb-3">
+                  {createRatingArray(review.rating).map((rating, index) => {
+                    return (
+                      <FaStar
+                        key={index}
+                        className="inline text-xl text-yellow-500 mb-3"
+                      />
+                    );
+                  })}
+                  <p className="mb-3">{review.reviewMsg}</p>
+                  <p className="mb-3">
+                    {review.createdAt
+                      .split("T")[0]
+                      .split("-")
+                      .reverse()
+                      .join("-")}
+                    {" | "}
+                    {review.createdAt.split("T")[1].slice(0, 8)}
+                  </p>
+                  <p className="font-medium">{review.reviewer.username}</p>
+                </div>
+              );
+            })
+          : "No reviews yet. Be the first one to review!"}
       </section>
     </main>
   );

@@ -10,7 +10,7 @@ const createReviewController = async (req, res) => {
     if (!pid) return response(res, 400, false, "No pid. No review");
     if (!rating) return response(res, 400, false, "Rating missing");
     if (!reviewMsg) return response(res, 400, false, "Review msg missing");
-    if (!uid) return response(res, 400, false, "Uid missing");
+    if (!uid) return response(res, 400, false, "Please login to comment");
 
     const newReview = await new Review({
       product: pid,

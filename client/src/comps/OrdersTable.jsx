@@ -415,14 +415,18 @@ const OrdersTable = () => {
                             .join("-")}
                         </td>
                         <td className="border text-sm p-1">
-                          <button
-                            className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 ml-2"
-                            onClick={() => {
-                              downloadInvoice(order._id);
-                            }}
-                          >
-                            Download
-                          </button>
+                          {order.status === "Completed" ? (
+                            <button
+                              className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 ml-2"
+                              onClick={() => {
+                                downloadInvoice(order._id);
+                              }}
+                            >
+                              Download
+                            </button>
+                          ) : (
+                            "Not available"
+                          )}
                         </td>
                       </tr>
                     );

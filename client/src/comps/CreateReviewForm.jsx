@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
-const CreateReviewForm = () => {
+const CreateReviewForm = ({ pid }) => {
   const { uid } = useSelector((state) => state.user_Slice);
 
   const handleCreateReview = async (formData) => {
@@ -11,7 +11,7 @@ const CreateReviewForm = () => {
       const reviewMsg = formData.get("reviewMsg");
 
       const res = await axios.post(
-        `http://localhost:8000/api/v1/create-review`,
+        `http://localhost:8000/api/v1/create-review/${pid}`,
         { rating, reviewMsg, uid },
         { withCredentials: true }
       );
@@ -21,6 +21,7 @@ const CreateReviewForm = () => {
       }
     } catch (err) {
       console.log(err.message);
+      toast.error(err.response.data.msg);
     }
   };
 
@@ -34,6 +35,7 @@ const CreateReviewForm = () => {
           name="rating"
           id="rating"
           className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+          required
         >
           <option>Select Rating</option>
           <option value="1">1 - Bad</option>
@@ -54,6 +56,7 @@ const CreateReviewForm = () => {
           className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
           rows={5}
           placeholder="Write your review"
+          required
         ></textarea>
       </div>
 
