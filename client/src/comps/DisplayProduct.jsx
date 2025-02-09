@@ -205,14 +205,14 @@ const DisplayProduct = () => {
             <h2 className="text-2xl mb-5">Short product description</h2>
             <p className="w-6/12">{productData.shortDesc}</p>
           </section>
-          <section className="w-6/12 flex justify-evenly items-center">
+          <section className="w-5/12 flex justify-evenly items-center ">
             <button
               className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300 "
               onClick={decrement}
             >
               -
             </button>
-            <span className="mx-1">{count}</span>
+            <span className="px-1 text-xl">{count}</span>
             <button
               className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300"
               onClick={increment}

@@ -70,8 +70,7 @@ const CheckoutForm = () => {
 
   const [taxes, setTaxes] = useState({
     state: "",
-    CGSTRate: "",
-    SGSTRate: "",
+    GSTRate: "",
   });
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -98,8 +97,7 @@ const CheckoutForm = () => {
         setTaxes((prev) => ({
           ...prev,
           state: res.data.data.state,
-          CGSTRate: res.data.data.CGSTRate,
-          SGSTRate: res.data.data.SGSTRate,
+          GSTRate: res.data.data.GSTRate,
         }));
       }
     } catch (err) {
@@ -108,10 +106,10 @@ const CheckoutForm = () => {
   };
 
   const calcNetPayable = () => {
-    const CGST = Math.round((cartNetTotal * taxes.CGSTRate) / 100);
-    const SGST = Math.round((cartNetTotal * taxes.SGSTRate) / 100);
+    // tax calculation
+    const GST = Math.round((cartNetTotal * taxes.GSTRate) / 100);
 
-    const totalAmountToBePaid = cartNetTotal + CGST + SGST;
+    const totalAmountToBePaid = cartNetTotal + GST;
     setNetPayable(totalAmountToBePaid);
   };
 
@@ -951,21 +949,11 @@ const CheckoutForm = () => {
 
                         <tr className="border-b">
                           <td className="border text-sm p-1 font-bold">
-                            CGST ({taxes.CGSTRate}%)
+                            GST ({taxes.GSTRate}%)
                           </td>
                           <td className="poppins-light border text-sm p-1 text-center">
                             Rs
-                            {Math.round((cartNetTotal * taxes.CGSTRate) / 100)}
-                          </td>
-                        </tr>
-
-                        <tr className="border-b">
-                          <td className="border text-sm p-1 font-bold">
-                            SGST ({taxes.SGSTRate}%)
-                          </td>
-                          <td className="poppins-light border text-sm p-1 text-center">
-                            Rs
-                            {Math.round((cartNetTotal * taxes.SGSTRate) / 100)}
+                            {Math.round((cartNetTotal * taxes.GSTRate) / 100)}
                           </td>
                         </tr>
 
