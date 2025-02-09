@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const taxSchema = new mongoose.Schema(
   {
+    category: {
+      type: mongoose.Types.ObjectId || null,
+    },
     state: {
       type: String,
       required: true,

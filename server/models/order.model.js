@@ -32,23 +32,11 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    CGSTRate: {
+    GSTRate: {
       type: Number,
       default: 0,
     },
-    SGSTRate: {
-      type: Number,
-      default: 0,
-    },
-    CGST: {
-      type: Number,
-      default: 0,
-    },
-    SGST: {
-      type: Number,
-      default: 0,
-    },
-    totalTax: {
+    GST: {
       type: Number,
       default: 0,
     },

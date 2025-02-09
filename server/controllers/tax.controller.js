@@ -3,7 +3,7 @@ import response from "../utils/response.js";
 
 const createTaxController = async (req, res) => {
   try {
-    const { state, GSTRate } = req.body;
+    const { cid, state, GSTRate } = req.body;
 
     if (!state) return response(res, 400, false, "State is missing");
     if (!GSTRate) return response(res, 400, false, "GSTRate is missing");
@@ -11,7 +11,7 @@ const createTaxController = async (req, res) => {
     const tax = await Tax.findOne({ state });
     if (tax) return response(res, 409, false, "Tax already exists");
 
-    const newTax = await new Tax({ state, GSTRate }).save();
+    const newTax = await new Tax({ category: cid, state, GSTRate }).save();
 
     return response(res, 201, true, "Tax created successfully", newTax);
   } catch (err) {
@@ -23,15 +23,16 @@ const createTaxController = async (req, res) => {
 const updateTaxController = async (req, res) => {
   try {
     const { tid } = req.params;
-    const { state, GSTRate } = req.body;
+    const { cid, state, GSTRate } = req.body;
 
     if (!tid) return response(res, 400, false, "No tid. No updation");
+    if (!cid) return response(res, 400, false, "No cid. No updation");
     if (!state) return response(res, 400, false, "State is missing");
     if (!GSTRate) return response(res, 400, false, "GSTRate is missing");
 
     const updatedTax = await Tax.findByIdAndUpdate(
       tid,
-      { state, GSTRate },
+      { category: cid, state, GSTRate },
       { new: true }
     );
 
@@ -56,7 +57,8 @@ const fetchAllTaxesController = async (req, res) => {
     const taxesPerPage = await Tax.find()
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .populate("category");
 
     const totalTaxesCount = await Tax.countDocuments();
     const totalPagesCount = Math.ceil(totalTaxesCount / limit);

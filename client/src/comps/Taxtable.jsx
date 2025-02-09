@@ -139,6 +139,9 @@ const TaxTable = ({ taxCreated }) => {
                 Tax ID
               </th>
               <th className="poppins-light text-white border text-sm p-1">
+                Category
+              </th>
+              <th className="poppins-light text-white border text-sm p-1">
                 State
               </th>
               <th className="poppins-light text-white border text-sm p-1">
@@ -160,6 +163,9 @@ const TaxTable = ({ taxCreated }) => {
                     {index + 1}
                   </td>
                   <td className="text-center border text-sm p-1">{tax._id}</td>
+                  <td className="text-center border text-sm p-1">
+                    {tax.category?.name || "All categories"}
+                  </td>
                   <td className="text-center border text-sm p-1">
                     {tax.state}
                   </td>
