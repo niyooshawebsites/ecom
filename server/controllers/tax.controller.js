@@ -3,16 +3,15 @@ import response from "../utils/response.js";
 
 const createTaxController = async (req, res) => {
   try {
-    const { state, CGSTRate, SGSTRate } = req.body;
+    const { state, GSTRate } = req.body;
 
     if (!state) return response(res, 400, false, "State is missing");
-    if (!CGSTRate) return response(res, 400, false, "CGSTRate is missing");
-    if (!SGSTRate) return response(res, 400, false, "SGSTRate is missing");
+    if (!GSTRate) return response(res, 400, false, "GSTRate is missing");
 
     const tax = await Tax.findOne({ state });
     if (tax) return response(res, 409, false, "Tax already exists");
 
-    const newTax = await new Tax({ state, CGSTRate, SGSTRate }).save();
+    const newTax = await new Tax({ state, GSTRate }).save();
 
     return response(res, 201, true, "Tax created successfully", newTax);
   } catch (err) {
@@ -24,16 +23,15 @@ const createTaxController = async (req, res) => {
 const updateTaxController = async (req, res) => {
   try {
     const { tid } = req.params;
-    const { state, CGSTRate, SGSTRate } = req.body;
+    const { state, GSTRate } = req.body;
 
     if (!tid) return response(res, 400, false, "No tid. No updation");
     if (!state) return response(res, 400, false, "State is missing");
-    if (!CGSTRate) return response(res, 400, false, "CGSTRate is missing");
-    if (!SGSTRate) return response(res, 400, false, "SGSTRate is missing");
+    if (!GSTRate) return response(res, 400, false, "GSTRate is missing");
 
     const updatedTax = await Tax.findByIdAndUpdate(
       tid,
-      { state, CGSTRate, SGSTRate },
+      { state, GSTRate },
       { new: true }
     );
 

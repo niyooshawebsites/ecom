@@ -43,16 +43,14 @@ const CreateTaxForm = ({ setTaxCreated }) => {
 
   const handleTaxCreation = async (formData) => {
     const state = formData.get("state");
-    const CGSTRate = formData.get("CGSTRate");
-    const SGSTRate = formData.get("SGSTRate");
+    const GSTRate = formData.get("GSTRate");
 
     try {
       const res = await axios.post(
         `http://localhost:8000/api/v1/create-tax`,
         {
           state,
-          CGSTRate,
-          SGSTRate,
+          GSTRate,
         },
         {
           withCredentials: true,
@@ -76,7 +74,7 @@ const CreateTaxForm = ({ setTaxCreated }) => {
           className=" flex justify-center items-center mb-3"
           action={handleTaxCreation}
         >
-          <div className="w-3/12 flex flex-col px-2">
+          <div className="w-4/12 flex flex-col px-2">
             <label htmlFor="state" className="mb-2">
               State
             </label>
@@ -95,28 +93,14 @@ const CreateTaxForm = ({ setTaxCreated }) => {
             </select>
           </div>
 
-          <div className="w-3/12 flex flex-col px-2">
-            <label htmlFor="CGSTRate" className="mb-2">
-              CGST Rate (%)
+          <div className="w-4/12 flex flex-col px-2">
+            <label htmlFor="GSTRate" className="mb-2">
+              GST Rate (%)
             </label>
             <input
               type="number"
-              name="CGSTRate"
-              id="CGSTRate"
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="18"
-              required
-            />
-          </div>
-
-          <div className="w-3/12 flex flex-col px-2">
-            <label htmlFor="SGSTRate" className="mb-2">
-              SGST Rate (%)
-            </label>
-            <input
-              type="number"
-              name="SGSTRate"
-              id="SGSTRate"
+              name="GSTRate"
+              id="GSTRate"
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="18"
               required

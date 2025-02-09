@@ -45,13 +45,7 @@ const taxSchema = new mongoose.Schema(
         "West Bengal",
       ],
     },
-    CGSTRate: {
-      type: Number,
-      required: true,
-      trim: true,
-      default: 18,
-    },
-    SGSTRate: {
+    GSTRate: {
       type: Number,
       required: true,
       trim: true,

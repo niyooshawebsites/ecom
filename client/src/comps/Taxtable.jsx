@@ -142,10 +142,7 @@ const TaxTable = ({ taxCreated }) => {
                 State
               </th>
               <th className="poppins-light text-white border text-sm p-1">
-                CGST Rate (%)
-              </th>
-              <th className="poppins-light text-white border text-sm p-1">
-                SGST Rate (%)
+                GST Rate (%)
               </th>
               <th className="poppins-light text-white border text-sm p-1">
                 Action
@@ -167,10 +164,7 @@ const TaxTable = ({ taxCreated }) => {
                     {tax.state}
                   </td>
                   <td className="text-center border text-sm p-1">
-                    {tax.CGSTRate}
-                  </td>
-                  <td className="text-center border text-sm p-1">
-                    {tax.SGSTRate}
+                    {tax.GSTRate}
                   </td>
                   <td className="text-center border text-sm">
                     <Link to={`/dashboard/update-tax?tid=${tax._id}`}>

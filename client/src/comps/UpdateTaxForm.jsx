@@ -7,9 +7,47 @@ import BackBtn from "./BackBtn";
 const UpdateTaxForm = () => {
   const [tax, setTax] = useState({
     state: "",
-    CGSTRate: "",
-    SGSTRate: "",
+    GSTRate: "",
   });
+
+  const indianRegions = [
+    "Andaman and Nicobar Islands",
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chandigarh",
+    "Chhattisgarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jammu and Kashmir",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Ladakh",
+    "Lakshadweep",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Puducherry",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+  ];
 
   const location = useLocation();
   const queryString = new URLSearchParams(location.search);
@@ -27,8 +65,7 @@ const UpdateTaxForm = () => {
       if (res.data.success) {
         setTax({
           state: res.data.data.state,
-          CGSTRate: res.data.data.CGSTRate,
-          SGSTRate: res.data.data.SGSTRate,
+          GSTRate: res.data.data.CGSTRate,
         });
       }
     } catch (err) {
@@ -74,52 +111,41 @@ const UpdateTaxForm = () => {
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
       <BackBtn link={"/dashboard/tax"} />
       <h1 className="text-4xl py-3 poppins-light mb-5">Update Tax</h1>
-      <div className="flex flex-col border rounded-lg p-5">
+      <div className="flex flex-col border w-10/12 rounded-lg p-5">
         <form
           className=" flex justify-center items-center mb-3"
           onSubmit={handleTaxUpdation}
         >
-          <div className="w-3/12 flex flex-col px-2">
+          <div className="w-4/12 flex flex-col px-2">
             <label htmlFor="state" className="mb-2">
               State
             </label>
-            <input
-              type="text"
+            <select
+              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               name="state"
               id="state"
               value={tax.state}
               onChange={handleChange}
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Uttar Pradesh"
               required
-            />
+            >
+              <option>Select</option>
+              {indianRegions.map((region, index) => (
+                <option key={index} value={region}>
+                  {region}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="w-3/12 flex flex-col px-2">
-            <label htmlFor="name" className="mb-2">
-              CGST Rate (%)
+          <div className="w-4/12 flex flex-col px-2">
+            <label htmlFor="GSTRate" className="mb-2">
+              GST Rate (%)
             </label>
             <input
               type="text"
-              name="CGSTRate"
-              id="CGSTRate"
-              value={tax.CGSTRate}
-              onChange={handleChange}
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="18"
-              required
-            />
-          </div>
-
-          <div className="w-1/12 flex flex-col px-2">
-            <label htmlFor="rate" className="mb-2">
-              SGST Rate (%)
-            </label>
-            <input
-              type="number"
-              name="SGSTRate"
-              id="SGSTRate"
-              value={tax.SGSTRate}
+              name="GSTRate"
+              id="GSTRate"
+              value={tax.GSTRate}
               onChange={handleChange}
               className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
               placeholder="18"
