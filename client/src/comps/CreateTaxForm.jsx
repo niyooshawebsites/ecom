@@ -2,63 +2,8 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-const CreateTaxForm = ({ setTaxCreated }) => {
-  const indianRegions = [
-    "Andaman and Nicobar Islands",
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chandigarh",
-    "Chhattisgarh",
-    "Dadra and Nagar Haveli and Daman and Diu",
-    "Delhi",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jammu and Kashmir",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Ladakh",
-    "Lakshadweep",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Puducherry",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-  ];
-
-  const [categories, setCategories] = useState([]);
+const CreateTaxForm = ({ setTaxCreated, categories }) => {
   const [singleStoreTax, setSingleStoreTax] = useState(false);
-
-  const fetchAllCategories = async (pageNo) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-categories/${pageNo}`,
-        { withCredentials: true }
-      );
-
-      if (res.data.success) {
-        setCategories(res.data.data);
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
 
   const handleTaxType = (formData) => {
     const taxType = formData.get("taxType");
@@ -96,10 +41,6 @@ const CreateTaxForm = ({ setTaxCreated }) => {
       console.log(err.message);
     }
   };
-
-  useEffect(() => {
-    fetchAllCategories();
-  }, []);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center">
@@ -148,25 +89,6 @@ const CreateTaxForm = ({ setTaxCreated }) => {
               action={handleTaxCreation}
             >
               <div className="w-4/12 flex flex-col px-2">
-                <label htmlFor="state" className="mb-2">
-                  State
-                </label>
-                <select
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  name="state"
-                  id="state"
-                  required
-                >
-                  <option>Select</option>
-                  {indianRegions.map((region, index) => (
-                    <option key={index} value={region}>
-                      {region}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="w-4/12 flex flex-col px-2">
                 <label htmlFor="GSTRate" className="mb-2">
                   GST Rate (%)
                 </label>
@@ -208,25 +130,6 @@ const CreateTaxForm = ({ setTaxCreated }) => {
                   {categories.map((category) => (
                     <option key={category._id} value={category._id}>
                       {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="w-4/12 flex flex-col px-2">
-                <label htmlFor="state" className="mb-2">
-                  State
-                </label>
-                <select
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  name="state"
-                  id="state"
-                  required
-                >
-                  <option>Select</option>
-                  {indianRegions.map((region, index) => (
-                    <option key={index} value={region}>
-                      {region}
                     </option>
                   ))}
                 </select>

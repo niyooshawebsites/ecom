@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { SlRefresh } from "react-icons/sl";
 import Pagination from "./Pagination";
 
-const TaxTable = ({ taxCreated }) => {
+const TaxTable = ({ taxCreated, categories }) => {
   const [taxes, setTaxes] = useState([]);
   const [taxDeleted, setTaxDeleted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,11 +27,11 @@ const TaxTable = ({ taxCreated }) => {
     }
   };
 
-  const fetchTaxByState = async (formData) => {
+  const fetchTaxByCategory = async (formData) => {
     const state = formData.get("state");
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-tax-by-state/${state}`,
+        `http://localhost:8000/api/v1/fetch-tax-by-category/${state}`,
         {
           withCredentials: true,
         }
@@ -102,15 +102,29 @@ const TaxTable = ({ taxCreated }) => {
         </div>
 
         <div className="flex my-3">
-          <form action={fetchTaxByState} className="flex w-full mr-3">
-            <input
-              type="text"
-              name="state"
-              id="state"
-              placeholder="State"
-              className="border border-gray-300 rounded p-1 mr-2 w-full"
-              required
-            />
+          <form
+            action={fetchTaxByCategory}
+            className="flex items-center w-full mr-3"
+          >
+            <div className="flex flex-col ">
+              <label htmlFor="category" className="mb-2">
+                Category
+              </label>
+              <select
+                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                name="category"
+                id="category"
+                required
+              >
+                <option>Select</option>
+                {categories.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <button className="bg-blue-600 hover:bg-blue-700 py-1 px-2 rounded text-white">
               Search
             </button>
@@ -142,9 +156,6 @@ const TaxTable = ({ taxCreated }) => {
                 Category
               </th>
               <th className="poppins-light text-white border text-sm p-1">
-                State
-              </th>
-              <th className="poppins-light text-white border text-sm p-1">
                 GST Rate (%)
               </th>
               <th className="poppins-light text-white border text-sm p-1">
@@ -165,9 +176,6 @@ const TaxTable = ({ taxCreated }) => {
                   <td className="text-center border text-sm p-1">{tax._id}</td>
                   <td className="text-center border text-sm p-1">
                     {tax.category?.name || "All categories"}
-                  </td>
-                  <td className="text-center border text-sm p-1">
-                    {tax.state}
                   </td>
                   <td className="text-center border text-sm p-1">
                     {tax.GSTRate}
