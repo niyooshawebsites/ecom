@@ -34,7 +34,7 @@ const createOrderController = async (req, res) => {
     const tax = await Tax.findOne({ category: product.category?._id });
     if (!tax) return response(res, 404, false, "Tax not found. No order");
 
-    const productGST = GST;
+    const productGST = (product.price * quantity * tax.GSTRate) / 100;
     const totalAmt = product.price * quantity + productGST;
 
     const order = await new Order({

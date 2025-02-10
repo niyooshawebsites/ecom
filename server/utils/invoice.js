@@ -64,14 +64,7 @@ const generateInvoice = (order, user, res) => {
   doc.rect(50, tableTop, 510, 20).fill("#e0e0e0").stroke();
   doc.fillColor("black");
 
-  const headers = [
-    "Product",
-    "Qty",
-    "Price",
-    "Total",
-    "GST (18%)",
-    "Grand Total",
-  ];
+  const headers = ["Product", "Qty", "Price", "Total", "GST", "Grand Total"];
   let xPos = 50;
   headers.forEach((header, i) => {
     doc.text(header, xPos, tableTop + 5, {

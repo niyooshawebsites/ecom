@@ -559,6 +559,8 @@ const CheckoutForm = () => {
     setCartTotal(calculateCartTotal());
     fetchLoggedUserDetailsonPageLoad(uid);
     calcNetPayable();
+    calcTax();
+    calcNetPayable();
   }, [tax, totalGST, cartNetTotal]);
 
   return (
@@ -802,8 +804,6 @@ const CheckoutForm = () => {
                   value={loggedInUserDetails.state}
                   onChange={(e) => {
                     handleChange(e);
-                    calcTax(e);
-                    calcNetPayable(e);
                   }}
                   required
                 >
