@@ -3,15 +3,25 @@ import response from "../utils/response.js";
 
 const createTaxController = async (req, res) => {
   try {
-    const { cid, state, GSTRate } = req.body;
+    const { cid, GSTRate } = req.body;
 
-    if (!state) return response(res, 400, false, "State is missing");
     if (!GSTRate) return response(res, 400, false, "GSTRate is missing");
 
-    const tax = await Tax.findOne({ state });
+    if (cid == null) {
+      const result = await Tax.countDocuments();
+      if (result) return response(res, 400, false, "Invaid GST setting");
+    }
+
+    if (cid) {
+      const result = await Tax.findOne({ category: null });
+      if (result) return response(res, 400, false, "Invaid GST setting");
+    }
+
+    const tax = await Tax.findOne({ category: cid });
+
     if (tax) return response(res, 409, false, "Tax already exists");
 
-    const newTax = await new Tax({ category: cid, state, GSTRate }).save();
+    const newTax = await new Tax({ category: cid, GSTRate }).save();
 
     return response(res, 201, true, "Tax created successfully", newTax);
   } catch (err) {
@@ -23,16 +33,15 @@ const createTaxController = async (req, res) => {
 const updateTaxController = async (req, res) => {
   try {
     const { tid } = req.params;
-    const { cid, state, GSTRate } = req.body;
+    const { cid, GSTRate } = req.body;
 
     if (!tid) return response(res, 400, false, "No tid. No updation");
     if (!cid) return response(res, 400, false, "No cid. No updation");
-    if (!state) return response(res, 400, false, "State is missing");
     if (!GSTRate) return response(res, 400, false, "GSTRate is missing");
 
     const updatedTax = await Tax.findByIdAndUpdate(
       tid,
-      { category: cid, state, GSTRate },
+      { category: cid, GSTRate },
       { new: true }
     );
 
@@ -123,12 +132,12 @@ const deleteTaxesController = async (req, res) => {
   }
 };
 
-const fetchTaxByStateController = async (req, res) => {
+const fetchTaxByCategoryController = async (req, res) => {
   try {
-    const { state } = req.params;
-    if (!state) return response(res, 400, false, "No state. No updation");
+    const { cid } = req.params;
+    if (!cid) return response(res, 400, false, "No cid. No updation");
 
-    const tax = await Tax.findOne({ state });
+    const tax = await Tax.findOne({ category: cid });
     if (!tax) return response(res, 404, false, "No tax found");
 
     return response(res, 200, true, "Tax found successfully", tax);
@@ -138,20 +147,20 @@ const fetchTaxByStateController = async (req, res) => {
   }
 };
 
-const fetchTaxByStateWithoutLoginController = async (req, res) => {
-  try {
-    const { state } = req.params;
-    if (!state) return response(res, 400, false, "No state. No updation");
+// const fetchTaxByStateWithoutLoginController = async (req, res) => {
+//   try {
+//     const { state } = req.params;
+//     if (!state) return response(res, 400, false, "No state. No updation");
 
-    const tax = await Tax.findOne({ state });
-    if (!tax) return response(res, 404, false, "No tax found");
+//     const tax = await Tax.findOne({ state });
+//     if (!tax) return response(res, 404, false, "No tax found");
 
-    return response(res, 200, true, "Tax found successfully", tax);
-  } catch (err) {
-    console.error(err.message);
-    return response(res, 500, false, "Internal server error");
-  }
-};
+//     return response(res, 200, true, "Tax found successfully", tax);
+//   } catch (err) {
+//     console.error(err.message);
+//     return response(res, 500, false, "Internal server error");
+//   }
+// };
 
 export {
   createTaxController,
@@ -160,6 +169,6 @@ export {
   fetchTaxController,
   deleteTaxController,
   deleteTaxesController,
-  fetchTaxByStateController,
-  fetchTaxByStateWithoutLoginController,
+  fetchTaxByCategoryController,
+  // fetchTaxByStateWithoutLoginController,
 };

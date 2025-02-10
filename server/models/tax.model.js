@@ -4,6 +4,7 @@ const taxSchema = new mongoose.Schema(
   {
     category: {
       type: mongoose.Types.ObjectId || null,
+      ref: "category",
     },
     GSTRate: {
       type: Number,

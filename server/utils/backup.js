@@ -88,8 +88,8 @@ const generateInvoice = (order, user, res) => {
   doc.font("Helvetica");
   let yPos = tableTop + 25;
   const total = order.quantity * order.product?.price;
-  const gst = order.GST; // GST is 18% of the total price
-  const grandTotal = order.orderValue;
+  const gst = (total * 18) / 100; // GST is 18% of the total price
+  const grandTotal = total + gst;
 
   doc.rect(50, yPos, 510, 20).stroke();
   xPos = 50;

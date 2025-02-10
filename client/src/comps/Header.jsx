@@ -64,6 +64,12 @@ const Header = () => {
                   >
                     <li>DASHBOARD</li>
                   </Link>
+                  <Link
+                    to="/"
+                    className="mr-5 font-bold bg-orange-600 rounded px-2"
+                  >
+                    <li>SHOP</li>
+                  </Link>
                   <Link to="/cart">
                     <li className="flex">
                       <CiShoppingCart className="text-2xl mr-1" />

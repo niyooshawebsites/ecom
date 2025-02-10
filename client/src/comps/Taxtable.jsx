@@ -28,10 +28,10 @@ const TaxTable = ({ taxCreated, categories }) => {
   };
 
   const fetchTaxByCategory = async (formData) => {
-    const state = formData.get("state");
+    const cid = formData.get("cid");
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-tax-by-category/${state}`,
+        `http://localhost:8000/api/v1/fetch-tax-by-category/${cid}`,
         {
           withCredentials: true,
         }
@@ -91,7 +91,7 @@ const TaxTable = ({ taxCreated, categories }) => {
   return (
     <div className="w-10/12 flex flex-col justify-start items-center">
       <div className="w-full">
-        <div className="flex justify-center items-center mt-10">
+        <div className="flex justify-center items-center mt-10 ">
           <h1 className="text-4xl text-center py-3 poppins-light bg-gray-200 rounded-md p-3 mb-2">
             Tax Details ({taxes.length < 10 ? `0${taxes.length}` : taxes.length}
             )
@@ -101,19 +101,19 @@ const TaxTable = ({ taxCreated, categories }) => {
           </button>
         </div>
 
-        <div className="flex my-3">
+        <div className="flex items-end my-3">
           <form
             action={fetchTaxByCategory}
             className="flex items-center w-full mr-3"
           >
-            <div className="flex flex-col ">
-              <label htmlFor="category" className="mb-2">
+            <div className="flex items-center">
+              <label htmlFor="cid" className="mr-3">
                 Category
               </label>
               <select
-                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                name="category"
-                id="category"
+                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 mr-3"
+                name="cid"
+                id="cid"
                 required
               >
                 <option>Select</option>
@@ -175,7 +175,9 @@ const TaxTable = ({ taxCreated, categories }) => {
                   </td>
                   <td className="text-center border text-sm p-1">{tax._id}</td>
                   <td className="text-center border text-sm p-1">
-                    {tax.category?.name || "All categories"}
+                    {tax.category == null
+                      ? "All categories"
+                      : tax.category?.name}
                   </td>
                   <td className="text-center border text-sm p-1">
                     {tax.GSTRate}

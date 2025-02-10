@@ -41,6 +41,7 @@ const DisplayProduct = () => {
               productName: productData.name,
               productPrice: productData.price,
               productCategory: productData.category?.name,
+              productCid: productData.category?._id,
               productQuantity: product.productQuantity + additionalQuantity,
               productTotalAmount: product.productQuantity * productData.price,
             })
@@ -59,6 +60,7 @@ const DisplayProduct = () => {
                   productName: productData.name,
                   productPrice: productData.price,
                   productCategory: productData.category?.name,
+                  productCid: productData.category?._id,
                   productQuantity: product.productQuantity + additionalQuantity,
                   productTotalAmount:
                     (product.productQuantity + additionalQuantity) *
@@ -77,6 +79,7 @@ const DisplayProduct = () => {
               productName: productData.name,
               productPrice: productData.price,
               productCategory: productData.category?.name,
+              productCid: productData.category?._id,
               productQuantity: count,
               productTotalAmount: count * productData.price,
             })
@@ -91,6 +94,7 @@ const DisplayProduct = () => {
                   productName: productData.name,
                   productPrice: productData.price,
                   productCategory: productData.category?.name,
+                  productCid: productData.category?._id,
                   productQuantity: count,
                   productTotalAmount: count * productData.price,
                 },
@@ -108,6 +112,7 @@ const DisplayProduct = () => {
             productName: productData.name,
             productPrice: productData.price,
             productCategory: productData.category?.name,
+            productCid: productData.category?._id,
             productQuantity: count,
             productTotalAmount: count * productData.price,
           })
@@ -122,6 +127,7 @@ const DisplayProduct = () => {
                 productName: productData.name,
                 productPrice: productData.price,
                 productCategory: productData.category?.name,
+                productCid: productData.category?._id,
                 productQuantity: count,
                 productTotalAmount: count * productData.price,
               },

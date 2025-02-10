@@ -68,10 +68,8 @@ const CheckoutForm = () => {
     paymentMethod: "",
   });
 
-  const [taxes, setTaxes] = useState({
-    state: "",
-    GSTRate: "",
-  });
+  const [tax, setTax] = useState([]);
+  const [totalGST, setTotalGST] = useState(0);
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -84,32 +82,40 @@ const CheckoutForm = () => {
 
   const [cartTotal, setCartTotal] = useState(0);
 
-  const calcTax = async (e) => {
+  const calcTax = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-tax-by-state-without-login/${e.target.value}`,
-        {
-          withCredentials: true,
-        }
+      const taxArray = await Promise.all(
+        cartProductList.map(async (cartProduct) => {
+          const res = await axios.get(
+            `http://localhost:8000/api/v1/fetch-tax-by-category/${cartProduct.productCid}`,
+            {
+              withCredentials: true,
+            }
+          );
+
+          const rate = res.data.data.GSTRate / 100;
+
+          const taxPerProduct = Number(rate * cartProduct.productPrice);
+
+          return taxPerProduct;
+        })
       );
 
-      if (res.data.success) {
-        setTaxes((prev) => ({
-          ...prev,
-          state: res.data.data.state,
-          GSTRate: res.data.data.GSTRate,
-        }));
-      }
+      setTax(taxArray);
     } catch (err) {
       console.log(err.message);
     }
   };
 
   const calcNetPayable = () => {
-    // tax calculation
-    const GST = Math.round((cartNetTotal * taxes.GSTRate) / 100);
+    const totalTax = tax.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0
+    );
 
-    const totalAmountToBePaid = cartNetTotal + GST;
+    setTotalGST(totalTax);
+
+    const totalAmountToBePaid = cartNetTotal + totalTax;
     setNetPayable(totalAmountToBePaid);
   };
 
@@ -291,16 +297,7 @@ const CheckoutForm = () => {
                           paymentMethod: loggedInUserDetails.paymentMethod,
                           tnxId: response.razorpay_payment_id,
                           paymentStatus: "Paid",
-                          CGSTRate: taxes.CGSTRate,
-                          SGSTRate: taxes.SGSTRate,
-                          CGST: Math.round(
-                            (cartNetTotal * taxes.CGSTRate) / 100
-                          ),
-                          SGST: Math.round(
-                            (cartNetTotal * taxes.SGSTRate) / 100
-                          ),
-                          totalTax: this.CGST + this.SGST,
-                          netPayable,
+                          GST: totalGST,
                         },
                         { withCredentials: true }
                       );
@@ -347,12 +344,7 @@ const CheckoutForm = () => {
                   orderNote: loggedInUserDetails.orderNote,
                   paymentMethod: loggedInUserDetails.paymentMethod,
                   paymentStatus: "Unpaid",
-                  CGSTRate: taxes.CGSTRate,
-                  SGSTRate: taxes.SGSTRate,
-                  CGST: Math.round((cartNetTotal * taxes.CGSTRate) / 100),
-                  SGST: Math.round((cartNetTotal * taxes.SGSTRate) / 100),
-                  totalTax: this.CGST + this.SGST,
-                  netPayable,
+                  GST: totalGST,
                 },
                 { withCredentials: true }
               );
@@ -464,16 +456,7 @@ const CheckoutForm = () => {
                             paymentMethod: loggedInUserDetails.paymentMethod,
                             tnxId: response.razorpay_payment_id,
                             paymentStatus: "Paid",
-                            CGSTRate: taxes.CGSTRate,
-                            SGSTRate: taxes.SGSTRate,
-                            CGST: Math.round(
-                              (cartNetTotal * taxes.CGSTRate) / 100
-                            ),
-                            SGST: Math.round(
-                              (cartNetTotal * taxes.SGSTRate) / 100
-                            ),
-                            totalTax: this.CGST + this.SGST,
-                            netPayable,
+                            GST: totalGST,
                           },
                           { withCredentials: true }
                         );
@@ -520,12 +503,7 @@ const CheckoutForm = () => {
                     orderNote: loggedInUserDetails.orderNote,
                     paymentMethod: loggedInUserDetails.paymentMethod,
                     paymentStatus: "Unpaid",
-                    CGSTRate: taxes.CGSTRate,
-                    SGSTRate: taxes.SGSTRate,
-                    CGST: Math.round((cartNetTotal * taxes.CGSTRate) / 100),
-                    SGST: Math.round((cartNetTotal * taxes.SGSTRate) / 100),
-                    totalTax: this.CGST + this.SGST,
-                    netPayable,
+                    GST: totalGST,
                   },
                   { withCredentials: true }
                 );
@@ -581,7 +559,7 @@ const CheckoutForm = () => {
     setCartTotal(calculateCartTotal());
     fetchLoggedUserDetailsonPageLoad(uid);
     calcNetPayable();
-  }, [taxes, cartNetTotal]);
+  }, [tax, totalGST, cartNetTotal]);
 
   return (
     <div className=" flex flex-col justify-start items-center min-h-screen">
@@ -948,12 +926,10 @@ const CheckoutForm = () => {
                         </tr>
 
                         <tr className="border-b">
-                          <td className="border text-sm p-1 font-bold">
-                            GST ({taxes.GSTRate}%)
-                          </td>
+                          <td className="border text-sm p-1 font-bold">GST</td>
                           <td className="poppins-light border text-sm p-1 text-center">
                             Rs
-                            {Math.round((cartNetTotal * taxes.GSTRate) / 100)}
+                            {totalGST}
                           </td>
                         </tr>
 

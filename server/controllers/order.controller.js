@@ -1,7 +1,7 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
-import User from "../models/user.model.js";
 import response from "../utils/response.js";
+import Tax from "../models/tax.model.js";
 
 const createOrderController = async (req, res) => {
   try {
@@ -14,11 +14,7 @@ const createOrderController = async (req, res) => {
       paymentMethod,
       paymentStatus,
       tnxId,
-      CGSTRate,
-      SGSTRate,
-      CGST,
-      SGST,
-      netPayable,
+      GST,
     } = req.body;
 
     if (!pid) return response(res, 400, false, "No pid. No order");
@@ -29,28 +25,17 @@ const createOrderController = async (req, res) => {
       return response(res, 400, false, "No payment method. No order");
     if (!paymentStatus)
       return response(res, 400, false, "No payment status. No order");
-    if (!CGSTRate) return response(res, 400, false, "No CGST rate. No order");
-    if (!SGSTRate) return response(res, 400, false, "No SGST rate. No order");
-    if (!CGST) return response(res, 400, false, "No SGST. No order");
-    if (!SGST) return response(res, 400, false, "No SGST. No order");
-    if (!netPayable)
-      return response(res, 400, false, "No net payable. No order");
+    if (!GST) return response(res, 400, false, "No SGST. No order");
 
-    const product = await Product.findById(pid);
+    const product = await Product.findById(pid).populate("category");
     if (!product)
       return response(res, 404, false, "Product not found. No order");
 
-    const customer = await User.findById(uid);
-    if (!customer)
-      return response(res, 404, false, "Cusotmer not found. No order");
+    const tax = await Tax.findOne({ category: product.category?._id });
+    if (!tax) return response(res, 404, false, "Tax not found. No order");
 
-    const state = customer.contactDetails?.address?.state;
-    if (!state) return response(res, 404, false, "State not found. No order");
-
-    const CGSTTax = Math.round((product.price * quantity * CGSTRate) / 100);
-    const SGSTax = Math.round((product.price * quantity * SGSTRate) / 100);
-    const totalTax = CGSTTax + SGSTax;
-    const totalAmt = Math.round(quantity * product.price + totalTax);
+    const productGST = GST;
+    const totalAmt = product.price * quantity + productGST;
 
     const order = await new Order({
       product: pid,
@@ -60,13 +45,8 @@ const createOrderController = async (req, res) => {
       paymentMethod,
       paymentStatus,
       tnxId,
-      CGSTRate,
-      SGSTRate,
-      CGST: CGSTTax,
-      SGST: SGSTax,
-      totalTax,
+      GST: productGST,
       orderValue: totalAmt,
-      netPayable,
     }).save();
 
     return response(res, 201, true, "New order created", order);

@@ -32,10 +32,6 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    GSTRate: {
-      type: Number,
-      default: 0,
-    },
     GST: {
       type: Number,
       default: 0,

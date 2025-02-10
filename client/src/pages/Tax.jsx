@@ -1,7 +1,7 @@
 import Layout from "../comps/Layout";
 import CreateTaxForm from "../comps/CreateTaxForm";
 import AdminSidebar from "../comps/AdminSidebar";
-import TaxTable from "../comps/Taxtable";
+import TaxTable from "../comps/TaxTable";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
