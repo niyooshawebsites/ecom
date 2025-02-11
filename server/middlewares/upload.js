@@ -8,7 +8,6 @@ dotenv.config();
 const storage = multerS3({
   s3,
   bucket: process.env.AWS_BUCKET_NAME,
-  acl: "public-read", // Allow public access to images
   metadata: (req, file, cb) => {
     cb(null, { fieldName: file.fieldname });
   },
