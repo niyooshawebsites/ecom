@@ -24,6 +24,10 @@ const productSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    gallery: {
+      type: [String],
+      required: true,
+    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "category",

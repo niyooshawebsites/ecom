@@ -1,5 +1,7 @@
 import express from "express";
 import auth from "../middlewares/auth.middleware.js";
+import upload from "../middlewares/upload.js";
+
 import {
   createProductController,
   updateProductController,
@@ -14,7 +16,15 @@ import {
 
 const productRouter = express.Router();
 
-productRouter.post("/create-product", auth, createProductController);
+productRouter.post(
+  "/create-product",
+  auth,
+  upload.fields([
+    { name: "img", maxCount: 1 },
+    { name: "gallery", maxCount: 5 },
+  ]),
+  createProductController
+);
 productRouter.patch("/update-product/:pid", auth, updateProductController);
 productRouter.delete("/delete-product/:pid", auth, deleteProductController);
 productRouter.delete("/delete-products/:pids", auth, deleteProductsController);

@@ -9,13 +9,20 @@ const createProductController = async (req, res) => {
     if (!name || !price || !category || !shortDesc || !longDesc)
       return response(res, 400, false, "Please fill out all the information");
 
+    // check if the product already exists
     const product = await Product.findOne({ name });
     if (product) return response(res, 409, false, "Product already exists");
 
+    // extract S3 image url fom multer upload
+    const imgURL = req.files.img[0].location;
+    const galleryURL = req.files.gallery.map((file) => file.location);
+
     const newProduct = await new Product({
       ...req.body,
-      img: "https://www.tibertaber.com/cdn/shop/files/Tiber_Taber_Girls_Devi_Lehenga_Set_TTG24_033_Red_Mood_1_4b80dfdd-8258-4419-82f6-0c3d664fab7b.jpg?v=1727693111&width=493",
+      img: imgURL,
+      gallery: galleryURL,
     }).save();
+
     return response(res, 201, true, "Product created successfully", newProduct);
   } catch (err) {
     console.error(err.message);
