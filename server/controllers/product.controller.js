@@ -115,7 +115,25 @@ const fetchProductController = async (req, res) => {
     const product = await Product.findById(pid).populate("category");
     if (!product) return response(res, 404, false, "Product not found");
 
-    return response(res, 200, true, "Product found successfully", product);
+    // generate fresh Pre-signed URLS for the images
+    const imgURL = await getImageURL(product.img);
+    const galleryURLs = await Promise.all(
+      product.gallery.map((key) => getImageURL(key))
+    );
+
+    const productWithImgURLs = {
+      ...product.toObject(), // convert mongoose document to plain object
+      img: imgURL,
+      gallery: galleryURLs,
+    };
+
+    return response(
+      res,
+      200,
+      true,
+      "Product found successfully",
+      productWithImgURLs
+    );
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal sever error");
