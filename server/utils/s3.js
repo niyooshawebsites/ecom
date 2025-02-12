@@ -19,20 +19,20 @@ const s3 = new S3Client({
 });
 
 // generate a Pre-signed URL for image upload
-const generateUploadURL = async (fileName) => {
-  try {
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `products/${Date.now()}_${fileName}`,
-    };
+// const generateUploadURL = async (fileName) => {
+//   try {
+//     const params = {
+//       Bucket: process.env.AWS_BUCKET_NAME,
+//       Key: `products/${Date.now()}_${fileName}`,
+//     };
 
-    return await getSignedUrl(s3, new PutObjectCommand(params), {
-      expiresIn: 3600,
-    });
-  } catch (err) {
-    console.error(err.message);
-  }
-};
+//     return await getSignedUrl(s3, new PutObjectCommand(params), {
+//       expiresIn: 3600,
+//     });
+//   } catch (err) {
+//     console.error(err.message);
+//   }
+// };
 
 // generate a signed URL to view the image
 const getImageURL = async (fileKey) => {
@@ -64,4 +64,4 @@ const deleteImage = async (fileKey) => {
   }
 };
 
-export { s3, generateUploadURL, getImageURL, deleteImage };
+export { s3, getImageURL, deleteImage };

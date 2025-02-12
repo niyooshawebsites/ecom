@@ -1,7 +1,7 @@
 import Product from "../models/product.model.js";
 import response from "../utils/response.js";
 import slugify from "slugify";
-import { generateUploadURL } from "../utils/s3.js";
+import { getImageURL } from "../utils/s3.js";
 
 const createProductController = async (req, res) => {
   try {
