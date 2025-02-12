@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middlewares/auth.middleware.js";
-import upload from "../middlewares/upload.js";
+import upload from "../middlewares/upload.middleware.js";
 
 import {
   createProductController,

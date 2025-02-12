@@ -1,6 +1,7 @@
 import Product from "../models/product.model.js";
 import response from "../utils/response.js";
 import slugify from "slugify";
+import { generateUploadURL } from "../utils/s3.js";
 
 const createProductController = async (req, res) => {
   try {
@@ -13,14 +14,14 @@ const createProductController = async (req, res) => {
     const product = await Product.findOne({ name });
     if (product) return response(res, 409, false, "Product already exists");
 
-    // extract S3 image url fom multer upload
-    const imgURL = req.files.img[0].location;
-    const galleryURL = req.files.gallery.map((file) => file.location);
+    // extract S3 image url from multer upload - keys are already added by multer-s3
+    const imgKey = req.files.img[0].key;
+    const galleryKeys = req.files.gallery.map((file) => file.key);
 
     const newProduct = await new Product({
       ...req.body,
-      img: imgURL,
-      gallery: galleryURL,
+      img: imgKey,
+      gallery: galleryKeys,
     }).save();
 
     return response(res, 201, true, "Product created successfully", newProduct);

@@ -73,6 +73,19 @@ const CreateProductForm = () => {
 
       if (res.data.success) {
         toast.success(res.data.msg);
+
+        setProductDetails({
+          name: "",
+          category: "",
+          price: "",
+          shortDesc: "",
+          longDesc: "",
+          img: null,
+          gallery: [],
+        });
+
+        setPreviewImg(null);
+        setPreviewGalleryImgs(null);
       }
     } catch (err) {
       console.log(err.message);
