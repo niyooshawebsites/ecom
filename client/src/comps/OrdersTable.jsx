@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { SlRefresh } from "react-icons/sl";
 import { useSelector } from "react-redux";
 import Pagination from "./Pagination";
+import NoData from "./NoData";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -442,7 +443,7 @@ const OrdersTable = () => {
           )}
         </>
       ) : (
-        <h1 className="text-4xl py-3 poppins-light mt-10 mb-2">No Orders</h1>
+        <NoData data={"Orders"} />
       )}
     </div>
   );

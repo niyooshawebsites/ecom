@@ -59,8 +59,10 @@ const deleteImage = async (fileKey) => {
     };
 
     await s3.send(new DeleteObjectCommand(params));
+    return "Image deleted from S3";
   } catch (err) {
     console.error(err.message);
+    return "S3 image deletion failed";
   }
 };
 

@@ -36,6 +36,11 @@ const AdminSidebar = () => {
               Orders
             </li>
           </Link>
+          <Link to="/dashboard/gallery">
+            <li className="cursor-pointer flex items-center px-2 my-2">
+              Gallery
+            </li>
+          </Link>
           <li
             onClick={toggleShowCategoryMenu}
             className="cursor-pointer flex items-center px-2 my-2"

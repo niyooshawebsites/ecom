@@ -14,6 +14,7 @@ import couponRouter from "./routes/coupon.route.js";
 import paymentRouter from "./routes/payment.route.js";
 import invoiceRouter from "./routes/invoice.route.js";
 import taxRouter from "./routes/tax.route.js";
+import galleryRouter from "./routes/gallery.route.js";
 
 dotenv.config();
 connectDB();
@@ -42,6 +43,7 @@ app.use(BASE_URL, couponRouter);
 app.use(BASE_URL, paymentRouter);
 app.use(BASE_URL, invoiceRouter);
 app.use(BASE_URL, taxRouter);
+app.use(BASE_URL, galleryRouter);
 
 app.listen(PORT, () =>
   console.log(

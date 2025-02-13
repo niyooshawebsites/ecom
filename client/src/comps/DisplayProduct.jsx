@@ -5,15 +5,24 @@ import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import CreateReviewForm from "./CreateReviewForm";
 import { FaStar } from "react-icons/fa";
+import ModalImage from "react-modal-image";
 
 const DisplayProduct = () => {
   const [count, setCount] = useState(0);
   const dispatch = useDispatch();
-  // const { pid } = useParams();
   const location = useLocation();
   const queryStrings = new URLSearchParams(location.search);
   const pid = queryStrings.get("pid");
-  const [productData, setProductData] = useState({});
+  const [productData, setProductData] = useState({
+    name: "",
+    slug: "",
+    price: "",
+    img: null,
+    gallery: [],
+    category: "",
+    shortDesc: "",
+    longDesc: "",
+  });
   const [reviews, setReviews] = useState([]);
   const { cartProductList } = useSelector((state) => state.cart_Slice);
 
@@ -148,7 +157,19 @@ const DisplayProduct = () => {
       );
 
       if (res.data.success) {
-        setProductData(res.data.data);
+        setProductData((prev) => {
+          return {
+            ...prev,
+            name: res.data.data.name,
+            slug: res.data.data.slug,
+            price: res.data.data.price,
+            img: res.data.data.img,
+            gallery: res.data.data.gallery,
+            category: res.data.data.category,
+            shortDesc: res.data.data.shortDesc,
+            longDesc: res.data.data.longDesc,
+          };
+        });
       }
     } catch (err) {
       console.log(err.message);
@@ -198,9 +219,31 @@ const DisplayProduct = () => {
         </p>
       </div>
       <section className="flex ">
-        <section className=" flex justify-center w-5/12 border m-5">
-          <img src={productData.img} style={{ height: "500px" }} />
+        <section className=" flex justify-center w-6/12 border m-5">
+          <div className="flex flex-col justify-start items-center mr-5">
+            {productData.gallery.map((imgURL, index) => {
+              return (
+                <ModalImage
+                  key={index}
+                  small={imgURL}
+                  large={imgURL}
+                  alt={productData.name}
+                  className="h-[150px] my-2"
+                />
+              );
+            })}
+          </div>
+          <div>
+            <ModalImage
+              small={productData.img}
+              large={productData.img}
+              alt={productData.name}
+              className="h-[500px]"
+            />
+            {/* <img src={productData.img} style={{ height: "500px" }} /> */}
+          </div>
         </section>
+
         <section className="w-7/12 flex flex-col p-10">
           <section className="flex flex-col mb-5">
             <h1 className="text-5xl mb-5">{productData.name}</h1>

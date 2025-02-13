@@ -7,6 +7,8 @@ const createProductController = async (req, res) => {
   try {
     const { name, price, category, shortDesc, longDesc } = req.body;
 
+    console.log(name, price, category, shortDesc, longDesc);
+
     if (!name || !price || !category || !shortDesc || !longDesc)
       return response(res, 400, false, "Please fill out all the information");
 
@@ -88,7 +90,23 @@ const fetchAllProductsController = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
-      .populate("category");
+      .populate("category")
+      .lean(); // Convert to plain object for performance
+
+    const productsPerPageWithImgURLs = await Promise.all(
+      productsPerPage.map(async (product) => {
+        const imgURL = await getImageURL(product.img);
+        const galleryURLs = await Promise.all(
+          product.gallery.map((key) => getImageURL(key))
+        );
+
+        return {
+          ...product,
+          img: imgURL,
+          gallery: galleryURLs,
+        };
+      })
+    );
 
     const totalProductsCount = await Product.countDocuments();
     const totalPagesCount = Math.ceil(totalProductsCount / limit);
@@ -98,7 +116,7 @@ const fetchAllProductsController = async (req, res) => {
       200,
       true,
       `${productsPerPage.length} products fetched`,
-      productsPerPage,
+      productsPerPageWithImgURLs,
       totalPagesCount
     );
   } catch (err) {

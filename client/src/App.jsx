@@ -30,6 +30,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderCofirmation from "./pages/OrderConfirmation";
 import Tax from "./pages/Tax";
 import UpdateTax from "./pages/UpdateTax";
+import Gallery from "./pages/Gallery";
 
 const App = () => {
   return (
@@ -57,6 +58,7 @@ const App = () => {
               element={<UpdateCategory />}
             />
             <Route path="/dashboard/categories" element={<Categories />} />
+            <Route path="/dashboard/gallery" element={<Gallery />} />
             <Route
               path="/dashboard/create-product"
               element={<CreateProduct />}
