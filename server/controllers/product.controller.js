@@ -2,12 +2,11 @@ import Product from "../models/product.model.js";
 import response from "../utils/response.js";
 import slugify from "slugify";
 import { getImageURL } from "../utils/s3.js";
+import Gallery from "../models/gallery.model.js";
 
 const createProductController = async (req, res) => {
   try {
     const { name, price, category, shortDesc, longDesc } = req.body;
-
-    console.log(name, price, category, shortDesc, longDesc);
 
     if (!name || !price || !category || !shortDesc || !longDesc)
       return response(res, 400, false, "Please fill out all the information");
@@ -19,12 +18,21 @@ const createProductController = async (req, res) => {
     // extract S3 image url from multer upload - keys are already added by multer-s3
     const imgKey = req.files.img[0].key;
     const galleryKeys = req.files.gallery.map((file) => file.key);
+    const galleryKeysForGallery = req.files.gallery.map((file) => ({
+      imgKey: file.key,
+    }));
 
     const newProduct = await new Product({
       ...req.body,
       img: imgKey,
       gallery: galleryKeys,
     }).save();
+
+    // saving the uploaded images in gallery
+    const galleryImages = await Gallery.insertMany([
+      ...galleryKeysForGallery,
+      { imgKey },
+    ]);
 
     return response(res, 201, true, "Product created successfully", newProduct);
   } catch (err) {
@@ -96,7 +104,7 @@ const fetchAllProductsController = async (req, res) => {
     const productsPerPageWithImgURLs = await Promise.all(
       productsPerPage.map(async (product) => {
         const imgURL = await getImageURL(product.img);
-        const galleryURLs = await Promise.all(
+        const galleryURLs = await Promise.allSettled(
           product.gallery.map((key) => getImageURL(key))
         );
 
@@ -135,7 +143,7 @@ const fetchProductController = async (req, res) => {
 
     // generate fresh Pre-signed URLS for the images
     const imgURL = await getImageURL(product.img);
-    const galleryURLs = await Promise.all(
+    const galleryURLs = await Promise.allSettled(
       product.gallery.map((key) => getImageURL(key))
     );
 

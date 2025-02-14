@@ -2,47 +2,70 @@ import { useState, useEffect } from "react";
 import { SlRefresh } from "react-icons/sl";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
 import Pagination from "./Pagination";
 import NoData from "./NoData";
+import ModalImage from "react-modal-image";
+import { ImCross } from "react-icons/im";
 
 const DisplayGallery = () => {
   const [galleryImages, setGalleryImages] = useState([]);
+  const [tempStorage, setTempStorage] = useState([]);
+  const [imgUploaded, setImgUploaded] = useState(false);
 
-  const fetchAllGalleryImages = async () => {
+  const handleChange = (e) => {
+    const files = Array.from(e.target.files);
+    setTempStorage(files);
+  };
+
+  const uplaodGalleryImages = async (e) => {
+    e.preventDefault();
+
+    const galleryData = new FormData();
+
+    // append each image of the gallery
+    tempStorage.forEach((file) => {
+      galleryData.append("imgKeys", file);
+    });
+
     try {
-      const res = axios.get(`http://localhost:8000/api/v1/`, {
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/upload-gallery-images`,
+        galleryData,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        setImgUploaded((prev) => !prev);
+      }
+    } catch (err) {
+      toast.error(err.response.data.msg);
+      console.log(err.message);
+    }
+  };
+
+  const fetchAllGalleryImages = async (pageNo) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-all-gallery-images/${pageNo}`,
+        {
+          withCredentials: true,
+        }
+      );
 
       if (res.data.success) {
         setGalleryImages(res.data.data);
       }
     } catch (err) {
-      console.log(err.response.data.msg);
+      console.log(err);
     }
   };
 
-  const uplaodGalleryImages = async () => {
+  const deleteImage = async (id) => {
     try {
-      const res = await axios.post(
-        `http://localhost:8000/api/v1/upload-gallery-images`,
-        galleryImages,
+      const res = await axios.delete(
+        `http://localhost:8000/api/v1/delete-gallery-image/${id}`,
         { withCredentials: true }
-      );
-
-      if (res.data.sucess) {
-        toast.success(res.data.msg);
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-
-  const deleteImage = async () => {
-    try {
-      const res = axios.delete(
-        `http://localhost:8000/api/v1/delete-gallery-image`
       );
 
       if (res.data.success) {
@@ -55,8 +78,8 @@ const DisplayGallery = () => {
   };
 
   useEffect(() => {
-    fetchAllGalleryImages();
-  }, []);
+    fetchAllGalleryImages(1);
+  }, [imgUploaded]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
@@ -70,12 +93,17 @@ const DisplayGallery = () => {
           </button>
         </div>
         <div className="flex my-5">
-          <form action={uplaodGalleryImages} className="flex w-full">
+          <form
+            onSubmit={uplaodGalleryImages}
+            className="flex w-full"
+            encType="multipart/form-data"
+          >
             <input
               type="file"
-              name="images"
-              id="images"
-              placeholder="Upload images"
+              name="imgKeys"
+              id="imgKeys"
+              onChange={handleChange}
+              multiple
               className="border border-gray-300 rounded p-1 mr-2 w-full"
               required
             />
@@ -85,59 +113,24 @@ const DisplayGallery = () => {
           </form>
         </div>
         {galleryImages.length > 0 ? (
-          <table className="w-full border">
-            <thead className="bg-blue-600 h-10 m-10">
-              <tr className="">
-                <th className="poppins-light text-white border text-sm p-1">
-                  #
-                </th>
-                <th className="poppins-light text-white border text-sm p-1">
-                  Category ID
-                </th>
-                <th className="poppins-light text-white border text-sm p-1">
-                  Category name
-                </th>
-                <th className="poppins-light text-white border text-sm p-1">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {galleryImages.map((image, index) => {
-                return (
-                  <tr
-                    key={image._id}
-                    className="odd:bg-white even:bg-gray-300 h-10"
-                  >
-                    <td className="text-center border text-sm p-1">
-                      {index + 1}
-                    </td>
-                    <td className="text-center border text-sm p-1">
-                      {image._id}
-                    </td>
-                    <td className="text-center border text-sm p-1">
-                      {image.name}
-                    </td>
-                    <td className="text-center border text-sm">
-                      <Link to={`/dashboard/update-category/${image._id}`}>
-                        <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 mr-2">
-                          Edit
-                        </span>
-                      </Link>{" "}
-                      <button
-                        onClick={() => {
-                          deleteImage(image._id);
-                        }}
-                        className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="flex flex-reverse">
+            {galleryImages.map((file) => (
+              <div className="flex m-2" key={file.value._id}>
+                <ModalImage
+                  small={file.value?.url}
+                  large={file.value?.url}
+                  alt="Preview"
+                  className="h-[100px] mr-2 rounded"
+                />
+                <ImCross
+                  className="hover:cursor-pointer"
+                  onClick={() => {
+                    deleteImage(file.value._id);
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         ) : (
           <NoData data={"Images"} />
         )}

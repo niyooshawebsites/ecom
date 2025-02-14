@@ -1,5 +1,5 @@
 import express from "express";
-import upload from "../middlewares/upload.js";
+import { uploadGalleryImgs } from "../middlewares/upload.middleware.js";
 import auth from "../middlewares/auth.middleware.js";
 import {
   uploadGalleryImagesController,
@@ -13,7 +13,7 @@ const galleryRouter = express.Router();
 galleryRouter.post(
   "/upload-gallery-images",
   auth,
-  upload.fields([{ name: "images", maxCount: 5 }]),
+  uploadGalleryImgs.fields([{ name: "imgKeys", maxCount: 5 }]),
   uploadGalleryImagesController
 );
 

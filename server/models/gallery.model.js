@@ -2,10 +2,9 @@ import mongoose from "mongoose";
 
 const gallerySchema = new mongoose.Schema(
   {
-    url: {
+    imgKey: {
       type: String,
       required: true,
-      unique: true,
     },
   },
   {

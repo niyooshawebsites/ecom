@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middlewares/auth.middleware.js";
-import upload from "../middlewares/upload.middleware.js";
+import { uploadProductImgs } from "../middlewares/upload.middleware.js";
 
 import {
   createProductController,
@@ -19,7 +19,7 @@ const productRouter = express.Router();
 productRouter.post(
   "/create-product",
   auth,
-  upload.fields([
+  uploadProductImgs.fields([
     { name: "img", maxCount: 1 },
     { name: "gallery", maxCount: 5 },
   ]),

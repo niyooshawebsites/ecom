@@ -4,15 +4,22 @@ import { getImageURL, deleteImage } from "../utils/s3.js";
 
 const uploadGalleryImagesController = async (req, res) => {
   try {
-    const { imageURL } = req.files;
-    if (!imageURL) return response(res, 400, false, "Image is missing");
+    if (!req.files?.imgKeys)
+      return response(res, 400, false, "Image Keys is missing");
 
-    const existingImg = await Gallery.findOne({ url: imageURL });
-    if (existingImg) return response(res, 400, false, "Image already exists");
+    // Extract S3 keys from uploaded files
+    const images = req.files?.imgKeys.map((file) => ({ imgKey: file.key }));
 
-    const img = await new Gallery({ url: imageURL }).save();
+    // Save keys to MongoDB
+    const insertedImages = await Gallery.insertMany(images);
 
-    return response(res, 201, true, "Image uplaoded successfully", img);
+    return response(
+      res,
+      201,
+      true,
+      "Image uplaoded successfully",
+      insertedImages
+    );
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
@@ -26,16 +33,22 @@ const fetchAllGalleryImagesController = async (req, res) => {
     const limit = 50;
     const skip = (currentPageNo - 1) * limit;
 
-    const keys = await Gallery.find().skip(skip).limit(limit);
+    const keys = await Gallery.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     if (keys.length === 0)
       return response(res, 404, false, "No image keys found.");
 
-    // const imagesWithURLs = await Promise.all(
-    //   keys.map((key) => getImageURL(key))
-    // );
-
-    const imagesWithURLs = keys.map(async (key) => await getImageURL(key));
+    const imagesWithURLs = await Promise.allSettled(
+      keys.map(async (doc) => {
+        return {
+          ...doc.toObject(),
+          url: await getImageURL(doc.imgKey),
+        };
+      })
+    );
 
     if (imagesWithURLs.length === 0)
       return response(res, 404, false, "No images found");
