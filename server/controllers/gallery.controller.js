@@ -65,11 +65,11 @@ const deleteGalleryImageController = async (req, res) => {
     const { giid } = req.params;
     if (!giid) return response(res, 400, false, "No ggid. No deletion");
 
-    const key = await Gallery.findById(giid);
+    const doc = await Gallery.findById(giid);
 
-    if (!key) return response(res, 404, false, "No key. No deletion");
+    if (!doc) return response(res, 404, false, "No key. No deletion");
 
-    const result = await deleteImage(key);
+    const result = await deleteImage(doc.imgKey);
 
     if (result === "Image deleted from S3") {
       const result = await Gallery.findByIdAndDelete(giid);

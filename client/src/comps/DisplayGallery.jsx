@@ -11,6 +11,7 @@ const DisplayGallery = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [tempStorage, setTempStorage] = useState([]);
   const [imgUploaded, setImgUploaded] = useState(false);
+  const [imgDeleted, setImgDeleted] = useState(false);
 
   const handleChange = (e) => {
     const files = Array.from(e.target.files);
@@ -36,6 +37,7 @@ const DisplayGallery = () => {
 
       if (res.data.success) {
         toast.success(res.data.msg);
+        setGalleryImages([]);
         setImgUploaded((prev) => !prev);
       }
     } catch (err) {
@@ -70,6 +72,8 @@ const DisplayGallery = () => {
 
       if (res.data.success) {
         toast.success(res.data.msg);
+        setGalleryImages([]);
+        setImgDeleted((prev) => !prev);
       }
     } catch (err) {
       console.log(err.message);
@@ -79,7 +83,7 @@ const DisplayGallery = () => {
 
   useEffect(() => {
     fetchAllGalleryImages(1);
-  }, [imgUploaded]);
+  }, [imgUploaded, imgDeleted]);
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
