@@ -86,8 +86,6 @@ const CheckoutForm = () => {
   const [cartTotal, setCartTotal] = useState(0);
 
   const calcTax = async () => {
-    setLoading(true);
-
     try {
       const taxArray = await Promise.all(
         cartProductList.map(async (cartProduct) => {
@@ -108,10 +106,8 @@ const CheckoutForm = () => {
       );
 
       setTax(taxArray);
-      setLoading(false);
     } catch (err) {
       console.log(err.message);
-      setLoading(false);
     }
   };
 
@@ -142,8 +138,6 @@ const CheckoutForm = () => {
   };
 
   const fetchLoggedUserDetailsonPageLoad = async (uid) => {
-    setLoading(true);
-
     try {
       const res = await axios.get(
         `http://localhost:8000/api/v1/fetch-user/${uid}`,
@@ -167,11 +161,9 @@ const CheckoutForm = () => {
           state: res.data.data.contactDetails.address.state,
           pincode: res.data.data.contactDetails.address.pincode,
         }));
-        setLoading(false);
       }
     } catch (err) {
       console.log(err);
-      setLoading(false);
     }
   };
 
@@ -575,7 +567,6 @@ const CheckoutForm = () => {
   useEffect(() => {
     setCartTotal(calculateCartTotal());
     fetchLoggedUserDetailsonPageLoad(uid);
-    calcNetPayable();
     calcTax();
     calcNetPayable();
   }, [tax, totalGST, cartNetTotal]);

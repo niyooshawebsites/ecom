@@ -7,8 +7,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { sortSliceActions } from "../store/slices/sortSlice";
 import NoData from "../comps/NoData";
+import ProductSkeleton from "../comps/ProductSkeleton";
 
 const Shop = () => {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [productsData, setProductsData] = useState([]);
   const [sortedProductData, setSortedProductData] = useState([]);
@@ -23,6 +25,7 @@ const Shop = () => {
   } = useSelector((state) => state.filter_Slice);
 
   const fetchProductsData = async () => {
+    setLoading(true);
     try {
       let res;
 
@@ -81,10 +84,12 @@ const Shop = () => {
 
       if (res.data.success) {
         setProductsData(res.data.data);
+        setLoading(false);
       }
     } catch (err) {
       console.log(err.message);
       toast.error(err.response.data.msg);
+      setLoading(false);
     }
   };
 
@@ -141,7 +146,9 @@ const Shop = () => {
             </select>
           </div>
           <section className="w-10/12 flex flex-wrap">
-            {displayProducts.length > 0 ? (
+            {loading ? (
+              <ProductSkeleton />
+            ) : displayProducts.length > 0 ? (
               displayProducts.map((product) => {
                 return (
                   <Card
