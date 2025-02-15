@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ImCross } from "react-icons/im";
+import Loading from "./Loading";
 
 const CreateProductForm = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [productDetails, setProductDetails] = useState({
     name: "",
@@ -51,6 +53,8 @@ const CreateProductForm = () => {
 
   const handleProductCreation = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const productData = new FormData();
 
@@ -87,13 +91,16 @@ const CreateProductForm = () => {
 
         setPreviewImg(null);
         setPreviewGalleryImgs(null);
+        setLoading(false);
       }
     } catch (err) {
       console.log(err.message);
+      setLoading(false);
     }
   };
 
   const fetchAllCategories = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `http://localhost:8000/api/v1/fetch-all-categories-at-once`,
@@ -101,9 +108,11 @@ const CreateProductForm = () => {
       );
       if (res.data.success) {
         setCategories(res.data.data);
+        setLoading(false);
       }
     } catch (err) {
       console.log(err.message);
+      setLoading(false);
     }
   };
 
@@ -112,156 +121,162 @@ const CreateProductForm = () => {
   }, [productDetails.img]);
 
   return (
-    <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-light my-10">Create Product</h1>
-      <div className="flex flex-col w-6/12 border rounded-lg p-5">
-        <form
-          className="mb-3"
-          onSubmit={handleProductCreation}
-          encType="multipart/form-data"
-        >
-          <div className="flex flex-col mb-3">
-            <label htmlFor="category" className="mb-2">
-              Select category
-            </label>
-            <select
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              name="category"
-              id="category"
-              value={productDetails.category}
-              onChange={handleChange}
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
+          <h1 className="text-4xl py-3 poppins-light my-10">Create Product</h1>
+          <div className="flex flex-col w-6/12 border rounded-lg p-5">
+            <form
+              className="mb-3"
+              onSubmit={handleProductCreation}
+              encType="multipart/form-data"
             >
-              <option value="">Select</option>
-              {categories.map((category) => (
-                <option key={category._id} value={category._id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
+              <div className="flex flex-col mb-3">
+                <label htmlFor="category" className="mb-2">
+                  Select category
+                </label>
+                <select
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  name="category"
+                  id="category"
+                  value={productDetails.category}
+                  onChange={handleChange}
+                >
+                  <option value="">Select</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <div className="flex flex-col mb-3">
-            <label htmlFor="name" className="mb-2">
-              Product name
-            </label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={productDetails.name}
-              onChange={handleChange}
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Product name"
-            />
-          </div>
-
-          <div className="flex flex-col mb-3">
-            <label htmlFor="price" className="mb-2">
-              Price
-            </label>
-            <input
-              type="number"
-              name="price"
-              id="price"
-              value={productDetails.price}
-              onChange={handleChange}
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Product Price"
-            />
-          </div>
-
-          <div className="flex flex-col mb-3">
-            <label htmlFor="img" className="mb-2">
-              Product image
-            </label>
-            <input
-              type="file"
-              name="img"
-              id="img"
-              onChange={handleImgChange}
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Product name"
-            />
-            {previewImg && (
-              <div className="flex my-1">
-                <img src={previewImg} alt="Main img" width={40} />
-                <ImCross
-                  className="hover:cursor-pointer"
-                  onClick={() => {
-                    setPreviewImg(null);
-                  }}
+              <div className="flex flex-col mb-3">
+                <label htmlFor="name" className="mb-2">
+                  Product name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={productDetails.name}
+                  onChange={handleChange}
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Product name"
                 />
               </div>
-            )}
-          </div>
 
-          <div className="flex flex-col mb-3">
-            <label htmlFor="gallery" className="mb-2">
-              Product Gallery
-            </label>
-            <input
-              type="file"
-              name="gallery"
-              id="gallery"
-              onChange={handleGalleryChange}
-              multiple
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Product gallery"
-            />
-            <div className="flex">
-              {previewGalleryImgs &&
-                previewGalleryImgs.map((src, index) => (
-                  <div className="flex my-1 mr-3" key={index}>
-                    <img src={src} alt="Gallery img" width={40} />
+              <div className="flex flex-col mb-3">
+                <label htmlFor="price" className="mb-2">
+                  Price
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  id="price"
+                  value={productDetails.price}
+                  onChange={handleChange}
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Product Price"
+                />
+              </div>
+
+              <div className="flex flex-col mb-3">
+                <label htmlFor="img" className="mb-2">
+                  Product image
+                </label>
+                <input
+                  type="file"
+                  name="img"
+                  id="img"
+                  onChange={handleImgChange}
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Product name"
+                />
+                {previewImg && (
+                  <div className="flex my-1">
+                    <img src={previewImg} alt="Main img" width={40} />
                     <ImCross
                       className="hover:cursor-pointer"
                       onClick={() => {
-                        setPreviewGalleryImgs(null);
+                        setPreviewImg(null);
                       }}
                     />
                   </div>
-                ))}
-            </div>
-          </div>
+                )}
+              </div>
 
-          <div className="flex flex-col mb-3">
-            <label htmlFor="shortDesc" className="mb-2">
-              Short Description
-            </label>
-            <textarea
-              name="shortDesc"
-              id="shortDesc"
-              value={productDetails.shortDesc}
-              onChange={handleChange}
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              placeholder="Product short description"
-            ></textarea>
-          </div>
+              <div className="flex flex-col mb-3">
+                <label htmlFor="gallery" className="mb-2">
+                  Product Gallery
+                </label>
+                <input
+                  type="file"
+                  name="gallery"
+                  id="gallery"
+                  onChange={handleGalleryChange}
+                  multiple
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Product gallery"
+                />
+                <div className="flex">
+                  {previewGalleryImgs &&
+                    previewGalleryImgs.map((src, index) => (
+                      <div className="flex my-1 mr-3" key={index}>
+                        <img src={src} alt="Gallery img" width={40} />
+                        <ImCross
+                          className="hover:cursor-pointer"
+                          onClick={() => {
+                            setPreviewGalleryImgs(null);
+                          }}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
 
-          <div className="flex flex-col mb-3">
-            <label htmlFor="longDesc" className="mb-2">
-              Long Description
-            </label>
-            <textarea
-              name="longDesc"
-              id="longDesc"
-              value={productDetails.longDesc}
-              onChange={handleChange}
-              className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-              rows={8}
-              placeholder="Product short description"
-            ></textarea>
-          </div>
+              <div className="flex flex-col mb-3">
+                <label htmlFor="shortDesc" className="mb-2">
+                  Short Description
+                </label>
+                <textarea
+                  name="shortDesc"
+                  id="shortDesc"
+                  value={productDetails.shortDesc}
+                  onChange={handleChange}
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Product short description"
+                ></textarea>
+              </div>
 
-          <button
-            type="submit"
-            className="bg-blue-600 px-4 py-2 rounded-md text-white hover:bg-blue-700"
-          >
-            Create Product
-          </button>
-        </form>
-      </div>
-    </div>
+              <div className="flex flex-col mb-3">
+                <label htmlFor="longDesc" className="mb-2">
+                  Long Description
+                </label>
+                <textarea
+                  name="longDesc"
+                  id="longDesc"
+                  value={productDetails.longDesc}
+                  onChange={handleChange}
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  rows={8}
+                  placeholder="Product short description"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                className="bg-blue-600 px-4 py-2 rounded-md text-white hover:bg-blue-700"
+              >
+                Create Product
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

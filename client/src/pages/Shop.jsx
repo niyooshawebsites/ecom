@@ -6,6 +6,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { sortSliceActions } from "../store/slices/sortSlice";
+import NoData from "../comps/NoData";
 
 const Shop = () => {
   const dispatch = useDispatch();
@@ -140,20 +141,24 @@ const Shop = () => {
             </select>
           </div>
           <section className="w-10/12 flex flex-wrap">
-            {displayProducts.map((product) => {
-              return (
-                <Card
-                  key={product._id}
-                  pid={product._id}
-                  name={product.name}
-                  price={product.price}
-                  img={product.img}
-                  category={product.category?.name}
-                  shortDesc={product.shortDesc}
-                  longDesc={product.longDesc}
-                />
-              );
-            })}
+            {displayProducts.length > 0 ? (
+              displayProducts.map((product) => {
+                return (
+                  <Card
+                    key={product._id}
+                    pid={product._id}
+                    name={product.name}
+                    price={product.price}
+                    img={product.img}
+                    category={product.category?.name}
+                    shortDesc={product.shortDesc}
+                    longDesc={product.longDesc}
+                  />
+                );
+              })
+            ) : (
+              <NoData data={"Products"} />
+            )}
           </section>
         </div>
       </main>

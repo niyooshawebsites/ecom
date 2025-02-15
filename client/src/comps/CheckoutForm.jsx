@@ -5,8 +5,11 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { paymentMethodSliceActions } from "../store/slices/paymentMethodSlice";
 import { cartSliceActions } from "../store/slices/cartSlice";
+import Loading from "./Loading";
 
 const CheckoutForm = () => {
+  const [loading, setLoading] = useState(false);
+
   const indianRegions = [
     "Andaman and Nicobar Islands",
     "Andhra Pradesh",
@@ -83,6 +86,8 @@ const CheckoutForm = () => {
   const [cartTotal, setCartTotal] = useState(0);
 
   const calcTax = async () => {
+    setLoading(true);
+
     try {
       const taxArray = await Promise.all(
         cartProductList.map(async (cartProduct) => {
@@ -93,17 +98,20 @@ const CheckoutForm = () => {
             }
           );
 
-          const rate = res.data.data.GSTRate / 100;
+          if (res.data.success) {
+            const rate = res.data.data.GSTRate / 100;
+            const taxPerProduct = Number(rate * cartProduct.productPrice);
 
-          const taxPerProduct = Number(rate * cartProduct.productPrice);
-
-          return taxPerProduct;
+            return taxPerProduct;
+          }
         })
       );
 
       setTax(taxArray);
+      setLoading(false);
     } catch (err) {
       console.log(err.message);
+      setLoading(false);
     }
   };
 
@@ -134,6 +142,8 @@ const CheckoutForm = () => {
   };
 
   const fetchLoggedUserDetailsonPageLoad = async (uid) => {
+    setLoading(true);
+
     try {
       const res = await axios.get(
         `http://localhost:8000/api/v1/fetch-user/${uid}`,
@@ -157,9 +167,11 @@ const CheckoutForm = () => {
           state: res.data.data.contactDetails.address.state,
           pincode: res.data.data.contactDetails.address.pincode,
         }));
+        setLoading(false);
       }
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
@@ -209,6 +221,8 @@ const CheckoutForm = () => {
   };
 
   const placeOrder = async () => {
+    setLoading(true);
+
     try {
       // if not logged in
       if (!uid) {
@@ -223,7 +237,7 @@ const CheckoutForm = () => {
         }
       }
 
-      // if uid all the following will be ignored as control will flow to the catch part
+      // if uid is found all the following will be ignored as control will flow to the catch part
       // if the user is logged in
       if (uid) {
         // update user contact information
@@ -360,6 +374,7 @@ const CheckoutForm = () => {
 
                 // reset the cart
                 resetCart();
+                setLoading(false);
                 navigate("/order-confirmation");
               }
             });
@@ -519,6 +534,7 @@ const CheckoutForm = () => {
 
                   // reset the cart
                   resetCart();
+                  setLoading(false);
                   navigate("/order-confirmation");
                 }
               });
@@ -527,6 +543,7 @@ const CheckoutForm = () => {
         }
       } catch (err) {
         console.log(err.message);
+        setLoading(false);
       }
     }
   };
@@ -564,441 +581,449 @@ const CheckoutForm = () => {
   }, [tax, totalGST, cartNetTotal]);
 
   return (
-    <div className=" flex flex-col justify-start items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-light my-10">Checkout</h1>
-      <form className="w-8/12 mb-3" onSubmit={handleSubmit}>
-        <div className="flex">
-          <div className="w-7/12">
-            {uid ? (
-              <></>
-            ) : (
-              <>
-                <h2 className="font-semibold mb-5">Account information</h2>
-                <div className="flex mb-5">
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className=" flex flex-col justify-start items-center min-h-screen">
+          <h1 className="text-4xl py-3 poppins-light my-10">Checkout</h1>
+          <form className="w-8/12 mb-3" onSubmit={handleSubmit}>
+            <div className="flex">
+              <div className="w-7/12">
+                {uid ? (
+                  <></>
+                ) : (
+                  <>
+                    <h2 className="font-semibold mb-5">Account information</h2>
+                    <div className="flex mb-5">
+                      <div className="w-6/12 flex flex-col px-2">
+                        <label htmlFor="username" className="mb-2">
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          name="username"
+                          id="username"
+                          value={loggedInUserDetails.username}
+                          onChange={handleChange}
+                          className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                          placeholder="Unique username"
+                          required
+                        />
+                      </div>
+
+                      <div className="w-6/12 flex flex-col px-2">
+                        <label htmlFor="password" className="mb-2">
+                          Password
+                        </label>
+                        <div className="flex justify-start items-center">
+                          <input
+                            type={isPasswordVisible ? "text" : "password"}
+                            name="password"
+                            id="password"
+                            value={loggedInUserDetails.password}
+                            onChange={handleChange}
+                            className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                            placeholder="Strong passowrd"
+                            required
+                          />
+                          <Link
+                            className="ml-2 border p-2 rounded-md"
+                            onClick={togglePasswordVisibility}
+                          >
+                            {isPasswordVisible ? "Hide" : "Show"}
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <h2 className="font-semibold mb-5">Shipping information</h2>
+
+                <div className="flex mb-3">
                   <div className="w-6/12 flex flex-col px-2">
-                    <label htmlFor="username" className="mb-2">
-                      Username
+                    <label htmlFor="fName" className="mb-2">
+                      First name
                     </label>
                     <input
                       type="text"
-                      name="username"
-                      id="username"
-                      value={loggedInUserDetails.username}
+                      name="fName"
+                      id="fName"
+                      value={loggedInUserDetails.fName}
                       onChange={handleChange}
                       className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                      placeholder="Unique username"
+                      placeholder="John"
                       required
                     />
                   </div>
 
                   <div className="w-6/12 flex flex-col px-2">
-                    <label htmlFor="password" className="mb-2">
-                      Password
+                    <label htmlFor="lName" className="mb-2">
+                      Last name
                     </label>
-                    <div className="flex justify-start items-center">
-                      <input
-                        type={isPasswordVisible ? "text" : "password"}
-                        name="password"
-                        id="password"
-                        value={loggedInUserDetails.password}
-                        onChange={handleChange}
-                        className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                        placeholder="Strong passowrd"
-                        required
-                      />
+                    <input
+                      type="text"
+                      name="lName"
+                      id="lName"
+                      value={loggedInUserDetails.lName}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="Doe"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex mb-3">
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="email" className="mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="text"
+                      name="email"
+                      id="email"
+                      value={loggedInUserDetails.email}
+                      onChange={handleChange}
+                      className={`border rounded-lg py-2 px-2 outline-none focus:border-blue-600 ${
+                        uid ? "bg-gray-200 text-gray-500" : ""
+                      }`}
+                      placeholder="johndoe@example.com"
+                      readOnly={uid ? true : false}
+                      required
+                    />
+                  </div>
+
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="contactNo" className="mb-2">
+                      Contact number
+                    </label>
+                    <input
+                      type="text"
+                      name="contactNo"
+                      id="contactNo"
+                      value={loggedInUserDetails.contactNo}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="99898989898"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex mb-3">
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="buildingNo" className="mb-2">
+                      Building number or name
+                    </label>
+                    <input
+                      type="text"
+                      name="buildingNo"
+                      id="buildingNo"
+                      value={loggedInUserDetails.buildingNo}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="A 145"
+                      required
+                    />
+                  </div>
+
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="streetNo" className="mb-2">
+                      Street number or name
+                    </label>
+                    <input
+                      type="text"
+                      name="streetNo"
+                      id="streetNo"
+                      value={loggedInUserDetails.streetNo}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="07"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex mb-3">
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="locality" className="mb-2">
+                      Locality
+                    </label>
+                    <input
+                      type="text"
+                      name="locality"
+                      id="locality"
+                      value={loggedInUserDetails.locality}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="Panchsheet society"
+                      required
+                    />
+                  </div>
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="district" className="mb-2">
+                      District
+                    </label>
+                    <input
+                      type="text"
+                      name="district"
+                      id="district"
+                      value={loggedInUserDetails.district}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="North east"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex mb-3">
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="landmark" className="mb-2">
+                      Landmark
+                    </label>
+                    <input
+                      type="text"
+                      name="landmark"
+                      id="landmark"
+                      value={loggedInUserDetails.landmark}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="KFC"
+                      required
+                    />
+                  </div>
+
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="city" className="mb-2">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      id="city"
+                      value={loggedInUserDetails.city}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="Agra"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex mb-3">
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="state" className="mb-2">
+                      State
+                    </label>
+                    <select
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      name="state"
+                      id="state"
+                      value={loggedInUserDetails.state}
+                      onChange={(e) => {
+                        handleChange(e);
+                      }}
+                      required
+                    >
+                      <option>Select</option>
+                      {indianRegions.map((region, index) => (
+                        <option key={index} value={region}>
+                          {region}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="w-6/12 flex flex-col px-2">
+                    <label htmlFor="pincode" className="mb-2">
+                      Pincode
+                    </label>
+                    <input
+                      type="text"
+                      name="pincode"
+                      id="pincode"
+                      value={loggedInUserDetails.pincode}
+                      onChange={handleChange}
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                      placeholder="201301"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col mb-3 px-2">
+                  <label htmlFor="orderNote" className="mb-2">
+                    Order note
+                  </label>
+                  <textarea
+                    name="orderNote"
+                    id="orderNote"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    rows={3}
+                    value={loggedInUserDetails.orderNote}
+                    onChange={handleChange}
+                    placeholder="Share order note, if any"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div className="w-5/12 border rounded-lg ">
+                <div className="flex flex-col justify-start items-center min-h-screen px-5">
+                  {cartProductList.length > 0 ? (
+                    <div className="flex flex-col w-full py-5">
+                      <table className="w-full border">
+                        <thead className="bg-blue-600 text-white h-10 m-10">
+                          <tr>
+                            <th className="poppins-light border text-sm p-1">
+                              Product Name
+                            </th>
+                            <th className="poppins-light border text-sm p-1">
+                              Quantity
+                            </th>
+                            <th className="poppins-light border text-sm p-1">
+                              Price (Rs)
+                            </th>
+                            <th className="poppins-light border text-sm p-1">
+                              Total (Rs)
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cartProductList.map((cartProduct, index) => {
+                            return (
+                              <tr
+                                key={index}
+                                className="odd:bg-white even:bg-gray-300 h-10 text-center border"
+                              >
+                                <td className="border text-sm p-1">
+                                  {cartProduct.productName}
+                                </td>
+                                <td className="border text-sm p-1">
+                                  <span>{cartProduct.productQuantity}</span>
+                                </td>
+                                <td className="border text-sm p-1">
+                                  {cartProduct.productPrice}
+                                </td>
+                                <td className="border text-sm p-1">
+                                  {cartProduct.productTotalAmount}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+
+                      <div className="w-full flex justify-between border p-5">
+                        <table className="w-full table-auto">
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="border text-sm p-1 font-bold">
+                                Gross total
+                              </td>
+                              <td className="poppins-light border text-sm p-1 text-center">
+                                Rs {cartGrossTotal || 0}
+                              </td>
+                            </tr>
+
+                            <tr className="border-b">
+                              <td className="border text-sm p-1 font-bold">
+                                Discount:
+                              </td>
+                              <td className="poppins-light border text-sm p-1 text-center">
+                                Rs ({cartDiscount.discountAmount || 0})
+                              </td>
+                            </tr>
+
+                            <tr className="border-b">
+                              <td className="border text-sm p-1 font-bold">
+                                Net total
+                              </td>
+                              <td className="poppins-light border text-sm p-1 text-center">
+                                Rs {cartNetTotal || 0}
+                              </td>
+                            </tr>
+
+                            <tr className="border-b">
+                              <td className="border text-sm p-1 font-bold">
+                                GST
+                              </td>
+                              <td className="poppins-light border text-sm p-1 text-center">
+                                Rs
+                                {totalGST}
+                              </td>
+                            </tr>
+
+                            <tr className="border-b">
+                              <td className="border text-sm p-1 font-bold">
+                                Net Payable
+                              </td>
+                              <td className="poppins-light border text-sm p-1 text-center">
+                                Rs {netPayable || 0}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full flex flex-col justify-center items-center my-3 bg-gray-200 p-10 rounded-lg">
+                      <h3 className="mb-3">The cart is empty!</h3>
+                      <h3 className="mb-3">Add some products to the cart!</h3>
                       <Link
-                        className="ml-2 border p-2 rounded-md"
-                        onClick={togglePasswordVisibility}
+                        className="bg-blue-600 py-2 px-4 border rounded-md text-xl text-gray-100 hover:bg-blue-700"
+                        to="/"
                       >
-                        {isPasswordVisible ? "Hide" : "Show"}
+                        Go the shop
                       </Link>
                     </div>
+                  )}
+
+                  <div className="flex flex-col justify-start item-start mb-3 px-2 w-full">
+                    <h2 className="font-semibold mb-5">Payment method</h2>
+
+                    <label htmlFor="online" className="mb-2">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        id="online"
+                        value="Online"
+                        checked={loggedInUserDetails.paymentMethod === "Online"}
+                        onChange={handleChange}
+                        defaultChecked
+                      />{" "}
+                      Online
+                    </label>
+
+                    <label htmlFor="cod" className="mb-2">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        id="cod"
+                        value="COD"
+                        checked={loggedInUserDetails.paymentMethod === "COD"}
+                        onChange={handleChange}
+                      />{" "}
+                      Cash on Delivery
+                    </label>
                   </div>
-                </div>
-              </>
-            )}
 
-            <h2 className="font-semibold mb-5">Shipping information</h2>
-
-            <div className="flex mb-3">
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="fName" className="mb-2">
-                  First name
-                </label>
-                <input
-                  type="text"
-                  name="fName"
-                  id="fName"
-                  value={loggedInUserDetails.fName}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="John"
-                  required
-                />
-              </div>
-
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="lName" className="mb-2">
-                  Last name
-                </label>
-                <input
-                  type="text"
-                  name="lName"
-                  id="lName"
-                  value={loggedInUserDetails.lName}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="Doe"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex mb-3">
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="email" className="mb-2">
-                  Email
-                </label>
-                <input
-                  type="text"
-                  name="email"
-                  id="email"
-                  value={loggedInUserDetails.email}
-                  onChange={handleChange}
-                  className={`border rounded-lg py-2 px-2 outline-none focus:border-blue-600 ${
-                    uid ? "bg-gray-200 text-gray-500" : ""
-                  }`}
-                  placeholder="johndoe@example.com"
-                  readOnly={uid ? true : false}
-                  required
-                />
-              </div>
-
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="contactNo" className="mb-2">
-                  Contact number
-                </label>
-                <input
-                  type="text"
-                  name="contactNo"
-                  id="contactNo"
-                  value={loggedInUserDetails.contactNo}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="99898989898"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex mb-3">
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="buildingNo" className="mb-2">
-                  Building number or name
-                </label>
-                <input
-                  type="text"
-                  name="buildingNo"
-                  id="buildingNo"
-                  value={loggedInUserDetails.buildingNo}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="A 145"
-                  required
-                />
-              </div>
-
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="streetNo" className="mb-2">
-                  Street number or name
-                </label>
-                <input
-                  type="text"
-                  name="streetNo"
-                  id="streetNo"
-                  value={loggedInUserDetails.streetNo}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="07"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex mb-3">
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="locality" className="mb-2">
-                  Locality
-                </label>
-                <input
-                  type="text"
-                  name="locality"
-                  id="locality"
-                  value={loggedInUserDetails.locality}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="Panchsheet society"
-                  required
-                />
-              </div>
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="district" className="mb-2">
-                  District
-                </label>
-                <input
-                  type="text"
-                  name="district"
-                  id="district"
-                  value={loggedInUserDetails.district}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="North east"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex mb-3">
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="landmark" className="mb-2">
-                  Landmark
-                </label>
-                <input
-                  type="text"
-                  name="landmark"
-                  id="landmark"
-                  value={loggedInUserDetails.landmark}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="KFC"
-                  required
-                />
-              </div>
-
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="city" className="mb-2">
-                  City
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  value={loggedInUserDetails.city}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="Agra"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex mb-3">
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="state" className="mb-2">
-                  State
-                </label>
-                <select
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  name="state"
-                  id="state"
-                  value={loggedInUserDetails.state}
-                  onChange={(e) => {
-                    handleChange(e);
-                  }}
-                  required
-                >
-                  <option>Select</option>
-                  {indianRegions.map((region, index) => (
-                    <option key={index} value={region}>
-                      {region}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="w-6/12 flex flex-col px-2">
-                <label htmlFor="pincode" className="mb-2">
-                  Pincode
-                </label>
-                <input
-                  type="text"
-                  name="pincode"
-                  id="pincode"
-                  value={loggedInUserDetails.pincode}
-                  onChange={handleChange}
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="201301"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col mb-3 px-2">
-              <label htmlFor="orderNote" className="mb-2">
-                Order note
-              </label>
-              <textarea
-                name="orderNote"
-                id="orderNote"
-                className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                rows={3}
-                value={loggedInUserDetails.orderNote}
-                onChange={handleChange}
-                placeholder="Share order note, if any"
-              ></textarea>
-            </div>
-          </div>
-
-          <div className="w-5/12 border rounded-lg ">
-            <div className="flex flex-col justify-start items-center min-h-screen px-5">
-              {cartProductList.length > 0 ? (
-                <div className="flex flex-col w-full py-5">
-                  <table className="w-full border">
-                    <thead className="bg-blue-600 text-white h-10 m-10">
-                      <tr>
-                        <th className="poppins-light border text-sm p-1">
-                          Product Name
-                        </th>
-                        <th className="poppins-light border text-sm p-1">
-                          Quantity
-                        </th>
-                        <th className="poppins-light border text-sm p-1">
-                          Price (Rs)
-                        </th>
-                        <th className="poppins-light border text-sm p-1">
-                          Total (Rs)
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {cartProductList.map((cartProduct, index) => {
-                        return (
-                          <tr
-                            key={index}
-                            className="odd:bg-white even:bg-gray-300 h-10 text-center border"
-                          >
-                            <td className="border text-sm p-1">
-                              {cartProduct.productName}
-                            </td>
-                            <td className="border text-sm p-1">
-                              <span>{cartProduct.productQuantity}</span>
-                            </td>
-                            <td className="border text-sm p-1">
-                              {cartProduct.productPrice}
-                            </td>
-                            <td className="border text-sm p-1">
-                              {cartProduct.productTotalAmount}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-
-                  <div className="w-full flex justify-between border p-5">
-                    <table className="w-full table-auto">
-                      <tbody>
-                        <tr className="border-b">
-                          <td className="border text-sm p-1 font-bold">
-                            Gross total
-                          </td>
-                          <td className="poppins-light border text-sm p-1 text-center">
-                            Rs {cartGrossTotal || 0}
-                          </td>
-                        </tr>
-
-                        <tr className="border-b">
-                          <td className="border text-sm p-1 font-bold">
-                            Discount:
-                          </td>
-                          <td className="poppins-light border text-sm p-1 text-center">
-                            Rs ({cartDiscount.discountAmount || 0})
-                          </td>
-                        </tr>
-
-                        <tr className="border-b">
-                          <td className="border text-sm p-1 font-bold">
-                            Net total
-                          </td>
-                          <td className="poppins-light border text-sm p-1 text-center">
-                            Rs {cartNetTotal || 0}
-                          </td>
-                        </tr>
-
-                        <tr className="border-b">
-                          <td className="border text-sm p-1 font-bold">GST</td>
-                          <td className="poppins-light border text-sm p-1 text-center">
-                            Rs
-                            {totalGST}
-                          </td>
-                        </tr>
-
-                        <tr className="border-b">
-                          <td className="border text-sm p-1 font-bold">
-                            Net Payable
-                          </td>
-                          <td className="poppins-light border text-sm p-1 text-center">
-                            Rs {netPayable || 0}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ) : (
-                <div className="w-full flex flex-col justify-center items-center my-3 bg-gray-200 p-10 rounded-lg">
-                  <h3 className="mb-3">The cart is empty!</h3>
-                  <h3 className="mb-3">Add some products to the cart!</h3>
-                  <Link
-                    className="bg-blue-600 py-2 px-4 border rounded-md text-xl text-gray-100 hover:bg-blue-700"
-                    to="/"
+                  <button
+                    type="submit"
+                    onClick={emptyCartError}
+                    className="bg-green-600 px-4 py-2 rounded-md text-white hover:bg-green-700 w-full"
                   >
-                    Go the shop
-                  </Link>
+                    PLACE ORDER
+                  </button>
                 </div>
-              )}
-
-              <div className="flex flex-col justify-start item-start mb-3 px-2 w-full">
-                <h2 className="font-semibold mb-5">Payment method</h2>
-
-                <label htmlFor="online" className="mb-2">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    id="online"
-                    value="Online"
-                    checked={loggedInUserDetails.paymentMethod === "Online"}
-                    onChange={handleChange}
-                    defaultChecked
-                  />{" "}
-                  Online
-                </label>
-
-                <label htmlFor="cod" className="mb-2">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    id="cod"
-                    value="COD"
-                    checked={loggedInUserDetails.paymentMethod === "COD"}
-                    onChange={handleChange}
-                  />{" "}
-                  Cash on Delivery
-                </label>
               </div>
-
-              <button
-                type="submit"
-                onClick={emptyCartError}
-                className="bg-green-600 px-4 py-2 rounded-md text-white hover:bg-green-700 w-full"
-              >
-                PLACE ORDER
-              </button>
             </div>
-          </div>
+          </form>
         </div>
-      </form>
-    </div>
+      )}
+    </>
   );
 };
 
