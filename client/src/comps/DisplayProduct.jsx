@@ -233,16 +233,16 @@ const DisplayProduct = () => {
             </p>
           </div>
           <section className="flex ">
-            <section className=" flex justify-center w-6/12 border m-5">
+            <section className=" flex justify-center w-6/12 border rounded-md m-5">
               <div className="flex flex-col justify-start items-center mr-5">
                 {productData.gallery.map((imgURL, index) => {
                   return (
                     <ModalImage
                       key={index}
-                      small={imgURL}
-                      large={imgURL}
+                      small={imgURL.value}
+                      large={imgURL.value}
                       alt={productData.name}
-                      className="h-[150px] my-2"
+                      className="h-[150px] my-2 rounded-md"
                     />
                   );
                 })}
@@ -252,9 +252,8 @@ const DisplayProduct = () => {
                   small={productData.img}
                   large={productData.img}
                   alt={productData.name}
-                  className="h-[500px]"
+                  className="h-[500px] my-2 rounded-md"
                 />
-                {/* <img src={productData.img} style={{ height: "500px" }} /> */}
               </div>
             </section>
 
