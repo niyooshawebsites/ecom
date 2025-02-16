@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import Loading from "./Loading";
+import registrationSchema from "../validationSchemas/registrationSchema";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleRegsitration = async (formData) => {
     setLoading(true);
@@ -14,6 +16,22 @@ const RegisterForm = () => {
       const username = formData.get("username");
       const email = formData.get("email");
       const password = formData.get("password");
+
+      // sanitize and validate form data before sending to backend
+      const result = registrationSchema.safeParse({
+        username,
+        email,
+        password,
+      });
+
+      // if validation fails
+      if (!result.success) {
+        // Extract the errors
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
 
       const res = await axios.post(
         `http://localhost:8000/api/v1/register`,
@@ -50,6 +68,9 @@ const RegisterForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Unique username"
                 />
+                {errors.username && (
+                  <p className="text-red-500">{errors.username._errors[0]}</p>
+                )}
               </div>
               <div className="flex flex-col mb-3">
                 <label htmlFor="email">Email</label>
@@ -60,6 +81,9 @@ const RegisterForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="abc@example.com"
                 />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email._errors[0]}</p>
+                )}
               </div>
               <div className="flex flex-col mb-3">
                 <label htmlFor="password">Password</label>
@@ -70,6 +94,9 @@ const RegisterForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="*********"
                 />
+                {errors.password && (
+                  <p className="text-red-500">{errors.password._errors[0]}</p>
+                )}
               </div>
               <button
                 type="submit"
