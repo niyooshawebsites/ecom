@@ -3,10 +3,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Loading from "./Loading";
+import productSchema from "../utils/validation/productSchema";
 
 const CreateProductForm = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [productDetails, setProductDetails] = useState({
     name: "",
@@ -55,6 +57,16 @@ const CreateProductForm = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Validate using Zod
+    const result = productSchema.safeParse(productDetails);
+
+    if (!result.success) {
+      const formattedErrors = result.error.format();
+      setErrors(formattedErrors); // Store errors in state
+      setLoading(false);
+      return;
+    }
+
     try {
       const productData = new FormData();
 
@@ -101,6 +113,7 @@ const CreateProductForm = () => {
 
   const fetchAllCategories = async () => {
     setLoading(true);
+
     try {
       const res = await axios.get(
         `http://localhost:8000/api/v1/fetch-all-categories-at-once`,
@@ -151,6 +164,9 @@ const CreateProductForm = () => {
                     </option>
                   ))}
                 </select>
+                {errors.category && (
+                  <p className="text-red-500">{errors.category._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -166,6 +182,9 @@ const CreateProductForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product name"
                 />
+                {errors.name && (
+                  <p className="text-red-500">{errors.name._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -181,6 +200,9 @@ const CreateProductForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product Price"
                 />
+                {errors.price && (
+                  <p className="text-red-500">{errors.price._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -205,6 +227,9 @@ const CreateProductForm = () => {
                       }}
                     />
                   </div>
+                )}
+                {errors.img && (
+                  <p className="text-red-500">{errors.img._errors[0]}</p>
                 )}
               </div>
 
@@ -235,6 +260,9 @@ const CreateProductForm = () => {
                       </div>
                     ))}
                 </div>
+                {errors.gallery && (
+                  <p className="text-red-500">{errors.gallery._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -249,6 +277,9 @@ const CreateProductForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product short description"
                 ></textarea>
+                {errors.shortDesc && (
+                  <p className="text-red-500">{errors.shortDesc._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -264,6 +295,9 @@ const CreateProductForm = () => {
                   rows={8}
                   placeholder="Product short description"
                 ></textarea>
+                {errors.longDesc && (
+                  <p className="text-red-500">{errors.longDesc._errors[0]}</p>
+                )}
               </div>
 
               <button

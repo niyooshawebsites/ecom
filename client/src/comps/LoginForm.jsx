@@ -5,9 +5,12 @@ import { userSliceActions } from "../store/slices/userSlice";
 import { useDispatch } from "react-redux";
 import Loading from "./Loading";
 import { useState } from "react";
+import loginSchema from "../utils/validation/loginSchema";
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -17,6 +20,15 @@ const LoginForm = () => {
     try {
       const email = formData.get("email");
       const password = formData.get("password");
+
+      const result = loginSchema.safeParse({ email });
+
+      if (!result.success) {
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
 
       const res = await axios.post(
         `http://localhost:8000/api/v1/auth/login`,
@@ -75,6 +87,9 @@ const LoginForm = () => {
                   placeholder="abc@example.com"
                   required
                 />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email._errors[0]}</p>
+                )}
               </div>
               <div className="flex flex-col mb-3">
                 <label htmlFor="password">Password</label>

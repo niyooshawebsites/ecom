@@ -4,11 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { cartSliceActions } from "../store/slices/cartSlice";
+import cartSchema from "../utils/validation/cartSchema";
+import Loading from "./Loading";
 
 const CartTable = () => {
   const { cartProductList, cartDiscount, cartProduct } = useSelector(
     (state) => state.cart_Slice
   );
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const [cartTotal, setCartTotal] = useState(0);
   const [coupon, setCoupon] = useState(null);
@@ -137,8 +141,22 @@ const CartTable = () => {
   };
 
   const applyDiscount = async (formData) => {
+    setLoading(true);
+
     try {
       const couponCode = formData?.get("couponCode");
+
+      // sanitize and validate form data before sending to backend
+      const result = cartSchema.safeParse({ couponCode });
+
+      // if validation fails
+      if (!result.success) {
+        // Extract the errors
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
 
       const { data } = await axios.post(
         `http://localhost:8000/api/v1/apply-coupon/${cartTotal}`,
@@ -149,6 +167,7 @@ const CartTable = () => {
       );
 
       if (data.success) {
+        setLoading(false);
         setCoupon(data.data);
 
         // calculate discount amount
@@ -199,6 +218,7 @@ const CartTable = () => {
     } catch (err) {
       toast.error(err.response?.data.msg);
       console.log(err.response?.data.msg);
+      setLoading(false);
     }
   };
 
@@ -223,177 +243,196 @@ const CartTable = () => {
   ]);
 
   return (
-    <div className="flex flex-col justify-start items-center min-h-screen">
-      <h1 className="text-4xl py-3 poppins-regular mt-20">Cart Details</h1>
-      {cartProductList.length > 0 ? (
-        <div className="flex flex-col w-6/12 border rounded-lg p-5">
-          <table className="w-full border">
-            <thead className="bg-blue-600 text-white h-10 m-10">
-              <tr>
-                <th className="poppins-light border text-sm p-1">#</th>
-                <th className="poppins-light border text-sm p-1">
-                  Product Image
-                </th>
-                <th className="poppins-light border text-sm p-1">
-                  Product Name
-                </th>
-                <th className="poppins-light border text-sm p-1">
-                  Product Quantity
-                </th>
-                <th className="poppins-light border text-sm p-1">
-                  Product Price
-                </th>
-                <th className="poppins-light border text-sm p-1">Total</th>
-                <th className="poppins-light border text-sm p-1">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartProductList.map((cartProduct, index) => {
-                return (
-                  <tr
-                    key={index}
-                    className="odd:bg-white even:bg-gray-300 h-10 text-center border"
-                  >
-                    <td className="border text-sm p-1">{index + 1}</td>
-                    <td className="border text-sm p-1">Product Image</td>
-                    <td className="border text-sm p-1">
-                      {cartProduct.productName}
-                    </td>
-                    <td className="border text-sm p-1">
-                      <button
-                        className="bg-gray-200 py-1 px-2 border rounded-md text-xl hover:bg-gray-300 mr-2"
-                        onClick={() => {
-                          decQuantity(cartProduct.productId);
-                        }}
-                      >
-                        -
-                      </button>
-                      <span>{cartProduct.productQuantity}</span>
-                      <button
-                        className="bg-gray-200 py-1 px-2 border rounded-md text-xl hover:bg-gray-300 ml-2"
-                        onClick={() => {
-                          incQuantity(cartProduct.productId);
-                        }}
-                      >
-                        +
-                      </button>
-                    </td>
-                    <td className="border text-sm p-1">
-                      {cartProduct.productPrice}
-                    </td>
-                    <td className="border text-sm p-1">
-                      {cartProduct.productTotalAmount}
-                    </td>
-                    <td className="border text-sm p-1">
-                      <button
-                        className="bg-orange-600 py-1 px-1 border rounded-md  text-gray-100 hover:bg-orange-700"
-                        onClick={() => removeCartItem(cartProduct.productId)}
-                      >
-                        Remove
-                      </button>
-                    </td>
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="flex flex-col justify-start items-center min-h-screen">
+          <h1 className="text-4xl py-3 poppins-regular mt-20">Cart Details</h1>
+          {cartProductList.length > 0 ? (
+            <div className="flex flex-col w-6/12 border rounded-lg p-5">
+              <table className="w-full border">
+                <thead className="bg-blue-600 text-white h-10 m-10">
+                  <tr>
+                    <th className="poppins-light border text-sm p-1">#</th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Image
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Name
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Quantity
+                    </th>
+                    <th className="poppins-light border text-sm p-1">
+                      Product Price
+                    </th>
+                    <th className="poppins-light border text-sm p-1">Total</th>
+                    <th className="poppins-light border text-sm p-1">Action</th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-
-          <div className="w-full flex justify-between border p-5">
-            <div>
-              <form action={applyDiscount}>
-                <input
-                  type="text"
-                  placeholder="Enter coupon code"
-                  className="py-1 px-1 mr-2 border rounded-md border-blue-500"
-                  name="couponCode"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="bg-green-600 py-1 px-2 border rounded-md  text-gray-100 hover:bg-green-700"
-                >
-                  Apply
-                </button>
-              </form>
-              <div className="mt-3">
-                {cartDiscount.couponCode !== null ? (
-                  <>
-                    <h3>
-                      <span className="font-bold">Coupon code applied: </span>
-                      <span className="text-orange-500 font-bold">
-                        {cartDiscount.couponCode}
-                      </span>
-                    </h3>
-                    <p>
-                      <span className="font-bold">Coupon description:</span>{" "}
-                      {cartDiscount.couponDesc}
-                    </p>
-                  </>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
-
-            <table className="w-4/12 table-auto">
-              <tbody>
-                <tr className="border-b">
-                  <td className="border text-sm p-1 font-bold">Gross amount</td>
-                  <td className="poppins-light border text-sm p-1 text-center">
-                    {cartTotal ? cartTotal : 0}
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="border text-sm p-1 font-bold">
-                    Discount: {cartDiscount?.couponCode || ""}{" "}
-                    {cartDiscount?.couponCode ? (
-                      <button
-                        className="bg-orange-600 py-1 px-1 border rounded-md  text-gray-100 hover:bg-orange-700 poppins-light"
-                        onClick={removeCoupon}
+                </thead>
+                <tbody>
+                  {cartProductList.map((cartProduct, index) => {
+                    return (
+                      <tr
+                        key={index}
+                        className="odd:bg-white even:bg-gray-300 h-10 text-center border"
                       >
-                        Remove
-                      </button>
+                        <td className="border text-sm p-1">{index + 1}</td>
+                        <td className="border text-sm p-1">Product Image</td>
+                        <td className="border text-sm p-1">
+                          {cartProduct.productName}
+                        </td>
+                        <td className="border text-sm p-1">
+                          <button
+                            className="bg-gray-200 py-1 px-2 border rounded-md text-xl hover:bg-gray-300 mr-2"
+                            onClick={() => {
+                              decQuantity(cartProduct.productId);
+                            }}
+                          >
+                            -
+                          </button>
+                          <span>{cartProduct.productQuantity}</span>
+                          <button
+                            className="bg-gray-200 py-1 px-2 border rounded-md text-xl hover:bg-gray-300 ml-2"
+                            onClick={() => {
+                              incQuantity(cartProduct.productId);
+                            }}
+                          >
+                            +
+                          </button>
+                        </td>
+                        <td className="border text-sm p-1">
+                          {cartProduct.productPrice}
+                        </td>
+                        <td className="border text-sm p-1">
+                          {cartProduct.productTotalAmount}
+                        </td>
+                        <td className="border text-sm p-1">
+                          <button
+                            className="bg-orange-600 py-1 px-1 border rounded-md  text-gray-100 hover:bg-orange-700"
+                            onClick={() =>
+                              removeCartItem(cartProduct.productId)
+                            }
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              <div className="w-full flex justify-between border p-5">
+                <div>
+                  <form action={applyDiscount}>
+                    <input
+                      type="text"
+                      placeholder="Enter coupon code"
+                      className="py-1 px-1 mr-2 border rounded-md border-blue-500"
+                      name="couponCode"
+                      required
+                    />
+                    {errors.couponCode && (
+                      <p className="text-red-500">
+                        {errors.couponCode._errors[0] || ""}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      className="bg-green-600 py-1 px-2 border rounded-md  text-gray-100 hover:bg-green-700"
+                    >
+                      Apply
+                    </button>
+                  </form>
+                  <div className="mt-3">
+                    {cartDiscount.couponCode !== null ? (
+                      <>
+                        <h3>
+                          <span className="font-bold">
+                            Coupon code applied:{" "}
+                          </span>
+                          <span className="text-orange-500 font-bold">
+                            {cartDiscount.couponCode}
+                          </span>
+                        </h3>
+                        <p>
+                          <span className="font-bold">Coupon description:</span>{" "}
+                          {cartDiscount.couponDesc}
+                        </p>
+                      </>
                     ) : (
                       ""
                     )}
-                  </td>
-                  <td className="poppins-light border text-sm p-1 text-center">
-                    ({cartDiscount?.discountAmount || 0})
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="border text-sm p-1 font-bold">Net amount</td>
-                  <td className="poppins-light border text-sm p-1 text-center">
-                    {cartTotal - discount}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                  </div>
+                </div>
 
-          <div className="flex justify-end items-center mt-5">
-            <Link
-              className="bg-blue-600 py-1 px-2 rounded-md text-gray-100 hover:bg-blue-700"
-              to="/checkout"
-            >
-              Proceed to checkout
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="w-4/12 flex flex-col justify-center items-center bg-gray-200 p-10 rounded-lg">
-          <h3 className="mb-3">
-            The cart is empty! Add some products to the cart!
-          </h3>
-          <Link
-            className="bg-blue-600 py-2 px-4 border rounded-md text-xl text-gray-100 hover:bg-blue-700"
-            to="/"
-          >
-            Go the shop
-          </Link>
+                <table className="w-4/12 table-auto">
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="border text-sm p-1 font-bold">
+                        Gross amount
+                      </td>
+                      <td className="poppins-light border text-sm p-1 text-center">
+                        {cartTotal ? cartTotal : 0}
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="border text-sm p-1 font-bold">
+                        Discount: {cartDiscount?.couponCode || ""}{" "}
+                        {cartDiscount?.couponCode ? (
+                          <button
+                            className="bg-orange-600 py-1 px-1 border rounded-md  text-gray-100 hover:bg-orange-700 poppins-light"
+                            onClick={removeCoupon}
+                          >
+                            Remove
+                          </button>
+                        ) : (
+                          ""
+                        )}
+                      </td>
+                      <td className="poppins-light border text-sm p-1 text-center">
+                        ({cartDiscount?.discountAmount || 0})
+                      </td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="border text-sm p-1 font-bold">
+                        Net amount
+                      </td>
+                      <td className="poppins-light border text-sm p-1 text-center">
+                        {cartTotal - discount}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex justify-end items-center mt-5">
+                <Link
+                  className="bg-blue-600 py-1 px-2 rounded-md text-gray-100 hover:bg-blue-700"
+                  to="/checkout"
+                >
+                  Proceed to checkout
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="w-4/12 flex flex-col justify-center items-center bg-gray-200 p-10 rounded-lg">
+              <h3 className="mb-3">
+                The cart is empty! Add some products to the cart!
+              </h3>
+              <Link
+                className="bg-blue-600 py-2 px-4 border rounded-md text-xl text-gray-100 hover:bg-blue-700"
+                to="/"
+              >
+                Go the shop
+              </Link>
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

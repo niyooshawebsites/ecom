@@ -1,7 +1,5 @@
 import { z } from "zod";
-
-// utility function to escape HTML characters
-const escapeHTML = (str) => str.replace(/[&<>"'`=]/g, "");
+import escapeHTML from "./sanitization";
 
 const registrationSchema = z.object({
   username: z

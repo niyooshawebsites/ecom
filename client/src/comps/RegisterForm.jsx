@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import Loading from "./Loading";
-import registrationSchema from "../validationSchemas/registrationSchema";
+import registrationSchema from "../utils/validation/registrationSchema";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);

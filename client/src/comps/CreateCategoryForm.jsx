@@ -2,15 +2,30 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Loading from "./Loading";
 import { useState } from "react";
+import categorySchema from "../utils/validation/categoryScehma";
 
 const CreateCategoryForm = () => {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleCategoryCreation = async (formData) => {
     setLoading(true);
 
     try {
       const name = formData.get("name");
+
+      // sanitize and validate form data before sending to backend
+      const result = categorySchema.safeParse({ name });
+
+      // if validation fails
+      if (!result.success) {
+        // Extract the errors
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
+
       const res = await axios.post(
         "http://localhost:8000/api/v1/create-category",
         { name },
@@ -47,6 +62,9 @@ const CreateCategoryForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter category name"
                 />
+                {errors.name && (
+                  <p className="text-red-500">{errors.name._errors[0]}</p>
+                )}
               </div>
               <button
                 type="submit"
