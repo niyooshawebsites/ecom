@@ -2,9 +2,11 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Loading from "./Loading";
 import { useState } from "react";
+import couponSchema from "../utils/validation/couponSchema";
 
 const CreateCouponForm = () => {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleCouponCreation = async (formData) => {
     setLoading(true);
@@ -20,6 +22,27 @@ const CreateCouponForm = () => {
       const usageLimit = formData.get("usageLimit");
       const isActive = formData.get("isActive");
       const desc = formData.get("desc");
+
+      // Validate using Zod
+      const result = couponSchema.safeParse({
+        couponCode,
+        discountType,
+        discountValue,
+        minOrderValue,
+        maxOrderValue,
+        startDate,
+        endDate,
+        usageLimit,
+        isActive,
+        desc,
+      });
+
+      if (!result.success) {
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
 
       const res = await axios.post(
         "http://localhost:8000/api/v1/create-coupon",
@@ -68,6 +91,9 @@ const CreateCouponForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter a code"
                 />
+                {errors.couponCode && (
+                  <p className="text-red-500">{errors.couponCode._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -80,6 +106,9 @@ const CreateCouponForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the coupon description"
                 ></textarea>
+                {errors.desc && (
+                  <p className="text-red-500">{errors.desc._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -94,6 +123,11 @@ const CreateCouponForm = () => {
                   <option value="percentage">Percentage</option>
                   <option value="fixed">Fixed</option>
                 </select>
+                {errors.discountType && (
+                  <p className="text-red-500">
+                    {errors.discountType._errors[0]}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -107,6 +141,11 @@ const CreateCouponForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the discount value"
                 />
+                {errors.discountValue && (
+                  <p className="text-red-500">
+                    {errors.discountValue._errors[0]}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -121,6 +160,11 @@ const CreateCouponForm = () => {
                   defaultValue={0}
                   placeholder="Enter the minimum order value"
                 />
+                {errors.minOrderValue && (
+                  <p className="text-red-500">
+                    {errors.minOrderValue._errors[0]}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -135,6 +179,11 @@ const CreateCouponForm = () => {
                   defaultValue={1000000000}
                   placeholder="Enter the minimum order value"
                 />
+                {errors.maxOrderValue && (
+                  <p className="text-red-500">
+                    {errors.maxOrderValue._errors[0]}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -147,6 +196,9 @@ const CreateCouponForm = () => {
                   id="startDate"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                 />
+                {errors.startDate && (
+                  <p className="text-red-500">{errors.startDate._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -159,6 +211,9 @@ const CreateCouponForm = () => {
                   id="endDate"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                 />
+                {errors.endDate && (
+                  <p className="text-red-500">{errors.endDate._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -172,6 +227,9 @@ const CreateCouponForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the usage limit"
                 />
+                {errors.usageLimit && (
+                  <p className="text-red-500">{errors.usageLimit._errors[0]}</p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -186,6 +244,9 @@ const CreateCouponForm = () => {
                   <option value="true">Active</option>
                   <option value="false">Inactive</option>
                 </select>
+                {errors.isActive && (
+                  <p className="text-red-500">{errors.isActive._errors[0]}</p>
+                )}
               </div>
               <button
                 type="submit"

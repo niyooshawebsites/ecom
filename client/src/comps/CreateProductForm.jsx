@@ -156,6 +156,7 @@ const CreateProductForm = () => {
                   id="category"
                   value={productDetails.category}
                   onChange={handleChange}
+                  required
                 >
                   <option value="">Select</option>
                   {categories.map((category) => (
@@ -181,6 +182,7 @@ const CreateProductForm = () => {
                   onChange={handleChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product name"
+                  required
                 />
                 {errors.name && (
                   <p className="text-red-500">{errors.name._errors[0]}</p>
@@ -199,6 +201,7 @@ const CreateProductForm = () => {
                   onChange={handleChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product Price"
+                  required
                 />
                 {errors.price && (
                   <p className="text-red-500">{errors.price._errors[0]}</p>
@@ -216,6 +219,7 @@ const CreateProductForm = () => {
                   onChange={handleImgChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product name"
+                  required
                 />
                 {previewImg && (
                   <div className="flex my-1">

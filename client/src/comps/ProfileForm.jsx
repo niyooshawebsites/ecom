@@ -3,12 +3,14 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import Loading from "./Loading";
+import profileSchema from "../utils/validation/profileSchema";
 
 const ProfileForm = () => {
   const { uid } = useSelector((state) => state.user_Slice);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -25,8 +27,19 @@ const ProfileForm = () => {
       const newPassword = formData.get("newPassword");
       const confirmNewPassword = formData.get("confirmNewPassword");
 
+      const result = profileSchema.safeParse({
+        newPassword,
+        confirmNewPassword,
+      });
+
       if (newPassword !== confirmNewPassword) {
         toast.error("Password mismatch");
+      }
+
+      if (!result.success) {
+        const formattedData = result.error.format();
+        setErrors(formattedData);
+        setLoading(false);
         return;
       }
 
@@ -60,20 +73,28 @@ const ProfileForm = () => {
                 <label htmlFor="newPassword" className="mb-3">
                   Update password
                 </label>
-                <div className="flex items-center">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="newPassword"
-                    id="newPassword"
-                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 w-full mr-2"
-                    placeholder="New Password"
-                  />
-                  <span
-                    className="border p-2 rounded-lg cursor-pointer"
-                    onClick={togglePasswordVisibility}
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </span>
+                <div className="flex flex-col">
+                  <div className="flex items-center">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="newPassword"
+                      id="newPassword"
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 w-full mr-2"
+                      placeholder="New Password"
+                      required
+                    />
+                    <span
+                      className="border p-2 rounded-lg cursor-pointer"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </span>
+                  </div>
+                  {errors.newPassword && (
+                    <p className="text-red-500">
+                      {errors.newPassword._errors[0]}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -81,20 +102,28 @@ const ProfileForm = () => {
                 <label htmlFor="confirmNewPassword" className="mb-3">
                   Confirm password
                 </label>
-                <div className="flex items-center">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmNewPassword"
-                    id="confirmNewPassword"
-                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 w-full mr-2"
-                    placeholder="Confirm new password"
-                  />
-                  <span
-                    className="border p-2 rounded-lg cursor-pointer"
-                    onClick={toggleConfirmPasswordVisibility}
-                  >
-                    {showConfirmPassword ? "Hide" : "Show"}
-                  </span>
+                <div className="flex flex-col">
+                  <div className="flex items-center">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmNewPassword"
+                      id="confirmNewPassword"
+                      className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 w-full mr-2"
+                      placeholder="Confirm new password"
+                      required
+                    />
+                    <span
+                      className="border p-2 rounded-lg cursor-pointer"
+                      onClick={toggleConfirmPasswordVisibility}
+                    >
+                      {showConfirmPassword ? "Hide" : "Show"}
+                    </span>
+                  </div>
+                  {errors.confirmNewPassword && (
+                    <p className="text-red-500">
+                      {errors.confirmNewPassword._errors[0]}
+                    </p>
+                  )}
                 </div>
               </div>
               <button

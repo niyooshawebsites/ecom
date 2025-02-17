@@ -9,10 +9,7 @@ const productSchema = z.object({
     .max(50, "Product name must be atmost 50 characters long")
     .trim()
     .transform((val) => escapeHTML(val)),
-  price: z
-    .number()
-    .regex(/^\d+(\.\d{1,2})?$/, "Price must be a valid number")
-    .transform((val) => parseFloat(val)), // Convert price to a float
+  price: z.number().transform((val) => parseFloat(val)), // Convert price to a float
   img: z
     .custom((file) => file instanceof File, "Main product image is required") // to check if it is a file object
     .optional(),
