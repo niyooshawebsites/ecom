@@ -3,10 +3,12 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import Loading from "./Loading";
 import { useState } from "react";
+import reviewSchema from "../utils/validation/reviewSchema";
 
 const CreateReviewForm = ({ pid }) => {
   const { uid } = useSelector((state) => state.user_Slice);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleCreateReview = async (formData) => {
     setLoading(true);
@@ -14,6 +16,15 @@ const CreateReviewForm = ({ pid }) => {
     try {
       const rating = formData.get("rating");
       const reviewMsg = formData.get("reviewMsg");
+
+      const result = reviewSchema.safeParse({ rating, reviewMsg });
+
+      if (!result.success) {
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
 
       const res = await axios.post(
         `http://localhost:8000/api/v1/create-review/${pid}`,
@@ -55,6 +66,9 @@ const CreateReviewForm = ({ pid }) => {
               <option value="1">4 - Very good</option>
               <option value="5">5 - Excellent</option>
             </select>
+            {errors.rating && (
+              <p className="text-red-500">{errors.rating._errors[0]}</p>
+            )}
           </div>
 
           <div className="flex flex-col mb-3">
@@ -69,6 +83,9 @@ const CreateReviewForm = ({ pid }) => {
               placeholder="Write your review"
               required
             ></textarea>
+            {errors.reviewMsg && (
+              <p className="text-red-500">{errors.reviewMsg._errors[0]}</p>
+            )}
           </div>
 
           <button

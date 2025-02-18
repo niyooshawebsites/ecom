@@ -41,7 +41,7 @@ const CreateTaxForm = ({ setTaxCreated, categories }) => {
     setLoading(true);
 
     const GSTRate = formData.get("GSTRate");
-    const result = gstSchema.safeParse({ GSTRate });
+    const result = gstSchema.safeParse({ GSTRate: Number(GSTRate) });
 
     if (!result.success) {
       const formattedErrors = result.error.format();
@@ -80,7 +80,7 @@ const CreateTaxForm = ({ setTaxCreated, categories }) => {
     const cid = formData.get("cid");
     const GSTRate = formData.get("GSTRate");
 
-    const result = taxSchema.safeParse({ cid, GSTRate });
+    const result = taxSchema.safeParse({ cid, GSTRate: Number(GSTRate) });
 
     if (!result.success) {
       const formattedErrors = result.error.format();

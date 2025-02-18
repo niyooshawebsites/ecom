@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import Loading from "./Loading";
+import contactInfoSchema from "../utils/validation/contactInfoSchema";
 
 const ContactInfoFrom = () => {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [updatedContactInfo, setUpdatedContactInfo] = useState({
     bName: "NA",
@@ -67,9 +69,73 @@ const ContactInfoFrom = () => {
     setUpdatedContactInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit1 = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const result = contactInfoSchema.safeParse({
+      bName: updatedContactInfo.bName,
+      website: updatedContactInfo.bName,
+      contactNo: updatedContactInfo.contactNo,
+      buildingNo: updatedContactInfo.buildingNo,
+      streetNo: updatedContactInfo.streetNo,
+      locality: updatedContactInfo.locality,
+      district: updatedContactInfo.district,
+      landmark: updatedContactInfo.landmark,
+      city: updatedContactInfo.city,
+      state: updatedContactInfo.state,
+      pincode: updatedContactInfo.pincode,
+    });
+
+    if (!result.success) {
+      const formattedErrors = result.error.format();
+      setErrors(formattedErrors);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await axios.patch(
+        `http://localhost:8000/api/v1/update-contact-details/${uid}`,
+        updatedContactInfo,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.response.data.msg);
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const result = contactInfoSchema.safeParse({
+      fName: updatedContactInfo.fName,
+      lName: updatedContactInfo.lName,
+      contactNo: updatedContactInfo.contactNo,
+      buildingNo: updatedContactInfo.buildingNo,
+      streetNo: updatedContactInfo.streetNo,
+      locality: updatedContactInfo.locality,
+      district: updatedContactInfo.district,
+      landmark: updatedContactInfo.landmark,
+      city: updatedContactInfo.city,
+      state: updatedContactInfo.state,
+      pincode: updatedContactInfo.pincode,
+    });
+
+    if (!result.success) {
+      const formattedErrors = result.error.format();
+      setErrors(formattedErrors);
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await axios.patch(
@@ -102,7 +168,7 @@ const ContactInfoFrom = () => {
           <h1 className="text-4xl py-3 poppins-light my-10">Contact Details</h1>
           <div className="flex flex-col w-5/12 border rounded-lg p-5 mb-10 overflow-auto">
             {role === "admin" ? (
-              <form className="mb-3" onSubmit={handleSubmit}>
+              <form className="mb-3" onSubmit={handleSubmit1}>
                 <div className="flex flex-col mb-3">
                   <label htmlFor="bName" className="mb-3">
                     Business name
@@ -115,7 +181,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Northern Lights Pvt Ltd"
+                    required
                   />
+                  {errors.bName && (
+                    <p className="text-red-500">{errors.bName._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -130,7 +200,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="www.northerlights.com"
+                    required
                   />
+                  {errors.website && (
+                    <p className="text-red-500">{errors.website._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -145,7 +219,13 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="9891875195"
+                    required
                   />
+                  {errors.contactNo && (
+                    <p className="text-red-500">
+                      {errors.contactNo._errors[0]}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -160,7 +240,13 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="A 123"
+                    required
                   />
+                  {errors.buildingNo && (
+                    <p className="text-red-500">
+                      {errors.buildingNo._errors[0]}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -175,7 +261,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="07"
+                    required
                   />
+                  {errors.streetNo && (
+                    <p className="text-red-500">{errors.streetNo._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -190,7 +280,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Nehru Enclave"
+                    required
                   />
+                  {errors.locality && (
+                    <p className="text-red-500">{errors.locality._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -205,7 +299,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="North East"
+                    required
                   />
+                  {errors.district && (
+                    <p className="text-red-500">{errors.district._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -220,7 +318,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Ahuja builders"
+                    required
                   />
+                  {errors.landmark && (
+                    <p className="text-red-500">{errors.landmark._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -235,7 +337,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="New Delhi"
+                    required
                   />
+                  {errors.city && (
+                    <p className="text-red-500">{errors.city._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -250,7 +356,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Delhi"
+                    required
                   />
+                  {errors.state && (
+                    <p className="text-red-500">{errors.state._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -265,7 +375,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="110001"
+                    required
                   />
+                  {errors.pincode && (
+                    <p className="text-red-500">{errors.pincode._errors[0]}</p>
+                  )}
                 </div>
 
                 <button
@@ -276,7 +390,7 @@ const ContactInfoFrom = () => {
                 </button>
               </form>
             ) : (
-              <form className="mb-3" onSubmit={handleSubmit}>
+              <form className="mb-3" onSubmit={handleSubmit2}>
                 <div className="flex flex-col mb-3">
                   <label htmlFor="fName" className="mb-3">
                     First name
@@ -289,7 +403,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="John"
+                    required
                   />
+                  {errors.fName && (
+                    <p className="text-red-500">{errors.fName._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -304,7 +422,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Doe"
+                    required
                   />
+                  {errors.lName && (
+                    <p className="text-red-500">{errors.lName._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -319,7 +441,13 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="9891875195"
+                    required
                   />
+                  {errors.contactNo && (
+                    <p className="text-red-500">
+                      {errors.contactNo._errors[0]}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -334,7 +462,13 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="A 123"
+                    required
                   />
+                  {errors.buildingNo && (
+                    <p className="text-red-500">
+                      {errors.buildingNo._errors[0]}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -349,7 +483,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="07"
+                    required
                   />
+                  {errors.streetNo && (
+                    <p className="text-red-500">{errors.streetNo._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -364,7 +502,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Nehru Enclave"
+                    required
                   />
+                  {errors.locality && (
+                    <p className="text-red-500">{errors.locality._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -379,7 +521,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="North East"
+                    required
                   />
+                  {errors.district && (
+                    <p className="text-red-500">{errors.district._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -394,7 +540,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Ahuja builders"
+                    required
                   />
+                  {errors.landmark && (
+                    <p className="text-red-500">{errors.landmark._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -409,7 +559,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="New Delhi"
+                    required
                   />
+                  {errors.city && (
+                    <p className="text-red-500">{errors.city._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -424,7 +578,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="Delhi"
+                    required
                   />
+                  {errors.state && (
+                    <p className="text-red-500">{errors.state._errors[0]}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col mb-3">
@@ -439,7 +597,11 @@ const ContactInfoFrom = () => {
                     onChange={handleChange}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="110001"
+                    required
                   />
+                  {errors.pincode && (
+                    <p className="text-red-500">{errors.pincode._errors[0]}</p>
+                  )}
                 </div>
 
                 <button

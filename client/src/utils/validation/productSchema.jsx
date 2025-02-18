@@ -23,7 +23,7 @@ const productSchema = z.object({
     .trim(),
   longDesc: z
     .string()
-    .min(20, "Long description must be at least 20 characters")
+    .min(100, "Long description must be at least 100 characters")
     .max(5000, "Long description cannot exceed 5000 characters")
     .trim(),
 });

@@ -67,6 +67,7 @@ const RegisterForm = () => {
                   id="username"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Unique username"
+                  required
                 />
                 {errors.username && (
                   <p className="text-red-500">{errors.username._errors[0]}</p>
@@ -80,6 +81,7 @@ const RegisterForm = () => {
                   id="email"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="abc@example.com"
+                  required
                 />
                 {errors.email && (
                   <p className="text-red-500">{errors.email._errors[0]}</p>
@@ -93,6 +95,7 @@ const RegisterForm = () => {
                   id="password"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="*********"
+                  required
                 />
                 {errors.password && (
                   <p className="text-red-500">{errors.password._errors[0]}</p>

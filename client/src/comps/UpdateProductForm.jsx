@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import BackBtn from "./BackBtn";
 import Loading from "./Loading";
+import productSchema from "../utils/validation/productSchema";
 
 const UpdateProductForm = () => {
   const [product, setProduct] = useState({
@@ -19,6 +20,7 @@ const UpdateProductForm = () => {
   const [productUpdated, setProductUpdated] = useState(false);
   const { pid } = useParams();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const fetchAllCategories = async () => {
     setLoading(true);
@@ -67,6 +69,21 @@ const UpdateProductForm = () => {
       const updatedPrice = formData.get("price");
       const updatedShortDesc = formData.get("shortDesc");
       const updatedLongDesc = formData.get("longDesc");
+
+      const result = productSchema.safeParse({
+        category: updatedCategory,
+        name: updatedName,
+        price: Number(updatedPrice),
+        shortDesc: updatedShortDesc,
+        longDesc: updatedLongDesc,
+      });
+
+      if (!result.success) {
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
 
       const res = await axios.patch(
         `http://localhost:8000/api/v1/update-product/${pid}`,
@@ -145,7 +162,11 @@ const UpdateProductForm = () => {
                   defaultValue={product.name}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product name"
+                  required
                 />
+                {errors.name && (
+                  <p className="text-red-500">{errors.name._errors[0]}</p>
+                )}
               </div>
               <div className="flex flex-col mb-3">
                 <label htmlFor="price">Price</label>
@@ -156,7 +177,11 @@ const UpdateProductForm = () => {
                   defaultValue={product.price}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product Price"
+                  required
                 />
+                {errors.price && (
+                  <p className="text-red-500">{errors.price._errors[0]}</p>
+                )}
               </div>
               <div className="flex flex-col mb-3">
                 <label htmlFor="shortDesc">Short Description</label>
@@ -167,7 +192,11 @@ const UpdateProductForm = () => {
                   defaultValue={product.shortDesc}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product short description"
+                  required
                 ></textarea>
+                {errors.shortDesc && (
+                  <p className="text-red-500">{errors.shortDesc._errors[0]}</p>
+                )}
               </div>
               <div className="flex flex-col mb-3">
                 <label htmlFor="longDesc">Long Description</label>
@@ -178,7 +207,11 @@ const UpdateProductForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   rows={10}
                   placeholder="Product short description"
+                  required
                 ></textarea>
+                {errors.longDesc && (
+                  <p className="text-red-500">{errors.longDesc._errors[0]}</p>
+                )}
               </div>
               <button
                 type="submit"

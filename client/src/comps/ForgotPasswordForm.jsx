@@ -3,15 +3,26 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "./Loading";
 import { useState } from "react";
+import forgotPasswordSchema from "../utils/validation/forgotPasswordSchema";
 
 const ForgotPasswordForm = () => {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (formData) => {
     setLoading(true);
 
     try {
       const email = formData.get("email");
+
+      const result = forgotPasswordSchema.safeParse({ email });
+
+      if (!result.success) {
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
 
       const res = await axios.post(
         "http://localhost:8000/api/v1/forgot-password",
@@ -48,6 +59,9 @@ const ForgotPasswordForm = () => {
                   placeholder="Enter the registered email id"
                   required
                 />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email._errors[0]}</p>
+                )}
                 <span className="text-gray-200 mt-2">
                   Reset password email will be sent
                 </span>

@@ -61,6 +61,7 @@ const CreateCategoryForm = () => {
                   id="name"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter category name"
+                  required
                 />
                 {errors.name && (
                   <p className="text-red-500">{errors.name._errors[0]}</p>

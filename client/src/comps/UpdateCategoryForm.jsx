@@ -4,11 +4,13 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import BackBtn from "./BackBtn";
 import Loading from "./Loading";
+import categorySchema from "../utils/validation/categoryScehma";
 
 const UpdateCategoryForm = () => {
   const { cid } = useParams();
   const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const fetchCategory = async () => {
     setLoading(true);
@@ -34,6 +36,16 @@ const UpdateCategoryForm = () => {
 
     try {
       const udpatedCategoryName = formData.get("name");
+
+      const result = categorySchema.safeParse({ name: udpatedCategoryName });
+
+      if (!result.success) {
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+        setLoading(false);
+        return;
+      }
+
       // updating the catetory
       const res = await axios.patch(
         `http://localhost:8000/api/v1/update-category/${cid}`,
@@ -76,7 +88,11 @@ const UpdateCategoryForm = () => {
                   defaultValue={category.name}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product name"
+                  required
                 />
+                {errors.name && (
+                  <p className="text-red-500">{errors.name._errors[0]}</p>
+                )}
               </div>
               <button
                 type="submit"

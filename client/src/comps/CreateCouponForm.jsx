@@ -90,6 +90,7 @@ const CreateCouponForm = () => {
                   id="couponCode"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter a code"
+                  required
                 />
                 {errors.couponCode && (
                   <p className="text-red-500">{errors.couponCode._errors[0]}</p>
@@ -105,6 +106,7 @@ const CreateCouponForm = () => {
                   id="desc"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the coupon description"
+                  required
                 ></textarea>
                 {errors.desc && (
                   <p className="text-red-500">{errors.desc._errors[0]}</p>
@@ -119,6 +121,7 @@ const CreateCouponForm = () => {
                   name="discountType"
                   id="discountType"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  required
                 >
                   <option value="percentage">Percentage</option>
                   <option value="fixed">Fixed</option>
@@ -140,6 +143,7 @@ const CreateCouponForm = () => {
                   id="discountValue"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the discount value"
+                  required
                 />
                 {errors.discountValue && (
                   <p className="text-red-500">
@@ -159,6 +163,7 @@ const CreateCouponForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   defaultValue={0}
                   placeholder="Enter the minimum order value"
+                  required
                 />
                 {errors.minOrderValue && (
                   <p className="text-red-500">
@@ -178,6 +183,7 @@ const CreateCouponForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   defaultValue={1000000000}
                   placeholder="Enter the minimum order value"
+                  required
                 />
                 {errors.maxOrderValue && (
                   <p className="text-red-500">
@@ -195,6 +201,7 @@ const CreateCouponForm = () => {
                   name="startDate"
                   id="startDate"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  required
                 />
                 {errors.startDate && (
                   <p className="text-red-500">{errors.startDate._errors[0]}</p>
@@ -210,6 +217,7 @@ const CreateCouponForm = () => {
                   name="endDate"
                   id="endDate"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  required
                 />
                 {errors.endDate && (
                   <p className="text-red-500">{errors.endDate._errors[0]}</p>
@@ -226,6 +234,7 @@ const CreateCouponForm = () => {
                   id="usageLimit"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the usage limit"
+                  required
                 />
                 {errors.usageLimit && (
                   <p className="text-red-500">{errors.usageLimit._errors[0]}</p>
@@ -240,6 +249,7 @@ const CreateCouponForm = () => {
                   name="isActive"
                   id="isActive"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  required
                 >
                   <option value="true">Active</option>
                   <option value="false">Inactive</option>

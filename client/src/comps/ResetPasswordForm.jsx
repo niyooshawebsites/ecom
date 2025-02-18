@@ -3,11 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import Loading from "./Loading";
+import resetPasswordSchema from "../utils/validation/resetPasswordSchema";
 
 const ResetPasswordForm = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewConfirmPassword, setShowNewConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const location = useLocation();
   const queryString = new URLSearchParams(location.search);
@@ -28,6 +30,16 @@ const ResetPasswordForm = () => {
     try {
       const newPassword = formData.get("newPassword");
       const newConfirmPassword = formData.get("newConfirmPassword");
+
+      const result = resetPasswordSchema.safeParse({
+        newPassword,
+        newConfirmPassword,
+      });
+
+      if (!result.success) {
+        const formattedErrors = result.error.format();
+        setErrors(formattedErrors);
+      }
 
       if (newPassword !== newConfirmPassword) {
         toast.error("Reset password mismatch!");
@@ -81,6 +93,11 @@ const ResetPasswordForm = () => {
                     {showNewPassword ? "Hide" : "Show"}
                   </span>
                 </div>
+                {errors.newPassword && (
+                  <p className="text-red-500">
+                    {errors.newPassword._errors[0]}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col mb-3">
@@ -103,6 +120,11 @@ const ResetPasswordForm = () => {
                     {showNewConfirmPassword ? "Hide" : "Show"}
                   </span>
                 </div>
+                {errors.newConfirmPassword && (
+                  <p className="text-red-500">
+                    {errors.newConfirmPassword._errors[0]}
+                  </p>
+                )}
               </div>
               <button
                 type="submit"

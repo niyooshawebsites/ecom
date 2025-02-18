@@ -58,7 +58,10 @@ const CreateProductForm = () => {
     setLoading(true);
 
     // Validate using Zod
-    const result = productSchema.safeParse(productDetails);
+    const result = productSchema.safeParse({
+      ...productDetails,
+      price: Number(productDetails.price),
+    });
 
     if (!result.success) {
       const formattedErrors = result.error.format();
@@ -219,7 +222,6 @@ const CreateProductForm = () => {
                   onChange={handleImgChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product name"
-                  required
                 />
                 {previewImg && (
                   <div className="flex my-1">
@@ -280,6 +282,7 @@ const CreateProductForm = () => {
                   onChange={handleChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product short description"
+                  required
                 ></textarea>
                 {errors.shortDesc && (
                   <p className="text-red-500">{errors.shortDesc._errors[0]}</p>
@@ -298,6 +301,7 @@ const CreateProductForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   rows={8}
                   placeholder="Product short description"
+                  required
                 ></textarea>
                 {errors.longDesc && (
                   <p className="text-red-500">{errors.longDesc._errors[0]}</p>
