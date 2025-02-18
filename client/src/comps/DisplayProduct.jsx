@@ -265,9 +265,9 @@ const DisplayProduct = () => {
                   Rs {productData.price}
                 </h2>
                 <h2 className="text-2xl mb-5">Short product description</h2>
-                <p className="w-6/12">{productData.shortDesc}</p>
+                <p className="w-8/12">{productData.shortDesc}</p>
               </section>
-              <section className="w-5/12 flex justify-evenly items-center ">
+              <section className="w-8/12 flex justify-center space-x-4 items-center ">
                 <button
                   className="bg-gray-200 py-2 px-4 border rounded-md text-xl hover:bg-gray-300 "
                   onClick={decrement}
