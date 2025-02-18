@@ -84,6 +84,10 @@ const fetchAllCategoriesController = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
+
+    if (categoriesPerPage.length === 0)
+      return response(res, 404, false, "No Categories found");
+
     const totalCategoriesCount = await Category.countDocuments();
     const totalPagesCount = Math.ceil(totalCategoriesCount / limit);
     return response(

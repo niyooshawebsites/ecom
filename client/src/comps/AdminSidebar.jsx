@@ -123,7 +123,7 @@ const AdminSidebar = () => {
               <Link to="/dashboard/tax">
                 <li className="px-3 py-2 hover:bg-blue-600 text-white">Tax</li>
               </Link>
-              <Link to="/dashboard/categories">
+              <Link to="/dashboard/logo">
                 <li className="px-3 py-2 hover:bg-blue-600 text-white">Logo</li>
               </Link>
               <Link to="/dashboard/contact-info">

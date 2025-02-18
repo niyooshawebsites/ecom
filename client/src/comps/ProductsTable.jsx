@@ -48,6 +48,10 @@ const ProductsTable = () => {
   };
 
   const deleteProduct = async (pid) => {
+    const confimation = confirm("Do you really want to delete?");
+
+    if (!confimation) return;
+
     setLoading(true);
 
     try {

@@ -1,4 +1,3 @@
-import { useState } from "react";
 const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
   const handlePrev = (currentPage) => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);

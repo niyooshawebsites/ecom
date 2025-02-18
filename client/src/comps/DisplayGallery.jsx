@@ -14,6 +14,8 @@ const DisplayGallery = () => {
   const [imgUploaded, setImgUploaded] = useState(false);
   const [imgDeleted, setImgDeleted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const handleChange = (e) => {
     const files = Array.from(e.target.files);
@@ -63,6 +65,7 @@ const DisplayGallery = () => {
 
       if (res.data.success) {
         setGalleryImages(res.data.data);
+        setTotalPages(res.data.totalPagesCount);
         setLoading(false);
       }
     } catch (err) {
@@ -72,6 +75,10 @@ const DisplayGallery = () => {
   };
 
   const deleteImage = async (id) => {
+    const confimation = confirm("Do you really want to delete?");
+
+    if (!confimation) return;
+
     setLoading(true);
     try {
       const res = await axios.delete(
@@ -134,21 +141,29 @@ const DisplayGallery = () => {
             {galleryImages.length > 0 ? (
               <div className="flex flex-reverse">
                 {galleryImages.map((file) => (
-                  <div className="flex m-2" key={file.value._id}>
+                  <div
+                    className="flex w-3/12 m-2 p-2 border border-gray-300 rounded-md"
+                    key={file.value._id}
+                  >
                     <ModalImage
                       small={file.value?.url}
                       large={file.value?.url}
                       alt="Preview"
-                      className="h-[100px] mr-2 rounded"
+                      className="h-[100px] mr-2 rounded-md"
                     />
                     <ImCross
-                      className="hover:cursor-pointer"
+                      className="hover:cursor-pointer hover:text-3xl  text-orange-500 text-2xl border border-orange-600 rounded-full p-1"
                       onClick={() => {
                         deleteImage(file.value._id);
                       }}
                     />
                   </div>
                 ))}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  setCurrentPage={setCurrentPage}
+                />
               </div>
             ) : (
               <NoData data={"Images"} />

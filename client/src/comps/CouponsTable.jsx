@@ -30,6 +30,10 @@ const CouponsTable = () => {
   };
 
   const deleteCoupon = async (ccid) => {
+    const confimation = confirm("Do you really want to delete?");
+
+    if (!confimation) return;
+
     setLoading(true);
 
     try {

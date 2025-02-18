@@ -31,6 +31,8 @@ import OrderCofirmation from "./pages/OrderConfirmation";
 import Tax from "./pages/Tax";
 import UpdateTax from "./pages/UpdateTax";
 import Gallery from "./pages/Gallery";
+import PageNotFound from "./pages/PageNotFound";
+import Logo from "./pages/logo";
 
 const App = () => {
   return (
@@ -48,6 +50,7 @@ const App = () => {
           <Route path="checkout" element={<Checkout />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/order-confirmation" element={<OrderCofirmation />} />
+          <Route path="*" element={<PageNotFound />} />
           <Route element={<Protect />}>
             <Route
               path="/dashboard/create-category"
@@ -82,6 +85,7 @@ const App = () => {
             <Route path="/dashboard/profile" element={<Profile />} />
             <Route path="/dashboard/tax" element={<Tax />} />
             <Route path="/dashboard/update-tax" element={<UpdateTax />} />
+            <Route path="/dashboard/logo" element={<Logo />} />
           </Route>
         </Routes>
       </BrowserRouter>

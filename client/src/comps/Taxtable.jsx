@@ -58,6 +58,10 @@ const TaxTable = ({ taxCreated, categories }) => {
   };
 
   const deleteTax = async (tid) => {
+    const confimation = confirm("Do you really want to delete?");
+
+    if (!confimation) return;
+
     setLoading(true);
 
     try {

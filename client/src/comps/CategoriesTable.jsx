@@ -34,7 +34,12 @@ const CategoriesTable = () => {
   };
 
   const deleteCategory = async (cid) => {
+    const confimation = confirm("Do you really want to delete?");
+
+    if (!confimation) return;
+
     setLoading(true);
+
     try {
       const res = await axios.delete(
         `http://localhost:8000/api/v1/delete-category/${cid}`,

@@ -1,11 +1,17 @@
 import express from "express";
-import { uploadGalleryImgs } from "../middlewares/upload.middleware.js";
+import {
+  uploadGalleryImgs,
+  uploadLogo,
+} from "../middlewares/upload.middleware.js";
 import auth from "../middlewares/auth.middleware.js";
 import {
   uploadGalleryImagesController,
   fetchAllGalleryImagesController,
   deleteGalleryImageController,
   deleteGalleryImagesController,
+  uploadLogoController,
+  fetchLogoController,
+  deleteLogoController,
 } from "../controllers/gallery.controller.js";
 
 const galleryRouter = express.Router();
@@ -34,5 +40,16 @@ galleryRouter.delete(
   auth,
   deleteGalleryImagesController
 );
+
+galleryRouter.post(
+  "/upload-logo",
+  auth,
+  uploadLogo.single("logoKey"),
+  uploadLogoController
+);
+
+galleryRouter.get("/fetch-logo", auth, fetchLogoController);
+
+galleryRouter.delete("/delete-logo/:iid", auth, deleteLogoController);
 
 export default galleryRouter;

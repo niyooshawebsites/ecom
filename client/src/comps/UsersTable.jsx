@@ -59,6 +59,10 @@ const UsersTable = () => {
   };
 
   const deleteUser = async (uid) => {
+    const confimation = confirm("Do you really want to delete?");
+
+    if (!confimation) return;
+
     setLoading(true);
 
     try {
