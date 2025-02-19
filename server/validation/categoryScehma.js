@@ -1,9 +1,9 @@
 import { z } from "zod";
-import escapeHTML from "./sanitization";
+import escapeHTML from "./sanitization.js";
 
 const categorySchema = z.object({
   name: z
-    .string()
+    .string(10, "Category name must be at least 10 characters")
     .trim()
     .transform((val) => escapeHTML(val)),
 });

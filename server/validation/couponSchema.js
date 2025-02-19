@@ -1,5 +1,5 @@
 import { z } from "zod";
-import escapeHTML from "./sanitization";
+import escapeHTML from "./sanitization.js";
 
 const couponSchema = z.object({
   couponCode: z

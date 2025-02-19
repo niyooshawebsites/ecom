@@ -1,5 +1,5 @@
 import { z } from "zod";
-import escapeHTML from "./sanitization";
+import escapeHTML from "./sanitization.js";
 
 const reviewSchema = z.object({
   rating: z.enum([1, 2, 3, 4, 5], {

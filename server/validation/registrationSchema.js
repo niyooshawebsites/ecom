@@ -1,5 +1,5 @@
 import { z } from "zod";
-import escapeHTML from "./sanitization";
+import escapeHTML from "./sanitization.js";
 
 const registrationSchema = z.object({
   username: z
