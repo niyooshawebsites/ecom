@@ -171,7 +171,7 @@ const fetchReviewsByRatingController = async (req, res) => {
 
     return response(res, 200, true, "Product Reviews found", reviews);
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     return response(res, 500, false, "Internal server error");
   }
 };
@@ -188,7 +188,7 @@ const fetchReviewsByStatusController = async (req, res) => {
 
     return response(res, 200, true, "Product Reviews found", reviews);
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     return response(res, 500, false, "Internal server error");
   }
 };

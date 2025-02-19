@@ -18,8 +18,6 @@ const createCounponController = async (req, res) => {
       desc,
     } = req.body;
 
-    console.log(req.body);
-
     if (!couponCode || !discountType || !discountValue || !startDate || !desc)
       return response(res, 400, false, "Coupon details missing");
 
@@ -125,8 +123,6 @@ const fetchAllCouponsController = async (req, res) => {
 const deleteCouponController = async (req, res) => {
   try {
     const { ccid } = req.params;
-
-    console.log(ccid);
 
     if (!ccid) return response(res, 400, false, "No ccid. No coupon deletion");
 

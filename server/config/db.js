@@ -6,7 +6,7 @@ const connectDB = async () => {
     if (connect) {
       console.log(`DB connection successful`.bgGreen);
     } else {
-      console.log(`DB connection failed`.bgRed);
+      console.error(`DB connection failed`.bgRed);
     }
   } catch (err) {
     console.error(err.message);
