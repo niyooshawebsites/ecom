@@ -25,7 +25,15 @@ productRouter.post(
   ]),
   createProductController
 );
-productRouter.patch("/update-product/:pid", auth, updateProductController);
+productRouter.patch(
+  "/update-product/:pid",
+  auth,
+  uploadProductImgs.fields([
+    { name: "img", maxCount: 1 },
+    { name: "gallery", maxCount: 5 },
+  ]),
+  updateProductController
+);
 productRouter.delete("/delete-product/:pid", auth, deleteProductController);
 productRouter.delete("/delete-products/:pids", auth, deleteProductsController);
 productRouter.get("/fetch-all-products/:pageNo", fetchAllProductsController);

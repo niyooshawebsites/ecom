@@ -11,13 +11,15 @@ const CreateReviewForm = ({ pid }) => {
   const [errors, setErrors] = useState({});
 
   const handleCreateReview = async (formData) => {
-    setLoading(true);
-
     try {
       const rating = formData.get("rating");
       const reviewMsg = formData.get("reviewMsg");
 
       const result = reviewSchema.safeParse({ rating, reviewMsg });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       if (!result.success) {
         const formattedErrors = result.error.format();

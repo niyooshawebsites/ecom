@@ -10,12 +10,14 @@ const ForgotPasswordForm = () => {
   const [errors, setErrors] = useState({});
 
   const handleSubmit = async (formData) => {
-    setLoading(true);
-
     try {
       const email = formData.get("email");
 
       const result = forgotPasswordSchema.safeParse({ email });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       if (!result.success) {
         const formattedErrors = result.error.format();

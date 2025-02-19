@@ -10,8 +10,6 @@ const RegisterForm = () => {
   const [errors, setErrors] = useState({});
 
   const handleRegsitration = async (formData) => {
-    setLoading(true);
-
     try {
       const username = formData.get("username");
       const email = formData.get("email");
@@ -23,6 +21,10 @@ const RegisterForm = () => {
         email,
         password,
       });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       // if validation fails
       if (!result.success) {

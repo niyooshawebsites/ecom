@@ -15,13 +15,15 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (formData) => {
-    setLoading(true);
-
     try {
       const email = formData.get("email");
       const password = formData.get("password");
 
       const result = loginSchema.safeParse({ email });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       if (!result.success) {
         const formattedErrors = result.error.format();

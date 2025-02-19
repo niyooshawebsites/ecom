@@ -14,10 +14,12 @@ const CreateTaxForm = ({ setTaxCreated, categories }) => {
   const [errors, setErrors] = useState({});
 
   const handleTaxType = (formData) => {
-    setLoading(true);
-
     const taxType = formData.get("taxType");
     const result = taxTypeSchema.safeParse({ taxType });
+
+    if (result.success) {
+      setLoading(true);
+    }
 
     if (!result.success) {
       const formattedErrors = result.error.format();

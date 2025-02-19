@@ -21,8 +21,6 @@ const ProfileForm = () => {
   };
 
   const updateProfile = async (formData) => {
-    setLoading(true);
-
     try {
       const newPassword = formData.get("newPassword");
       const confirmNewPassword = formData.get("confirmNewPassword");
@@ -34,6 +32,10 @@ const ProfileForm = () => {
 
       if (newPassword !== confirmNewPassword) {
         toast.error("Password mismatch");
+      }
+
+      if (result.success) {
+        setLoading(true);
       }
 
       if (!result.success) {

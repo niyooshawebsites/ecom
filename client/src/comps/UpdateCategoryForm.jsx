@@ -32,12 +32,14 @@ const UpdateCategoryForm = () => {
   };
 
   const updateCategory = async (formData) => {
-    setLoading(true);
-
     try {
       const udpatedCategoryName = formData.get("name");
 
       const result = categorySchema.safeParse({ name: udpatedCategoryName });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       if (!result.success) {
         const formattedErrors = result.error.format();

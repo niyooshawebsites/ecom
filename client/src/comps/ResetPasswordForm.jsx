@@ -25,8 +25,6 @@ const ResetPasswordForm = () => {
   };
 
   const handleSubmit = async (formData) => {
-    setLoading(true);
-
     try {
       const newPassword = formData.get("newPassword");
       const newConfirmPassword = formData.get("newConfirmPassword");
@@ -35,6 +33,10 @@ const ResetPasswordForm = () => {
         newPassword,
         newConfirmPassword,
       });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       if (!result.success) {
         const formattedErrors = result.error.format();

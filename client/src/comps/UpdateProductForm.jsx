@@ -5,22 +5,56 @@ import { toast } from "react-toastify";
 import BackBtn from "./BackBtn";
 import Loading from "./Loading";
 import productSchema from "../utils/validation/productSchema";
+import { ImCross } from "react-icons/im";
+import ModalImage from "react-modal-image";
 
 const UpdateProductForm = () => {
   const [product, setProduct] = useState({
     name: "",
     price: "",
     slug: "",
-    category: {},
-    img: "",
+    category: "",
     shortDesc: "",
     longDesc: "",
+    img: null,
+    gallery: [],
   });
   const [categories, setCategories] = useState([]);
   const [productUpdated, setProductUpdated] = useState(false);
   const { pid } = useParams();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const [previewImg, setPreviewImg] = useState(null);
+  const [previewGalleryImgs, setPreviewGalleryImgs] = useState(null);
+
+  // hadle text field changes...
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProduct((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
+    setProduct((prev) => ({ ...prev, img: file }));
+
+    if (file) {
+      setPreviewImg(URL.createObjectURL(file));
+    }
+  };
+
+  const handleGalleryChange = (e) => {
+    const files = Array.from(e.target.files);
+    setProduct((prev) => ({ ...prev, gallery: files }));
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setPreviewGalleryImgs(previews);
+  };
 
   const fetchAllCategories = async () => {
     setLoading(true);
@@ -30,7 +64,6 @@ const UpdateProductForm = () => {
         `http://localhost:8000/api/v1/fetch-all-categories-at-once`,
         { withCredentials: true }
       );
-      console.log(res.data.data);
       if (res.data.success) {
         setCategories(res.data.data);
         setLoading(false);
@@ -51,7 +84,17 @@ const UpdateProductForm = () => {
       );
 
       if (res.data.success) {
-        setProduct(res.data.data);
+        setProduct((prev) => ({
+          ...prev,
+          name: res.data.data.name,
+          price: res.data.data.price,
+          slug: res.data.data.slug,
+          category: res.data.data.category._id,
+          shortDesc: res.data.data.shortDesc,
+          longDesc: res.data.data.longDesc,
+          img: res.data.data.img,
+          gallery: res.data.data.gallery.map((entry) => entry.value),
+        }));
         setLoading(false);
       }
     } catch (err) {
@@ -60,45 +103,51 @@ const UpdateProductForm = () => {
     }
   };
 
-  const updateProduct = async (formData) => {
-    setLoading(true);
+  const updateProduct = async (e) => {
+    e.preventDefault();
+
+    // Validate using Zod
+    const result = productSchema.safeParse({
+      ...product,
+      price: Number(product.price),
+    });
+
+    if (result.success) {
+      setLoading(true);
+    }
+
+    if (!result.success) {
+      const formattedErrors = result.error.format();
+      setErrors(formattedErrors); // Store errors in state
+      setLoading(false);
+      console.log("failed");
+      return;
+    }
 
     try {
-      const updatedCategory = formData.get("category");
-      const updatedName = formData.get("name");
-      const updatedPrice = formData.get("price");
-      const updatedShortDesc = formData.get("shortDesc");
-      const updatedLongDesc = formData.get("longDesc");
+      const productData = new FormData();
 
-      const result = productSchema.safeParse({
-        category: updatedCategory,
-        name: updatedName,
-        price: Number(updatedPrice),
-        shortDesc: updatedShortDesc,
-        longDesc: updatedLongDesc,
+      productData.append("category", product.category);
+      productData.append("name", product.name);
+      productData.append("price", product.price);
+      productData.append("img", product.img);
+      productData.append("shortDesc", product.shortDesc);
+      productData.append("longDesc", product.longDesc);
+
+      // Append each gallery image
+      product.gallery.forEach((file) => {
+        productData.append("gallery", file);
       });
-
-      if (!result.success) {
-        const formattedErrors = result.error.format();
-        setErrors(formattedErrors);
-        setLoading(false);
-        return;
-      }
 
       const res = await axios.patch(
         `http://localhost:8000/api/v1/update-product/${pid}`,
-        {
-          category: updatedCategory,
-          name: updatedName,
-          price: updatedPrice,
-          shortDesc: updatedShortDesc,
-          longDesc: updatedLongDesc,
-        },
+        productData,
         { withCredentials: true }
       );
 
       if (res.data.success) {
         toast.success(res.data.msg);
+
         setProductUpdated((prev) => !prev);
         setLoading(false);
       }
@@ -123,12 +172,13 @@ const UpdateProductForm = () => {
           <BackBtn link={"/dashboard/products"} />
           <h1 className="text-4xl py-3 poppins-light mb-5">Update Product</h1>
           <div className="flex flex-col w-6/12 border rounded-lg p-5 mb-10">
-            <form className="mb-3" action={updateProduct}>
+            <form className="mb-3" onSubmit={updateProduct}>
               <div className="flex flex-col mb-3">
                 <label htmlFor="username">Select category</label>
                 <select
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   name="category"
+                  onChange={handleChange}
                 >
                   {categories.map((category) => (
                     <option key={category._id} value={category._id}>
@@ -146,9 +196,13 @@ const UpdateProductForm = () => {
                   type="text"
                   name="currentCategory"
                   id="currentCategory"
-                  defaultValue={product.category.name}
+                  defaultValue={
+                    categories.filter(
+                      (category) => category._id === product.category
+                    )[0]?.name
+                  }
                   className="border rounded-lg py-2 px-2 outline-none bg-gray-100 text-gray-400"
-                  placeholder="Product name"
+                  placeholder="Current category"
                   readOnly
                 />
               </div>
@@ -162,12 +216,14 @@ const UpdateProductForm = () => {
                   defaultValue={product.name}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product name"
+                  onChange={handleChange}
                   required
                 />
                 {errors.name && (
                   <p className="text-red-500">{errors.name._errors[0]}</p>
                 )}
               </div>
+
               <div className="flex flex-col mb-3">
                 <label htmlFor="price">Price</label>
                 <input
@@ -177,12 +233,110 @@ const UpdateProductForm = () => {
                   defaultValue={product.price}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product Price"
+                  onChange={handleChange}
                   required
                 />
                 {errors.price && (
                   <p className="text-red-500">{errors.price._errors[0]}</p>
                 )}
               </div>
+
+              <div className="flex flex-col mb-3">
+                <label htmlFor="img" className="mb-2">
+                  Product image
+                </label>
+                <input
+                  type="file"
+                  name="img"
+                  id="img"
+                  onChange={handleImgChange}
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Product name"
+                />
+                {(previewImg || product.img) && (
+                  <div className="flex my-1">
+                    <ModalImage
+                      small={previewImg || product.img}
+                      large={previewImg || product.img}
+                      alt="Preview"
+                      className="w-[80px] mr-2 rounded-md"
+                    />
+                    <ImCross
+                      className="hover:cursor-pointer hover:text-3xl  text-orange-500 text-2xl border border-orange-600 rounded-full p-1"
+                      onClick={() => {
+                        setPreviewImg(null);
+                        setProduct((prev) => ({ ...prev, img: null }));
+                      }}
+                    />
+                  </div>
+                )}
+                {errors.img && (
+                  <p className="text-red-500">{errors.img._errors[0]}</p>
+                )}
+              </div>
+
+              <div className="flex flex-col mb-3">
+                <label htmlFor="gallery" className="mb-2">
+                  Product Gallery
+                </label>
+                <input
+                  type="file"
+                  name="gallery"
+                  id="gallery"
+                  onChange={handleGalleryChange}
+                  multiple
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="Product gallery"
+                />
+                <div className="flex my-2">
+                  {(previewGalleryImgs &&
+                    previewGalleryImgs.map((src, index) => (
+                      <div className="flex my-1 mr-3" key={index}>
+                        <ModalImage
+                          small={src}
+                          large={src}
+                          alt="Preview"
+                          className="w-[80px] mr-2 rounded-md"
+                        />
+                        <ImCross
+                          className="hover:cursor-pointer hover:text-3xl  text-orange-500 text-2xl border border-orange-600 rounded-full p-1"
+                          onClick={() => {
+                            setPreviewGalleryImgs(null);
+                            setProduct((prev) => ({
+                              ...prev,
+                              gallery: [],
+                            }));
+                          }}
+                        />
+                      </div>
+                    ))) ||
+                    (product.gallery.length > 0 &&
+                      product.gallery.map((src, index) => (
+                        <div className="flex my-1 mr-3" key={index}>
+                          <ModalImage
+                            small={src}
+                            large={src}
+                            alt="Preview"
+                            className="w-[80px] mr-2 rounded-md"
+                          />
+                          <ImCross
+                            className="hover:cursor-pointer hover:text-3xl  text-orange-500 text-2xl border border-orange-600 rounded-full p-1"
+                            onClick={() => {
+                              setPreviewGalleryImgs(null);
+                              setProduct((prev) => ({
+                                ...prev,
+                                gallery: [],
+                              }));
+                            }}
+                          />
+                        </div>
+                      )))}
+                </div>
+                {errors.gallery && (
+                  <p className="text-red-500">{errors.gallery._errors[0]}</p>
+                )}
+              </div>
+
               <div className="flex flex-col mb-3">
                 <label htmlFor="shortDesc">Short Description</label>
                 <textarea
@@ -192,6 +346,7 @@ const UpdateProductForm = () => {
                   defaultValue={product.shortDesc}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Product short description"
+                  onChange={handleChange}
                   required
                 ></textarea>
                 {errors.shortDesc && (
@@ -207,6 +362,7 @@ const UpdateProductForm = () => {
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   rows={10}
                   placeholder="Product short description"
+                  onChange={handleChange}
                   required
                 ></textarea>
                 {errors.longDesc && (

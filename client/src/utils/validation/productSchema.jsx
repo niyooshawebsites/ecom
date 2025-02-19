@@ -11,10 +11,25 @@ const productSchema = z.object({
     .transform((val) => escapeHTML(val)),
   price: z.number().transform((val) => parseFloat(val)), // Convert price to a float
   img: z
-    .custom((file) => file instanceof File, "Main product image is required") // to check if it is a file object
-    .optional(),
+    .union([
+      z.string().url("Main product image must be a valid URL"), // For pre-populated image (URL)
+      z
+        .instanceof(File)
+        .refine(
+          (file) => file instanceof File,
+          "Main product image is required"
+        ), // For new file
+    ])
+    .optional(), // Image is optional, but must be either a URL or a File
   gallery: z
-    .array(z.custom((file) => file instanceof File, "Invalid gallery image")) // array of file objects
+    .array(
+      z.union([
+        z
+          .instanceof(File)
+          .refine((file) => file instanceof File, "Invalid gallery image"), // for file uploads
+        z.string().url("Gallery image must be a valid URL"), // for URLs
+      ])
+    )
     .optional(),
   shortDesc: z
     .string()

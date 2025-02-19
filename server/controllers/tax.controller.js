@@ -30,32 +30,6 @@ const createTaxController = async (req, res) => {
   }
 };
 
-const updateTaxController = async (req, res) => {
-  try {
-    const { tid } = req.params;
-    const { cid, GSTRate } = req.body;
-
-    if (!tid) return response(res, 400, false, "No tid. No updation");
-    if (!cid) return response(res, 400, false, "No cid. No updation");
-    if (!GSTRate) return response(res, 400, false, "GSTRate is missing");
-
-    const updatedTax = await Tax.findByIdAndUpdate(
-      tid,
-      { category: cid, GSTRate },
-      { new: true }
-    );
-
-    if (!updatedTax) {
-      return response(res, 404, false, "Tax not found.");
-    }
-
-    return response(res, 201, true, "Tax updated successfully", updatedTax);
-  } catch (err) {
-    console.error(err.message);
-    return response(res, 500, false, "Internal server error");
-  }
-};
-
 const fetchAllTaxesController = async (req, res) => {
   try {
     const { pageNo } = req.params;
@@ -164,7 +138,6 @@ const fetchTaxByCategoryController = async (req, res) => {
 
 export {
   createTaxController,
-  updateTaxController,
   fetchAllTaxesController,
   fetchTaxController,
   deleteTaxController,

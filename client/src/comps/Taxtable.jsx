@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { SlRefresh } from "react-icons/sl";
@@ -212,11 +211,11 @@ const TaxTable = ({ taxCreated, categories }) => {
                         {tax.GSTRate}
                       </td>
                       <td className="text-center border text-sm">
-                        <Link to={`/dashboard/update-tax?tid=${tax._id}`}>
+                        {/* <Link to={`/dashboard/update-tax?tid=${tax._id}`}>
                           <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 mr-2">
                             Edit
                           </span>
-                        </Link>{" "}
+                        </Link>{" "} */}
                         <button
                           onClick={() => {
                             deleteTax(tax._id);

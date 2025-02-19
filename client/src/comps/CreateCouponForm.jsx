@@ -9,8 +9,6 @@ const CreateCouponForm = () => {
   const [errors, setErrors] = useState({});
 
   const handleCouponCreation = async (formData) => {
-    setLoading(true);
-
     try {
       const couponCode = formData.get("couponCode");
       const discountType = formData.get("discountType");
@@ -36,6 +34,10 @@ const CreateCouponForm = () => {
         isActive,
         desc,
       });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       if (!result.success) {
         const formattedErrors = result.error.format();

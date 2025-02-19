@@ -139,10 +139,10 @@ const DisplayGallery = () => {
               </form>
             </div>
             {galleryImages.length > 0 ? (
-              <div className="flex flex-reverse">
+              <div className="flex flex-wrap">
                 {galleryImages.map((file) => (
                   <div
-                    className="flex w-3/12 m-2 p-2 border border-gray-300 rounded-md"
+                    className="flex m-2 p-2 border border-gray-300 rounded-md"
                     key={file.value._id}
                   >
                     <ModalImage

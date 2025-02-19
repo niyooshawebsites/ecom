@@ -2,7 +2,6 @@ import express from "express";
 
 import {
   createTaxController,
-  updateTaxController,
   fetchAllTaxesController,
   fetchTaxController,
   deleteTaxController,
@@ -15,7 +14,6 @@ import auth from "../middlewares/auth.middleware.js";
 const taxRouter = express.Router();
 
 taxRouter.post("/create-tax", auth, createTaxController);
-taxRouter.patch("/update-tax/:tid", auth, updateTaxController);
 taxRouter.delete("/delete-tax/:tid", auth, deleteTaxController);
 taxRouter.delete("/delete-taxes/:tids", auth, deleteTaxesController);
 taxRouter.get("/fetch-all-taxes/:pageNo", auth, fetchAllTaxesController);

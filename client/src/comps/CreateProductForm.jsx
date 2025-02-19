@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Loading from "./Loading";
 import productSchema from "../utils/validation/productSchema";
+import ModalImage from "react-modal-image";
 
 const CreateProductForm = () => {
   const [categories, setCategories] = useState([]);
@@ -55,13 +56,16 @@ const CreateProductForm = () => {
 
   const handleProductCreation = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     // Validate using Zod
     const result = productSchema.safeParse({
       ...productDetails,
       price: Number(productDetails.price),
     });
+
+    if (result.success) {
+      setLoading(true);
+    }
 
     if (!result.success) {
       const formattedErrors = result.error.format();
@@ -225,9 +229,14 @@ const CreateProductForm = () => {
                 />
                 {previewImg && (
                   <div className="flex my-1">
-                    <img src={previewImg} alt="Main img" width={40} />
+                    <ModalImage
+                      small={previewImg}
+                      large={previewImg}
+                      alt="Preview"
+                      className="w-[80px] mr-2 rounded-md"
+                    />
                     <ImCross
-                      className="hover:cursor-pointer"
+                      className="hover:cursor-pointer hover:text-3xl  text-orange-500 text-2xl border border-orange-600 rounded-full p-1"
                       onClick={() => {
                         setPreviewImg(null);
                       }}
@@ -256,9 +265,14 @@ const CreateProductForm = () => {
                   {previewGalleryImgs &&
                     previewGalleryImgs.map((src, index) => (
                       <div className="flex my-1 mr-3" key={index}>
-                        <img src={src} alt="Gallery img" width={40} />
+                        <ModalImage
+                          small={src}
+                          large={src}
+                          alt="Preview"
+                          className="w-[80px] mr-2 rounded-md"
+                        />
                         <ImCross
-                          className="hover:cursor-pointer"
+                          className="hover:cursor-pointer hover:text-3xl  text-orange-500 text-2xl border border-orange-600 rounded-full p-1"
                           onClick={() => {
                             setPreviewGalleryImgs(null);
                           }}

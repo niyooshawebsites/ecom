@@ -44,9 +44,11 @@ const LogoForm = () => {
   };
 
   const uplaodLogo = async () => {
-    setLoading(true);
-
     const result = logoSchema.safeParse({ logoKey: logo.imgKey });
+
+    if (result.success) {
+      setLoading(true);
+    }
 
     if (!result.success) {
       const formattedErrors = result.error.format();

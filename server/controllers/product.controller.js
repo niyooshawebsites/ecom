@@ -53,13 +53,33 @@ const updateProductController = async (req, res) => {
     if (!name || !price || !updatedSlug || !category || !shortDesc || !longDesc)
       return response(res, 400, false, "Please fill out all the details");
 
+    // extract S3 image url from multer upload - keys are already added by multer-s3
+    const imgKey = req.files.img[0].key;
+    const galleryKeys = req.files.gallery.map((file) => file.key);
+    const galleryKeysForGallery = req.files.gallery.map((file) => ({
+      imgKey: file.key,
+    }));
+
     const updatedProduct = await Product.findByIdAndUpdate(
       pid,
-      { ...req.body, slug: updatedSlug },
+      {
+        $set: {
+          ...req.body,
+          slug: updatedSlug,
+          img: imgKey,
+          gallery: galleryKeys,
+        },
+      },
       {
         new: true,
       }
     );
+
+    // saving the uploaded images in gallery
+    const galleryImages = await Gallery.insertMany([
+      ...galleryKeysForGallery,
+      { imgKey },
+    ]);
 
     return response(
       res,

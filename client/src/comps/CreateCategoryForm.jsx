@@ -9,13 +9,15 @@ const CreateCategoryForm = () => {
   const [errors, setErrors] = useState({});
 
   const handleCategoryCreation = async (formData) => {
-    setLoading(true);
-
     try {
       const name = formData.get("name");
 
       // sanitize and validate form data before sending to backend
       const result = categorySchema.safeParse({ name });
+
+      if (result.success) {
+        setLoading(true);
+      }
 
       // if validation fails
       if (!result.success) {

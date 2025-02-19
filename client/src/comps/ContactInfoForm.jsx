@@ -71,7 +71,6 @@ const ContactInfoFrom = () => {
 
   const handleSubmit1 = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     const result = contactInfoSchema.safeParse({
       bName: updatedContactInfo.bName,
@@ -86,6 +85,10 @@ const ContactInfoFrom = () => {
       state: updatedContactInfo.state,
       pincode: updatedContactInfo.pincode,
     });
+
+    if (result.success) {
+      setLoading(true);
+    }
 
     if (!result.success) {
       const formattedErrors = result.error.format();
@@ -114,7 +117,6 @@ const ContactInfoFrom = () => {
 
   const handleSubmit2 = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     const result = contactInfoSchema.safeParse({
       fName: updatedContactInfo.fName,
@@ -129,6 +131,10 @@ const ContactInfoFrom = () => {
       state: updatedContactInfo.state,
       pincode: updatedContactInfo.pincode,
     });
+
+    if (result.success) {
+      setLoading(true);
+    }
 
     if (!result.success) {
       const formattedErrors = result.error.format();
