@@ -2,15 +2,16 @@ import Category from "../models/category.model.js";
 import response from "../utils/response.js";
 import slugify from "slugify";
 import categorySchema from "../validation/categoryScehma.js";
+import { z } from "zod";
 
 const createCategoryController = async (req, res) => {
   try {
+    // sanitize and validate form data before sending to backend
+    categorySchema.parse(req.body);
+
     const { name } = req.body;
 
     if (!name) return response(res, 400, false, "Please fill out the category");
-
-    // sanitize and validate form data before sending to backend
-    categorySchema.parse({ name });
 
     const category = await Category.findOne({ name });
     if (category) return response(res, 409, false, "Category already exists");
@@ -39,6 +40,8 @@ const createCategoryController = async (req, res) => {
 
 const updateCategoryController = async (req, res) => {
   try {
+    categorySchema.parse(req.body);
+
     const { cid } = req.params;
     const { name } = req.body;
 
@@ -65,6 +68,13 @@ const updateCategoryController = async (req, res) => {
       updatedCategory
     );
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      // If validation fails, send a detailed error response
+      return res.status(400).json({
+        errors: err.errors.map((e) => ({ message: e.message, path: e.path })),
+      });
+    }
+
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
   }

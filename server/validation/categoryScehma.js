@@ -3,7 +3,8 @@ import escapeHTML from "./sanitization.js";
 
 const categorySchema = z.object({
   name: z
-    .string(10, "Category name must be at least 10 characters")
+    .string()
+    .min(3, "Category name must be at least 3 characters")
     .trim()
     .transform((val) => escapeHTML(val)),
 });

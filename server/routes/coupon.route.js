@@ -9,7 +9,7 @@ import {
   deleteCouponController,
   applyCouponController,
   deleteCouponsController,
-} from "../controllers/counpon.controller.js";
+} from "../controllers/coupon.controller.js";
 const couponRouter = express.Router();
 
 couponRouter.post("/create-coupon", auth, createCounponController);

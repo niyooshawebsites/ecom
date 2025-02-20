@@ -1,7 +1,11 @@
 import Coupon from "../models/coupon.model.js";
 import response from "../utils/response.js";
+import couponSchema from "../validation/couponSchema.js";
+import { z } from "zod";
 
 const createCounponController = async (req, res) => {
+  couponSchema.parse(req.body);
+
   try {
     const {
       couponCode,
@@ -25,12 +29,21 @@ const createCounponController = async (req, res) => {
 
     return response(res, 201, true, "Coupon created successfully", coupon);
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      // If validation fails, send a detailed error response
+      return res.status(400).json({
+        errors: err.errors.map((e) => ({ message: e.message, path: e.path })),
+      });
+    }
+
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
   }
 };
 
 const updateCouponController = async (req, res) => {
+  couponSchema.parse(req.body);
+
   try {
     const { ccid } = req.params;
     const {
@@ -65,6 +78,13 @@ const updateCouponController = async (req, res) => {
       updatedCoupon
     );
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      // If validation fails, send a detailed error response
+      return res.status(400).json({
+        errors: err.errors.map((e) => ({ message: e.message, path: e.path })),
+      });
+    }
+
     console.error(err.message);
     return response(res, 500, false, "Internal server error");
   }

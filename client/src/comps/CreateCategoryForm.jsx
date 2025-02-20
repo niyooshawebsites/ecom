@@ -23,6 +23,7 @@ const CreateCategoryForm = () => {
       if (!result.success) {
         // Extract the errors
         const formattedErrors = result.error.format();
+        console.log(formattedErrors);
         setErrors(formattedErrors);
         setLoading(false);
         return;
