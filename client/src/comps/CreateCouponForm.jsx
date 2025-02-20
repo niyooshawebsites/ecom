@@ -7,32 +7,75 @@ import couponSchema from "../utils/validation/couponSchema";
 const CreateCouponForm = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [couponDetails, setCouponDetails] = useState({
+    couponCode: null,
+    discountType: null,
+    discountValue: null,
+    minOrderValue: null,
+    maxOrderValue: 10000000000,
+    startDate: null,
+    endDate: null,
+    usageLimit: null,
+    isActive: true,
+    desc: null,
+  });
 
-  const handleCouponCreation = async (formData) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setCouponDetails((prev) => {
+      if (name === "isActive") {
+        return {
+          ...prev,
+          [name]: value === "true",
+        };
+      }
+
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleCouponCreation = async (e) => {
+    e.preventDefault();
+
     try {
-      const couponCode = formData.get("couponCode");
-      const discountType = formData.get("discountType");
-      const discountValue = formData.get("discountValue");
-      const minOrderValue = formData.get("minOrderValue");
-      const maxOrderValue = formData.get("maxOrderValue");
-      const startDate = formData.get("startDate");
-      const endDate = formData.get("endDate");
-      const usageLimit = formData.get("usageLimit");
-      const isActive = formData.get("isActive");
-      const desc = formData.get("desc");
+      const validateDates = (startDate, endDate) => {
+        const parseDate = (dateString) => {
+          const [year, month, date] = dateString.split("-");
+          return new Date(year, month - 1, date);
+        };
+
+        const couponStartDate = parseDate(startDate).getTime();
+        const couponEndDate = parseDate(endDate).getTime();
+
+        return couponStartDate > couponEndDate ? false : true;
+      };
+
+      const dateComp = validateDates(
+        couponDetails.startDate,
+        couponDetails.endDate
+      );
+
+      if (!dateComp) {
+        toast.error("End date is less than start date");
+        return;
+      }
 
       // Validate using Zod
       const result = couponSchema.safeParse({
-        couponCode,
-        discountType,
-        discountValue,
-        minOrderValue,
-        maxOrderValue,
-        startDate,
-        endDate,
-        usageLimit,
-        isActive,
-        desc,
+        couponCode: couponDetails.couponCode,
+        discountType: couponDetails.discountType,
+        discountValue: Number(couponDetails.discountValue),
+        minOrderValue: Number(couponDetails.minOrderValue),
+        maxOrderValue: Number(couponDetails.maxOrderValue),
+        startDate: couponDetails.startDate,
+        endDate: couponDetails.endDate,
+        usageLimit: Number(couponDetails.usageLimit),
+        isActive: couponDetails.isActive,
+        desc: couponDetails.desc,
       });
 
       if (result.success) {
@@ -48,18 +91,7 @@ const CreateCouponForm = () => {
 
       const res = await axios.post(
         "http://localhost:8000/api/v1/create-coupon",
-        {
-          couponCode,
-          discountType,
-          discountValue,
-          minOrderValue,
-          maxOrderValue,
-          startDate,
-          endDate,
-          usageLimit,
-          isActive,
-          desc,
-        },
+        couponDetails,
         { withCredentials: true }
       );
 
@@ -81,7 +113,7 @@ const CreateCouponForm = () => {
         <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
           <h1 className="text-4xl py-3 poppins-light my-10">Create Coupon</h1>
           <div className="flex flex-col w-5/12 border rounded-lg p-5 mb-10">
-            <form className="mb-3" action={handleCouponCreation}>
+            <form className="mb-3" onSubmit={handleCouponCreation}>
               <div className="flex flex-col mb-3">
                 <label htmlFor="couponCode" className="mb-1">
                   Coupon Code
@@ -92,6 +124,7 @@ const CreateCouponForm = () => {
                   id="couponCode"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter a code"
+                  onChange={handleChange}
                   required
                 />
                 {errors.couponCode && (
@@ -108,6 +141,7 @@ const CreateCouponForm = () => {
                   id="desc"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the coupon description"
+                  onChange={handleChange}
                   required
                 ></textarea>
                 {errors.desc && (
@@ -123,8 +157,10 @@ const CreateCouponForm = () => {
                   name="discountType"
                   id="discountType"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  onChange={handleChange}
                   required
                 >
+                  <option>Select</option>
                   <option value="percentage">Percentage</option>
                   <option value="fixed">Fixed</option>
                 </select>
@@ -143,8 +179,15 @@ const CreateCouponForm = () => {
                   type="number"
                   name="discountValue"
                   id="discountValue"
+                  min={1}
+                  max={
+                    couponDetails.discountType === "percentage"
+                      ? 100
+                      : 100000000
+                  }
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the discount value"
+                  onChange={handleChange}
                   required
                 />
                 {errors.discountValue && (
@@ -163,8 +206,8 @@ const CreateCouponForm = () => {
                   name="minOrderValue"
                   id="minOrderValue"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  defaultValue={0}
                   placeholder="Enter the minimum order value"
+                  onChange={handleChange}
                   required
                 />
                 {errors.minOrderValue && (
@@ -183,8 +226,8 @@ const CreateCouponForm = () => {
                   name="maxOrderValue"
                   id="maxOrderValue"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  defaultValue={1000000000}
                   placeholder="Enter the minimum order value"
+                  onChange={handleChange}
                   required
                 />
                 {errors.maxOrderValue && (
@@ -203,6 +246,7 @@ const CreateCouponForm = () => {
                   name="startDate"
                   id="startDate"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  onChange={handleChange}
                   required
                 />
                 {errors.startDate && (
@@ -219,6 +263,7 @@ const CreateCouponForm = () => {
                   name="endDate"
                   id="endDate"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  onChange={handleChange}
                   required
                 />
                 {errors.endDate && (
@@ -236,6 +281,7 @@ const CreateCouponForm = () => {
                   id="usageLimit"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter the usage limit"
+                  onChange={handleChange}
                   required
                 />
                 {errors.usageLimit && (
@@ -251,10 +297,12 @@ const CreateCouponForm = () => {
                   name="isActive"
                   id="isActive"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  onChange={handleChange}
                   required
                 >
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
+                  <option>Select</option>
+                  <option value={true}>Active</option>
+                  <option value={false}>Inactive</option>
                 </select>
                 {errors.isActive && (
                   <p className="text-red-500">{errors.isActive._errors[0]}</p>

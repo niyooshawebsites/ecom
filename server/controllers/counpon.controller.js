@@ -70,6 +70,23 @@ const updateCouponController = async (req, res) => {
   }
 };
 
+const fetchCouponForUpdationController = async (req, res) => {
+  try {
+    const { ccid } = req.params;
+
+    if (!ccid) return response(res, 400, false, "No ccid. No coupon fetching");
+
+    const coupon = await Coupon.findById(ccid);
+
+    if (!coupon) return response(res, 404, false, "No coupon found");
+
+    return response(res, 201, true, "Coupon found successfully", coupon);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 const fetchCouponController = async (req, res) => {
   try {
     const { couponCode } = req.params;
@@ -196,6 +213,7 @@ const deleteCouponsController = async (req, res) => {
 export {
   createCounponController,
   updateCouponController,
+  fetchCouponForUpdationController,
   fetchCouponController,
   fetchAllCouponsController,
   deleteCouponController,

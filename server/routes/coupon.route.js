@@ -3,6 +3,7 @@ import auth from "../middlewares/auth.middleware.js";
 import {
   createCounponController,
   updateCouponController,
+  fetchCouponForUpdationController,
   fetchCouponController,
   fetchAllCouponsController,
   deleteCouponController,
@@ -13,6 +14,11 @@ const couponRouter = express.Router();
 
 couponRouter.post("/create-coupon", auth, createCounponController);
 couponRouter.patch("/update-coupon/:ccid", auth, updateCouponController);
+couponRouter.get(
+  "/fetch-coupon-for-updation/:ccid",
+  auth,
+  fetchCouponForUpdationController
+);
 couponRouter.get("/fetch-coupon/:couponCode", auth, fetchCouponController);
 couponRouter.get("/fetch-coupons/:pageNo", auth, fetchAllCouponsController);
 couponRouter.delete("/delete-coupon/:ccid", auth, deleteCouponController);

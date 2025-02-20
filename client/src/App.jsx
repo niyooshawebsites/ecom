@@ -29,7 +29,6 @@ import Users from "./pages/Users";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderCofirmation from "./pages/OrderConfirmation";
 import Tax from "./pages/Tax";
-import UpdateTax from "./pages/UpdateTax";
 import Gallery from "./pages/Gallery";
 import PageNotFound from "./pages/PageNotFound";
 import Logo from "./pages/logo";
@@ -84,7 +83,6 @@ const App = () => {
             <Route path="/dashboard/contact-info" element={<ContactInfo />} />
             <Route path="/dashboard/profile" element={<Profile />} />
             <Route path="/dashboard/tax" element={<Tax />} />
-            <Route path="/dashboard/update-tax" element={<UpdateTax />} />
             <Route path="/dashboard/logo" element={<Logo />} />
           </Route>
         </Routes>
