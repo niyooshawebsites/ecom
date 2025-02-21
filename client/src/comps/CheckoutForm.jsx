@@ -9,6 +9,8 @@ import Loading from "./Loading";
 
 const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
+  const [shippingAuthToken, setShippingAuthToken] = useState(null);
+  const [couriers, setCouriers] = useState([]);
 
   const indianRegions = [
     "Andaman and Nicobar Islands",
@@ -84,6 +86,56 @@ const CheckoutForm = () => {
   const [netPayable, setNetPayable] = useState(cartNetTotal);
 
   const [cartTotal, setCartTotal] = useState(0);
+
+  // SHPPING API START ***********************************
+
+  const shppingAuth = async () => {
+    try {
+      const res = await axios.post(
+        "https://apiv2.shiprocket.in/v1/external/auth/login",
+        {
+          email: import.meta.env.SHIPROCKET_EMAIL,
+          password: import.meta.env.SHIPROCKET_PASSWORD,
+        }
+      );
+
+      setShippingAuthToken(res.data?.token);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  // Ensure valid authentication token
+  const ensureAuth = async () => {
+    if (!shippingAuthToken) await shppingAuth();
+  };
+
+  // Get shipping rates
+  const getShippingRates = async () => {
+    try {
+      const res = await axios.get(
+        "https://apiv2.shiprocket.in/v1/external/courier/serviceability",
+        {
+          pickup_postcode: "110094",
+          delivery_postcode: loggedInUserDetails.pincode,
+          weight: 1.5,
+          length: 10,
+          breadth: 10,
+          height: 10,
+          cod: netPayable,
+        },
+        {
+          headers: { Authorization: `Bearer ${shippingAuthToken}` },
+        }
+      );
+
+      setCouriers(res.data.data.available_courier_companies);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  // SHPPING API END ***********************************
 
   const calcTax = async () => {
     try {
@@ -565,10 +617,12 @@ const CheckoutForm = () => {
   }, []);
 
   useEffect(() => {
+    ensureAuth();
     setCartTotal(calculateCartTotal());
     fetchLoggedUserDetailsonPageLoad(uid);
     calcTax();
     calcNetPayable();
+    getShippingRates();
   }, [tax, totalGST, cartNetTotal]);
 
   return (
