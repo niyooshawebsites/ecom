@@ -8,13 +8,18 @@ import { cartSliceActions } from "../store/slices/cartSlice";
 import Loading from "./Loading";
 
 const CheckoutForm = () => {
+  // cart total - Gross cart total
+  const [cartGrossTotal, setCartGrossTotal] = useState(0);
+  const [cartNetTotal, setCartNetTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [shippingAuthToken, setShippingAuthToken] = useState(null);
   const [couriers, setCouriers] = useState([]);
   const [coupon, setCoupon] = useState(null);
+  const [couponCode, setCouponCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountRemoved, setDiscountRemoved] = useState(false);
   const [errors, setErrors] = useState({});
-
   const indianRegions = [
     "Andaman and Nicobar Islands",
     "Andhra Pradesh",
@@ -53,10 +58,8 @@ const CheckoutForm = () => {
     "Uttarakhand",
     "West Bengal",
   ];
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [loggedInUserDetails, setLoggedInUserDetails] = useState({
     fName: "",
     lName: "",
@@ -75,27 +78,21 @@ const CheckoutForm = () => {
     orderNote: "",
     paymentMethod: "",
   });
-
   const [tax, setTax] = useState([]);
   const [totalGST, setTotalGST] = useState(0);
-
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
   const { uid } = useSelector((state) => state.user_Slice);
-
   const { cartProductList } = useSelector((state) => state.cart_Slice);
-
   const [netPayable, setNetPayable] = useState(cartNetTotal);
 
-  const [cartTotal, setCartTotal] = useState(0);
+  const handlCouponCodeChange = (e) => {
+    setCouponCode(e.target.value);
+  };
 
   // DISCOUNT START *****************************************
-  const applyDiscount = async (formData) => {
+  const applyDiscount = async () => {
     setLoading(true);
-
     try {
-      const couponCode = formData?.get("couponCode");
-
       // sanitize and validate form data before sending to backend
       // const result = cartSchema.safeParse({ couponCode });
 
@@ -109,7 +106,7 @@ const CheckoutForm = () => {
       // }
 
       const { data } = await axios.post(
-        `http://localhost:8000/api/v1/apply-coupon/${cartTotal}`,
+        `http://localhost:8000/api/v1/apply-coupon/${cartGrossTotal}`,
         { couponCode },
         {
           withCredentials: true,
@@ -118,52 +115,19 @@ const CheckoutForm = () => {
 
       if (data.success) {
         setLoading(false);
+        setDiscountApplied((prev) => !prev);
         setCoupon(data.data);
 
         // calculate discount amount
         if (data.data.discountType === "percentage") {
           setDiscountAmount(
-            Math.round((cartTotal * data.data.discountValue) / 100)
-          );
-
-          // creating global cart discount state
-          dispatch(
-            cartSliceActions.populateCartDiscount({
-              discountAmount: Math.round(
-                (cartTotal * data.data.discountValue) / 100
-              ),
-              couponCode: data.data.couponCode,
-              couponDesc: data.data.desc,
-            })
-          );
-
-          // creating global cart net total state
-          dispatch(
-            cartSliceActions.populateCartNetTotal({
-              cartNetTotal:
-                cartTotal - (cartTotal * data.data.discountValue) / 100,
-            })
+            Math.round((cartGrossTotal * data.data.discountValue) / 100)
           );
         }
 
         if (data.data.discountType !== "percentage") {
           setDiscountAmount(data.data.discountValue);
 
-          // creating global cart discount state
-          dispatch(
-            cartSliceActions.populateCartDiscount({
-              discountAmount: data.data.discountValue,
-              couponCode: data.data.couponCode,
-              couponDesc: data.data.desc,
-            })
-          );
-
-          // creating global cart net total state
-          dispatch(
-            cartSliceActions.populateCartNetTotal({
-              cartNetTotal: cartTotal - data.data.discountValue,
-            })
-          );
           toast.success(data.msg);
         }
       }
@@ -171,6 +135,15 @@ const CheckoutForm = () => {
       toast.error(err.response?.data.msg);
       console.log(err.response?.data.msg);
       setLoading(false);
+    }
+  };
+
+  const removeDiscount = async () => {
+    try {
+      setDiscountAmount(0);
+      setDiscountRemoved((prev) => !prev);
+    } catch (err) {
+      console.log(err.message);
     }
   };
 
@@ -266,13 +239,17 @@ const CheckoutForm = () => {
     setNetPayable(totalAmountToBePaid);
   };
 
-  const calculateCartTotal = () => {
+  const calculateCartGrossTotal = () => {
     const intialValue = 0;
     const sumOfCart = cartProductList.reduce(
       (total, item) => total + item.productTotalAmount,
       intialValue
     );
-    return sumOfCart;
+    setCartGrossTotal(sumOfCart);
+  };
+
+  const calculateCartNetTotal = () => {
+    setCartNetTotal(cartGrossTotal - discountAmount);
   };
 
   const handleChange = (e) => {
@@ -709,15 +686,17 @@ const CheckoutForm = () => {
   }, [cartProductList]);
 
   useEffect(() => {
-    calcNetPayable();
-  }, [tax, cartNetTotal]);
-
-  useEffect(() => {
     // ensureAuth();
-    setCartTotal(calculateCartTotal());
+    calculateCartGrossTotal();
+
     fetchLoggedUserDetailsonPageLoad(uid);
     getShippingRates();
   }, []);
+
+  useEffect(() => {
+    calcNetPayable();
+    calculateCartNetTotal();
+  }, [tax, cartNetTotal, discountApplied, discountRemoved]);
 
   return (
     <>
@@ -1013,7 +992,7 @@ const CheckoutForm = () => {
                 <div className="flex flex-col justify-start items-center min-h-screen px-5">
                   {cartProductList.length > 0 ? (
                     <div className="flex flex-col w-full py-5">
-                      <table className="w-full border mb-10">
+                      <table className="w-full border mb-5">
                         <thead className="bg-blue-600 text-white h-10 m-10">
                           <tr>
                             <th className="poppins-light border text-sm p-1">
@@ -1057,14 +1036,15 @@ const CheckoutForm = () => {
 
                       {/* Adjustment */}
 
-                      <div className="w-full flex justify-between border p-5">
-                        <div>
-                          <form action={applyDiscount}>
+                      <div className="w-full flex justify-between p-5">
+                        <div className="flex w-full flex-col">
+                          <div className="flex ">
                             <input
                               type="text"
                               placeholder="Enter coupon code"
-                              className="py-1 px-1 mr-2 border rounded-md border-blue-500 w-9/12"
+                              className="py-1 px-1 mr-2 border rounded-md border-blue-500 w-full"
                               name="couponCode"
+                              onChange={handlCouponCodeChange}
                               required
                             />
                             {/* {errors.couponCode && (
@@ -1073,15 +1053,15 @@ const CheckoutForm = () => {
                                 </p>
                               )} */}
                             <button
-                              type="submit"
-                              className="bg-green-600 py-1 px-2 border rounded-md  text-gray-100 hover:bg-green-700 w-2/12"
+                              className="bg-green-600 py-1 px-2 border rounded-md  text-gray-100 hover:bg-green-700"
+                              onClick={applyDiscount}
                             >
                               Apply
                             </button>
-                          </form>
+                          </div>
 
                           <div className="mt-3">
-                            {coupon !== null ? (
+                            {coupon !== 0 ? (
                               <>
                                 <h3>
                                   <span className="font-bold">
@@ -1121,7 +1101,13 @@ const CheckoutForm = () => {
 
                             <tr className="border-b">
                               <td className="border text-sm p-1 font-bold">
-                                Discount:
+                                Discount:{" "}
+                                <Link
+                                  className="bg-orange-500 hover:bg-orange-600 px-2 py-1 ml-3 rounded-md text-white"
+                                  onClick={removeDiscount}
+                                >
+                                  Remove
+                                </Link>
                               </td>
                               <td className="poppins-light border text-sm p-1 text-center">
                                 Rs ({discountAmount})
@@ -1133,7 +1119,7 @@ const CheckoutForm = () => {
                                 Net total
                               </td>
                               <td className="poppins-light border text-sm p-1 text-center">
-                                Rs {cartNetTotal || 0}
+                                Rs {cartNetTotal}
                               </td>
                             </tr>
 

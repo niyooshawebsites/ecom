@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 import { cartSliceActions } from "../store/slices/cartSlice";
 
 const CartTable = () => {
-  const { cartProductList, cartProduct } = useSelector(
-    (state) => state.cart_Slice
-  );
+  const { cartProductList } = useSelector((state) => state.cart_Slice);
   const dispatch = useDispatch();
   const [cartTotal, setCartTotal] = useState(0);
   const [quantityChanged, setQuantityChanged] = useState(false);
@@ -82,15 +80,6 @@ const CartTable = () => {
   useEffect(() => {
     setCartTotal(calculateCartTotal());
   }, [cartProductList.length, quantityChanged]);
-
-  useEffect(() => {
-    // creating global cart gross total state
-    dispatch(
-      cartSliceActions.populateCartGrossTotal({
-        cartGrossTotal: calculateCartTotal(),
-      })
-    );
-  }, [quantityChanged, cartTotal, cartProduct.productQuantity]);
 
   return (
     <>
