@@ -614,16 +614,19 @@ const CheckoutForm = () => {
 
   useEffect(() => {
     loadPaymentGatewayScript();
-  }, []);
+    calcTax();
+  }, [cartProductList]);
+
+  useEffect(() => {
+    calcNetPayable();
+  }, [tax, cartNetTotal]);
 
   useEffect(() => {
     ensureAuth();
     setCartTotal(calculateCartTotal());
     fetchLoggedUserDetailsonPageLoad(uid);
-    calcTax();
-    calcNetPayable();
     getShippingRates();
-  }, [tax, totalGST, cartNetTotal]);
+  }, []);
 
   return (
     <>
