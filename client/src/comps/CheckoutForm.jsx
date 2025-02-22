@@ -11,6 +11,9 @@ const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
   const [shippingAuthToken, setShippingAuthToken] = useState(null);
   const [couriers, setCouriers] = useState([]);
+  const [coupon, setCoupon] = useState(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [errors, setErrors] = useState({});
 
   const indianRegions = [
     "Andaman and Nicobar Islands",
@@ -80,12 +83,98 @@ const CheckoutForm = () => {
 
   const { uid } = useSelector((state) => state.user_Slice);
 
-  const { cartProductList, cartDiscount, cartGrossTotal, cartNetTotal } =
-    useSelector((state) => state.cart_Slice);
+  const { cartProductList } = useSelector((state) => state.cart_Slice);
 
   const [netPayable, setNetPayable] = useState(cartNetTotal);
 
   const [cartTotal, setCartTotal] = useState(0);
+
+  // DISCOUNT START *****************************************
+  const applyDiscount = async (formData) => {
+    setLoading(true);
+
+    try {
+      const couponCode = formData?.get("couponCode");
+
+      // sanitize and validate form data before sending to backend
+      // const result = cartSchema.safeParse({ couponCode });
+
+      // // if validation fails
+      // if (!result.success) {
+      //   // Extract the errors
+      //   const formattedErrors = result.error.format();
+      //   setErrors(formattedErrors);
+      //   setLoading(false);
+      //   return;
+      // }
+
+      const { data } = await axios.post(
+        `http://localhost:8000/api/v1/apply-coupon/${cartTotal}`,
+        { couponCode },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        setLoading(false);
+        setCoupon(data.data);
+
+        // calculate discount amount
+        if (data.data.discountType === "percentage") {
+          setDiscountAmount(
+            Math.round((cartTotal * data.data.discountValue) / 100)
+          );
+
+          // creating global cart discount state
+          dispatch(
+            cartSliceActions.populateCartDiscount({
+              discountAmount: Math.round(
+                (cartTotal * data.data.discountValue) / 100
+              ),
+              couponCode: data.data.couponCode,
+              couponDesc: data.data.desc,
+            })
+          );
+
+          // creating global cart net total state
+          dispatch(
+            cartSliceActions.populateCartNetTotal({
+              cartNetTotal:
+                cartTotal - (cartTotal * data.data.discountValue) / 100,
+            })
+          );
+        }
+
+        if (data.data.discountType !== "percentage") {
+          setDiscountAmount(data.data.discountValue);
+
+          // creating global cart discount state
+          dispatch(
+            cartSliceActions.populateCartDiscount({
+              discountAmount: data.data.discountValue,
+              couponCode: data.data.couponCode,
+              couponDesc: data.data.desc,
+            })
+          );
+
+          // creating global cart net total state
+          dispatch(
+            cartSliceActions.populateCartNetTotal({
+              cartNetTotal: cartTotal - data.data.discountValue,
+            })
+          );
+          toast.success(data.msg);
+        }
+      }
+    } catch (err) {
+      toast.error(err.response?.data.msg);
+      console.log(err.response?.data.msg);
+      setLoading(false);
+    }
+  };
+
+  // DISCOUNT END *****************************************
 
   // SHPPING API START ***********************************
 
@@ -94,8 +183,10 @@ const CheckoutForm = () => {
       const res = await axios.post(
         "https://apiv2.shiprocket.in/v1/external/auth/login",
         {
-          email: import.meta.env.SHIPROCKET_EMAIL,
-          password: import.meta.env.SHIPROCKET_PASSWORD,
+          // email: import.meta.env.VITE_SHIPROCKET_EMAIL,
+          // password: import.meta.env.VITE_SHIPROCKET_PASSWORD,
+          email: "niyooshawebsolutions@gmail.com",
+          password: "jhdflkL@#$JG4542",
         }
       );
 
@@ -622,7 +713,7 @@ const CheckoutForm = () => {
   }, [tax, cartNetTotal]);
 
   useEffect(() => {
-    ensureAuth();
+    // ensureAuth();
     setCartTotal(calculateCartTotal());
     fetchLoggedUserDetailsonPageLoad(uid);
     getShippingRates();
@@ -922,7 +1013,7 @@ const CheckoutForm = () => {
                 <div className="flex flex-col justify-start items-center min-h-screen px-5">
                   {cartProductList.length > 0 ? (
                     <div className="flex flex-col w-full py-5">
-                      <table className="w-full border">
+                      <table className="w-full border mb-10">
                         <thead className="bg-blue-600 text-white h-10 m-10">
                           <tr>
                             <th className="poppins-light border text-sm p-1">
@@ -964,6 +1055,58 @@ const CheckoutForm = () => {
                         </tbody>
                       </table>
 
+                      {/* Adjustment */}
+
+                      <div className="w-full flex justify-between border p-5">
+                        <div>
+                          <form action={applyDiscount}>
+                            <input
+                              type="text"
+                              placeholder="Enter coupon code"
+                              className="py-1 px-1 mr-2 border rounded-md border-blue-500 w-9/12"
+                              name="couponCode"
+                              required
+                            />
+                            {/* {errors.couponCode && (
+                                <p className="text-red-500">
+                                  {errors.couponCode._errors[0] || ""}
+                                </p>
+                              )} */}
+                            <button
+                              type="submit"
+                              className="bg-green-600 py-1 px-2 border rounded-md  text-gray-100 hover:bg-green-700 w-2/12"
+                            >
+                              Apply
+                            </button>
+                          </form>
+
+                          <div className="mt-3">
+                            {coupon !== null ? (
+                              <>
+                                <h3>
+                                  <span className="font-bold">
+                                    Coupon code applied:{" "}
+                                  </span>
+                                  <span className="text-orange-500 font-bold">
+                                    {coupon.couponCode}
+                                  </span>
+                                </h3>
+                                <p>
+                                  <span className="font-bold">
+                                    Coupon description:
+                                  </span>{" "}
+                                  {coupon.couponDesc}
+                                </p>
+                              </>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Adjustment */}
+
                       <div className="w-full flex justify-between border p-5">
                         <table className="w-full table-auto">
                           <tbody>
@@ -981,7 +1124,7 @@ const CheckoutForm = () => {
                                 Discount:
                               </td>
                               <td className="poppins-light border text-sm p-1 text-center">
-                                Rs ({cartDiscount.discountAmount || 0})
+                                Rs ({discountAmount})
                               </td>
                             </tr>
 
