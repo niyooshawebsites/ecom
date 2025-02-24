@@ -215,7 +215,9 @@ const CheckoutForm = () => {
 
           if (res.data.success) {
             const rate = res.data.data.GSTRate / 100;
-            const taxPerProduct = Number(rate * cartProduct.productPrice);
+            const taxPerProduct =
+              Number(rate * cartProduct.productPrice) *
+              cartProduct.productQuantity;
 
             return taxPerProduct;
           }
