@@ -140,6 +140,7 @@ const CheckoutForm = () => {
 
   const removeDiscount = async () => {
     try {
+      setCoupon(null);
       setDiscountAmount(0);
       setDiscountRemoved((prev) => !prev);
     } catch (err) {
@@ -680,6 +681,8 @@ const CheckoutForm = () => {
     document.body.appendChild(script);
   };
 
+  console.log(coupon);
+
   useEffect(() => {
     loadPaymentGatewayScript();
     calcTax();
@@ -1052,16 +1055,16 @@ const CheckoutForm = () => {
                                   {errors.couponCode._errors[0] || ""}
                                 </p>
                               )} */}
-                            <button
+                            <Link
                               className="bg-green-600 py-1 px-2 border rounded-md  text-gray-100 hover:bg-green-700"
                               onClick={applyDiscount}
                             >
                               Apply
-                            </button>
+                            </Link>
                           </div>
 
                           <div className="mt-3">
-                            {coupon !== 0 ? (
+                            {coupon !== null ? (
                               <>
                                 <h3>
                                   <span className="font-bold">
@@ -1075,7 +1078,7 @@ const CheckoutForm = () => {
                                   <span className="font-bold">
                                     Coupon description:
                                   </span>{" "}
-                                  {coupon.couponDesc}
+                                  {coupon.desc}
                                 </p>
                               </>
                             ) : (
@@ -1102,12 +1105,16 @@ const CheckoutForm = () => {
                             <tr className="border-b">
                               <td className="border text-sm p-1 font-bold">
                                 Discount:{" "}
-                                <Link
-                                  className="bg-orange-500 hover:bg-orange-600 px-2 py-1 ml-3 rounded-md text-white"
-                                  onClick={removeDiscount}
-                                >
-                                  Remove
-                                </Link>
+                                {coupon !== null ? (
+                                  <Link
+                                    className="bg-orange-500 hover:bg-orange-600 px-2 py-1 ml-3 rounded-md text-white"
+                                    onClick={removeDiscount}
+                                  >
+                                    Remove
+                                  </Link>
+                                ) : (
+                                  ""
+                                )}
                               </td>
                               <td className="poppins-light border text-sm p-1 text-center">
                                 Rs ({discountAmount})
