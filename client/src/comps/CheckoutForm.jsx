@@ -12,7 +12,6 @@ const CheckoutForm = () => {
   const [cartGrossTotal, setCartGrossTotal] = useState(0);
   const [cartNetTotal, setCartNetTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [shippingAuthToken, setShippingAuthToken] = useState(null);
   const [couriers, setCouriers] = useState([]);
   const [coupon, setCoupon] = useState(null);
   const [couponCode, setCouponCode] = useState("");
@@ -84,6 +83,7 @@ const CheckoutForm = () => {
   const { uid } = useSelector((state) => state.user_Slice);
   const { cartProductList } = useSelector((state) => state.cart_Slice);
   const [netPayable, setNetPayable] = useState(cartNetTotal);
+  let [shippingAuthToken, setShippingAuthToken] = useState(null);
 
   const handlCouponCodeChange = (e) => {
     setCouponCode(e.target.value);
@@ -157,14 +157,12 @@ const CheckoutForm = () => {
       const res = await axios.post(
         "https://apiv2.shiprocket.in/v1/external/auth/login",
         {
-          // email: import.meta.env.VITE_SHIPROCKET_EMAIL,
-          // password: import.meta.env.VITE_SHIPROCKET_PASSWORD,
-          email: "niyooshawebsolutions@gmail.com",
-          password: "jhdflkL@#$JG4542",
+          email: import.meta.env.VITE_SHIPROCKET_EMAIL,
+          password: import.meta.env.VITE_SHIPROCKET_PASSWORD,
         }
       );
 
-      setShippingAuthToken(res.data?.token);
+      setShippingAuthToken(res.token);
     } catch (err) {
       console.log(err.message);
     }
@@ -181,15 +179,16 @@ const CheckoutForm = () => {
       const res = await axios.get(
         "https://apiv2.shiprocket.in/v1/external/courier/serviceability",
         {
-          pickup_postcode: "110094",
-          delivery_postcode: loggedInUserDetails.pincode,
-          weight: 1.5,
-          length: 10,
-          breadth: 10,
-          height: 10,
-          cod: netPayable,
-        },
-        {
+          payLoad: {
+            pickup_postcode: "110094",
+            delivery_postcode: loggedInUserDetails.pincode,
+            weight: 1.5,
+            length: 10,
+            breadth: 10,
+            height: 10,
+            cod: netPayable,
+          },
+
           headers: { Authorization: `Bearer ${shippingAuthToken}` },
         }
       );
@@ -683,17 +682,14 @@ const CheckoutForm = () => {
     document.body.appendChild(script);
   };
 
-  console.log(coupon);
-
   useEffect(() => {
     loadPaymentGatewayScript();
     calcTax();
   }, [cartProductList]);
 
   useEffect(() => {
-    // ensureAuth();
+    ensureAuth();
     calculateCartGrossTotal();
-
     fetchLoggedUserDetailsonPageLoad(uid);
     getShippingRates();
   }, []);
