@@ -32,6 +32,7 @@ import Tax from "./pages/Tax";
 import Gallery from "./pages/Gallery";
 import PageNotFound from "./pages/PageNotFound";
 import Logo from "./pages/logo";
+import Shipping from "./pages/Shipping";
 
 const App = () => {
   return (
@@ -83,6 +84,7 @@ const App = () => {
             <Route path="/dashboard/contact-info" element={<ContactInfo />} />
             <Route path="/dashboard/profile" element={<Profile />} />
             <Route path="/dashboard/tax" element={<Tax />} />
+            <Route path="/dashboard/shipping" element={<Shipping />} />
             <Route path="/dashboard/logo" element={<Logo />} />
           </Route>
         </Routes>

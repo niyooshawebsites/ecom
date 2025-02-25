@@ -12,7 +12,7 @@ const CheckoutForm = () => {
   const [cartGrossTotal, setCartGrossTotal] = useState(0);
   const [cartNetTotal, setCartNetTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [couriers, setCouriers] = useState([]);
+  const [courierCharges, setCourierCharges] = useState(0);
   const [coupon, setCoupon] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -83,7 +83,6 @@ const CheckoutForm = () => {
   const { uid } = useSelector((state) => state.user_Slice);
   const { cartProductList } = useSelector((state) => state.cart_Slice);
   const [netPayable, setNetPayable] = useState(cartNetTotal);
-  let [shippingAuthToken, setShippingAuthToken] = useState(null);
 
   const handlCouponCodeChange = (e) => {
     setCouponCode(e.target.value);
@@ -161,39 +160,35 @@ const CheckoutForm = () => {
           password: import.meta.env.VITE_SHIPROCKET_PASSWORD,
         }
       );
+      console.log(res.data.token);
+      const shippingAuthToken = await res.data.token;
 
-      setShippingAuthToken(res.token);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+      if (shippingAuthToken) {
+        const response = await axios.get(
+          "https://apiv2.shiprocket.in/v1/external/courier/serviceability",
+          {
+            params: {
+              pickup_postcode: 110094,
+              delivery_postcode: 110001,
+              weight: 1.5,
+              length: 10,
+              breadth: 10,
+              height: 10,
+              cod: netPayable,
+            },
 
-  // Ensure valid authentication token
-  const ensureAuth = async () => {
-    if (!shippingAuthToken) await shppingAuth();
-  };
+            headers: { Authorization: `Bearer ${shippingAuthToken}` },
+          }
+        );
 
-  // Get shipping rates
-  const getShippingRates = async () => {
-    try {
-      const res = await axios.get(
-        "https://apiv2.shiprocket.in/v1/external/courier/serviceability",
-        {
-          payLoad: {
-            pickup_postcode: "110094",
-            delivery_postcode: loggedInUserDetails.pincode,
-            weight: 1.5,
-            length: 10,
-            breadth: 10,
-            height: 10,
-            cod: netPayable,
-          },
+        console.log(response.data.data.available_courier_companies);
 
-          headers: { Authorization: `Bearer ${shippingAuthToken}` },
+        if (response) {
+          setCourierCharges(
+            response.data.data.available_courier_companies[0]?.freight_charge
+          );
         }
-      );
-
-      setCouriers(res.data.data.available_courier_companies);
+      }
     } catch (err) {
       console.log(err.message);
     }
@@ -237,7 +232,7 @@ const CheckoutForm = () => {
 
     setTotalGST(totalTax);
 
-    const totalAmountToBePaid = cartNetTotal + totalTax;
+    const totalAmountToBePaid = cartNetTotal + totalTax + courierCharges;
     setNetPayable(totalAmountToBePaid);
   };
 
@@ -683,21 +678,20 @@ const CheckoutForm = () => {
   };
 
   useEffect(() => {
+    shppingAuth();
     loadPaymentGatewayScript();
     calcTax();
   }, [cartProductList]);
 
   useEffect(() => {
-    ensureAuth();
     calculateCartGrossTotal();
     fetchLoggedUserDetailsonPageLoad(uid);
-    getShippingRates();
   }, []);
 
   useEffect(() => {
     calcNetPayable();
     calculateCartNetTotal();
-  }, [tax, cartNetTotal, discountApplied, discountRemoved]);
+  }, [tax, cartNetTotal, discountApplied, discountRemoved, courierCharges]);
 
   return (
     <>
@@ -1135,6 +1129,16 @@ const CheckoutForm = () => {
                               <td className="poppins-light border text-sm p-1 text-center">
                                 Rs
                                 {totalGST}
+                              </td>
+                            </tr>
+
+                            <tr className="border-b">
+                              <td className="border text-sm p-1 font-bold">
+                                Shipping
+                              </td>
+                              <td className="poppins-light border text-sm p-1 text-center">
+                                Rs
+                                {courierCharges}
                               </td>
                             </tr>
 
