@@ -50,7 +50,12 @@ const Header = () => {
             <Link to="/">
               <h1>ECOM</h1>
             </Link>
-
+            <input
+              type="text"
+              name=""
+              id=""
+              className="w-5/12 text-gray-800 px-2 rounded-md"
+            />
             <ul
               className={`flex ${uid ? "justify-end" : "justify-evenly"} ${
                 uid ? "w-fit" : "w-6/12"

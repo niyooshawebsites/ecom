@@ -6,9 +6,29 @@ import Gallery from "../models/gallery.model.js";
 
 const createProductController = async (req, res) => {
   try {
-    const { name, price, category, shortDesc, longDesc } = req.body;
+    const {
+      name,
+      price,
+      category,
+      length,
+      breadth,
+      height,
+      weight,
+      shortDesc,
+      longDesc,
+    } = req.body;
 
-    if (!name || !price || !category || !shortDesc || !longDesc)
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !length ||
+      !breadth ||
+      !height ||
+      !weight ||
+      !shortDesc ||
+      !longDesc
+    )
       return response(res, 400, false, "Please fill out all the information");
 
     // check if the product already exists
@@ -44,13 +64,33 @@ const createProductController = async (req, res) => {
 const updateProductController = async (req, res) => {
   try {
     const { pid } = req.params;
-    const { name, price, category, shortDesc, longDesc } = req.body;
+    const {
+      name,
+      price,
+      category,
+      length,
+      breadth,
+      height,
+      weight,
+      shortDesc,
+      longDesc,
+    } = req.body;
 
     if (!pid) response(res, 400, false, "No product id!. No updation!");
 
     const updatedSlug = slugify(name, { lower: true, strict: true });
 
-    if (!name || !price || !updatedSlug || !category || !shortDesc || !longDesc)
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !length ||
+      !breadth ||
+      !height ||
+      !weight ||
+      !shortDesc ||
+      !longDesc
+    )
       return response(res, 400, false, "Please fill out all the details");
 
     // extract S3 image url from multer upload - keys are already added by multer-s3

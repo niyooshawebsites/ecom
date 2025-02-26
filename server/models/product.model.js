@@ -34,6 +34,26 @@ const productSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    length: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
+    breadth: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
+    weight: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
     shortDesc: {
       type: String,
       required: true,

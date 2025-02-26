@@ -15,6 +15,10 @@ const CreateProductForm = () => {
     name: "",
     category: "",
     price: "",
+    length: "",
+    breadth: "",
+    height: "",
+    weight: "",
     shortDesc: "",
     longDesc: "",
     img: null,
@@ -80,6 +84,10 @@ const CreateProductForm = () => {
       productData.append("category", productDetails.category);
       productData.append("name", productDetails.name);
       productData.append("price", productDetails.price);
+      productData.append("length", productDetails.length);
+      productData.append("breadth", productDetails.breadth);
+      productData.append("height", productDetails.height);
+      productData.append("weight", productDetails.weight);
       productData.append("img", productDetails.img);
       productData.append("shortDesc", productDetails.shortDesc);
       productData.append("longDesc", productDetails.longDesc);
@@ -102,6 +110,10 @@ const CreateProductForm = () => {
           name: "",
           category: "",
           price: "",
+          length: "",
+          breadth: "",
+          height: "",
+          weight: "",
           shortDesc: "",
           longDesc: "",
           img: null,
@@ -283,6 +295,78 @@ const CreateProductForm = () => {
                 {errors.gallery && (
                   <p className="text-red-500">{errors.gallery._errors[0]}</p>
                 )}
+              </div>
+
+              <div className="flex">
+                <div className="flex flex-col mb-3 w-6/12 mr-3">
+                  <label htmlFor="discountType" className="mb-1">
+                    Length (cm)
+                  </label>
+                  <input
+                    type="text"
+                    name="length"
+                    id="length"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={productDetails.length}
+                    onChange={handleChange}
+                  />
+                  {errors.length && (
+                    <p className="text-red-500">{errors.length._errors[0]}</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col mb-3 w-6/12">
+                  <label htmlFor="currentDiscountType" className="mb-1">
+                    Breadth (cm)
+                  </label>
+                  <input
+                    type="text"
+                    name="breadth"
+                    id="breadth"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={productDetails.breadth}
+                    onChange={handleChange}
+                  />
+                  {errors.breadth && (
+                    <p className="text-red-500">{errors.breadth._errors[0]}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex">
+                <div className="flex flex-col mb-3 w-6/12 mr-3">
+                  <label htmlFor="height" className="mb-1">
+                    Height (cm)
+                  </label>
+                  <input
+                    type="text"
+                    name="height"
+                    id="height"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={productDetails.height}
+                    onChange={handleChange}
+                  />
+                  {errors.height && (
+                    <p className="text-red-500">{errors.height._errors[0]}</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col mb-3 w-6/12">
+                  <label htmlFor="weight" className="mb-1">
+                    Weight (Kg)
+                  </label>
+                  <input
+                    type="text"
+                    name="weight"
+                    id="weight"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={productDetails.weight}
+                    onChange={handleChange}
+                  />
+                  {errors.weight && (
+                    <p className="text-red-500">{errors.weight._errors[0]}</p>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col mb-3">
