@@ -14,6 +14,10 @@ const UpdateProductForm = () => {
     price: "",
     slug: "",
     category: "",
+    length: "",
+    breadth: "",
+    height: "",
+    weight: "",
     shortDesc: "",
     longDesc: "",
     img: null,
@@ -24,7 +28,6 @@ const UpdateProductForm = () => {
   const { pid } = useParams();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-
   const [previewImg, setPreviewImg] = useState(null);
   const [previewGalleryImgs, setPreviewGalleryImgs] = useState(null);
 
@@ -131,6 +134,10 @@ const UpdateProductForm = () => {
       productData.append("name", product.name);
       productData.append("price", product.price);
       productData.append("img", product.img);
+      productData.append("length", product.length);
+      productData.append("breadth", product.breadth);
+      productData.append("height", product.height);
+      productData.append("weight", product.weight);
       productData.append("shortDesc", product.shortDesc);
       productData.append("longDesc", product.longDesc);
 
@@ -335,6 +342,78 @@ const UpdateProductForm = () => {
                 {errors.gallery && (
                   <p className="text-red-500">{errors.gallery._errors[0]}</p>
                 )}
+              </div>
+
+              <div className="flex">
+                <div className="flex flex-col mb-3 w-6/12 mr-3">
+                  <label htmlFor="discountType" className="mb-1">
+                    Length (cm)
+                  </label>
+                  <input
+                    type="text"
+                    name="length"
+                    id="length"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={product.length}
+                    onChange={handleChange}
+                  />
+                  {errors.length && (
+                    <p className="text-red-500">{errors.length._errors[0]}</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col mb-3 w-6/12">
+                  <label htmlFor="currentDiscountType" className="mb-1">
+                    Breadth (cm)
+                  </label>
+                  <input
+                    type="text"
+                    name="breadth"
+                    id="breadth"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={product.breadth}
+                    onChange={handleChange}
+                  />
+                  {errors.breadth && (
+                    <p className="text-red-500">{errors.breadth._errors[0]}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex">
+                <div className="flex flex-col mb-3 w-6/12 mr-3">
+                  <label htmlFor="height" className="mb-1">
+                    Height (cm)
+                  </label>
+                  <input
+                    type="text"
+                    name="height"
+                    id="height"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={product.height}
+                    onChange={handleChange}
+                  />
+                  {errors.height && (
+                    <p className="text-red-500">{errors.height._errors[0]}</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col mb-3 w-6/12">
+                  <label htmlFor="weight" className="mb-1">
+                    Weight (Kg)
+                  </label>
+                  <input
+                    type="text"
+                    name="weight"
+                    id="weight"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                    value={product.weight}
+                    onChange={handleChange}
+                  />
+                  {errors.weight && (
+                    <p className="text-red-500">{errors.weight._errors[0]}</p>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col mb-3">
