@@ -93,12 +93,31 @@ const updateProductController = async (req, res) => {
     )
       return response(res, 400, false, "Please fill out all the details");
 
+    // Fetch the existing product
+    const existingProduct = await Product.findById(pid);
+    if (!existingProduct) {
+      return response(res, 404, false, "Product not found");
+    }
+
+    let imgKey = existingProduct.img; // Keep the existing image if not updating
+    let galleryKeys = existingProduct.gallery; // Keep the existing gallery images
+    let galleryKeysForGallery = [];
+
     // extract S3 image url from multer upload - keys are already added by multer-s3
-    const imgKey = req.files.img[0].key;
-    const galleryKeys = req.files.gallery.map((file) => file.key);
-    const galleryKeysForGallery = req.files.gallery.map((file) => ({
-      imgKey: file.key,
-    }));
+
+    if (req.files) {
+      // If a new main image is uploaded, update it
+      if (req.files.img && req.files.img.length > 0) {
+        imgKey = req.files.img[0].key;
+      }
+
+      if (req.files.gallery && req.files.gallery.length > 0) {
+        galleryKeys = req.files.gallery.map((file) => file.key);
+        galleryKeysForGallery = req.files.gallery.map((file) => ({
+          imgKey: file.key,
+        }));
+      }
+    }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       pid,
@@ -129,7 +148,7 @@ const updateProductController = async (req, res) => {
       updatedProduct
     );
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     return response(res, 500, false, "Interal server error");
   }
 };

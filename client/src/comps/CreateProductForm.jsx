@@ -303,7 +303,7 @@ const CreateProductForm = () => {
                     Length (cm)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="length"
                     id="length"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
@@ -320,7 +320,7 @@ const CreateProductForm = () => {
                     Breadth (cm)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="breadth"
                     id="breadth"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
@@ -339,7 +339,7 @@ const CreateProductForm = () => {
                     Height (cm)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="height"
                     id="height"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
@@ -356,7 +356,7 @@ const CreateProductForm = () => {
                     Weight (Kg)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="weight"
                     id="weight"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"

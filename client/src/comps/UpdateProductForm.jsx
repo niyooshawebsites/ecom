@@ -93,6 +93,10 @@ const UpdateProductForm = () => {
           price: res.data.data.price,
           slug: res.data.data.slug,
           category: res.data.data.category._id,
+          length: res.data.data.length,
+          breadth: res.data.data.breadth,
+          height: res.data.data.height,
+          weight: res.data.data.weight,
           shortDesc: res.data.data.shortDesc,
           longDesc: res.data.data.longDesc,
           img: res.data.data.img,
@@ -350,7 +354,7 @@ const UpdateProductForm = () => {
                     Length (cm)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="length"
                     id="length"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
@@ -367,7 +371,7 @@ const UpdateProductForm = () => {
                     Breadth (cm)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="breadth"
                     id="breadth"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
@@ -386,7 +390,7 @@ const UpdateProductForm = () => {
                     Height (cm)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="height"
                     id="height"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
@@ -403,7 +407,7 @@ const UpdateProductForm = () => {
                     Weight (Kg)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="weight"
                     id="weight"
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"

@@ -1,8 +1,15 @@
 import express from "express";
-
 const shippingRouter = express.Router();
 
-shippingRouter.post("/shipping-auth", shippingAuthController);
-shippingRouter.post("/shipping-rate", shippingRateController);
+import {
+  fetchCheapestCourierController,
+  createShippingOrderController,
+} from "../controllers/shippingController.js";
+
+shippingRouter.post("/shipping-rate", fetchCheapestCourierController);
+shippingRouter.post(
+  "/create-shipping-order/:oid",
+  createShippingOrderController
+);
 
 export default shippingRouter;

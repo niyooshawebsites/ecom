@@ -51,6 +51,14 @@ const orderSchema = new mongoose.Schema(
       ],
       default: "Pending",
     },
+    shipmentId: {
+      type: String,
+      default: null,
+    },
+    trackingNumber: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

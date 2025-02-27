@@ -27,35 +27,6 @@ const ensureAuth = async () => {
   if (!authToken) await authenticate();
 };
 
-// Get shipping rates
-const getCheapestCourier = async (orderDetails) => {
-  try {
-    await ensureAuth();
-
-    const response = await axios.post(
-      "https://apiv2.shiprocket.in/v1/external/courier/serviceability",
-      orderDetails,
-      { headers: { Authorization: `Bearer ${authToken}` } }
-    );
-
-    const couriers = response.data.data.available_courier_companies;
-
-    const cheapestCourier = couriers.reduce((lowest, currentItem) => {
-      return currentItem.freight_charge < lowest.freight_charge
-        ? currentItem
-        : lowest;
-    });
-
-    return cheapestCourier;
-  } catch (err) {
-    if (err.response?.status === 401) {
-      await authenticate(); // Retry after re-authentication
-      return getShippingRates(orderDetails);
-    }
-    throw err.message;
-  }
-};
-
 // Create Shiprocket order
 const createShippingOrder = async (orderData) => {
   try {
@@ -75,4 +46,4 @@ const createShippingOrder = async (orderData) => {
   }
 };
 
-export { getCheapestCourier, createShippingOrder };
+export { ensureAuth, createShippingOrder };
