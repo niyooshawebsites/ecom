@@ -41,6 +41,8 @@ const OrdersTable = () => {
         );
       }
 
+      console.log(res.data.data);
+
       if (res.data.success) {
         setOrders(res.data.data);
         setTotalPages(res.data.totalPagesCount);
@@ -326,7 +328,7 @@ const OrdersTable = () => {
                             </td>
                             <td className="flex justify-center p-1">
                               <img
-                                src={order.product?.img}
+                                src={order.img}
                                 alt={order.product?.name}
                                 width={40}
                               />

@@ -22,6 +22,10 @@ const DisplayProduct = () => {
     img: null,
     gallery: [],
     category: "",
+    length: "",
+    breadth: "",
+    height: "",
+    weight: "",
     shortDesc: "",
     longDesc: "",
   });
@@ -55,6 +59,10 @@ const DisplayProduct = () => {
               productCid: productData.category?._id,
               productQuantity: product.productQuantity + additionalQuantity,
               productTotalAmount: product.productQuantity * productData.price,
+              length: productData.length,
+              breadth: productData.breadth,
+              height: productData.height,
+              weight: productData.weight,
             })
           );
 
@@ -76,6 +84,10 @@ const DisplayProduct = () => {
                   productTotalAmount:
                     (product.productQuantity + additionalQuantity) *
                     productData.price,
+                  length: productData.length,
+                  breadth: productData.breadth,
+                  height: productData.height,
+                  weight: productData.weight,
                 },
               ],
             })
@@ -93,6 +105,10 @@ const DisplayProduct = () => {
               productCid: productData.category?._id,
               productQuantity: count,
               productTotalAmount: count * productData.price,
+              length: productData.length,
+              breadth: productData.breadth,
+              height: productData.height,
+              weight: productData.weight,
             })
           );
 
@@ -108,6 +124,10 @@ const DisplayProduct = () => {
                   productCid: productData.category?._id,
                   productQuantity: count,
                   productTotalAmount: count * productData.price,
+                  length: productData.length,
+                  breadth: productData.breadth,
+                  height: productData.height,
+                  weight: productData.weight,
                 },
               ],
             })
@@ -126,6 +146,10 @@ const DisplayProduct = () => {
             productCid: productData.category?._id,
             productQuantity: count,
             productTotalAmount: count * productData.price,
+            length: productData.length,
+            breadth: productData.breadth,
+            height: productData.height,
+            weight: productData.weight,
           })
         );
 
@@ -141,6 +165,10 @@ const DisplayProduct = () => {
                 productCid: productData.category?._id,
                 productQuantity: count,
                 productTotalAmount: count * productData.price,
+                length: productData.length,
+                breadth: productData.breadth,
+                height: productData.height,
+                weight: productData.weight,
               },
             ],
           })
@@ -170,6 +198,10 @@ const DisplayProduct = () => {
             img: res.data.data.img,
             gallery: res.data.data.gallery,
             category: res.data.data.category,
+            length: res.data.data.length,
+            breadth: res.data.data.breadth,
+            height: res.data.data.height,
+            weight: res.data.data.weight,
             shortDesc: res.data.data.shortDesc,
             longDesc: res.data.data.longDesc,
           };

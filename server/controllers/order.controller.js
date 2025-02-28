@@ -2,6 +2,7 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import response from "../utils/response.js";
 import Tax from "../models/tax.model.js";
+import { getImageURL } from "../utils/s3.js";
 
 const createOrderController = async (req, res) => {
   try {
@@ -101,10 +102,26 @@ const fetchAllOrdersController = async (req, res) => {
       .limit(limit)
       .sort({ createdAt: -1 })
       .populate("product")
-      .populate("customer");
+      .populate("customer")
+      .lean(); // Convert to plain object for performance;
 
     if (orders.length == 0)
       return response(res, 404, false, "No orders found.");
+
+    const ordersPerPageWithImgURLs = await Promise.all(
+      orders.map(async (order) => {
+        const imgURL = await getImageURL(order.product.img);
+        const galleryURLs = await Promise.allSettled(
+          order.product.gallery.map((key) => getImageURL(key))
+        );
+
+        return {
+          ...order,
+          img: imgURL,
+          gallery: galleryURLs,
+        };
+      })
+    );
 
     const totalOrdersCount = await Order.countDocuments();
     const totalPagesCount = Math.ceil(totalOrdersCount / limit);
@@ -114,7 +131,7 @@ const fetchAllOrdersController = async (req, res) => {
       200,
       true,
       "All orders fetched",
-      orders,
+      ordersPerPageWithImgURLs,
       totalPagesCount
     );
   } catch (err) {

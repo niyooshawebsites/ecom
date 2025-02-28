@@ -6,7 +6,7 @@ import {
   createShippingOrderController,
 } from "../controllers/shippingController.js";
 
-shippingRouter.post("/shipping-rate", fetchCheapestCourierController);
+shippingRouter.post("/fetch-shipping-rate", fetchCheapestCourierController);
 shippingRouter.post(
   "/create-shipping-order/:oid",
   createShippingOrderController

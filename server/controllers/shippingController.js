@@ -1,47 +1,25 @@
 import Order from "../models/order.model.js";
 import response from "../utils/response.js";
-import { createShippingOrder } from "../utils/shipping.js";
+import {
+  getShippingAuthToken,
+  getShippingRates,
+  createShippingOrder,
+} from "../utils/shipping.js";
 import axios from "axios";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 // Get shipping rates
-const fetchCheapestCourierController = async (orderDetails) => {
+const fetchCheapestCourierController = async (req, res) => {
   try {
-    let authToken = null;
+    const { pincode, weight, cod, order_type } = req.body;
 
-    // Authenticate and fetch token
-    const authenticate = async () => {
-      try {
-        const response = await axios.post(
-          "https://apiv2.shiprocket.in/v1/external/auth/login",
-          {
-            email: process.env.SHIPROCKET_EMAIL,
-            password: process.env.SHIPROCKET_PASSWORD,
-          }
-        );
-        authToken = response.data.token;
-      } catch (err) {
-        console.error("Shiprocket authentication failed:", err);
-        throw err.message;
-      }
-    };
+    // get the shipping auth token
+    const authToken = await getShippingAuthToken();
 
-    // Ensure valid authentication token
-    const ensureAuth = async () => {
-      if (!authToken) await authenticate();
-    };
-
-    ensureAuth();
-
-    const response = await axios.post(
-      "https://apiv2.shiprocket.in/v1/external/courier/serviceability",
-      orderDetails,
-      { headers: { Authorization: `Bearer ${authToken}` } }
-    );
-
-    const couriers = response.data.data.available_courier_companies;
+    // Fetch shipping rates
+    const couriers = await getShippingRates(authToken, pincode, weight, cod);
 
     const cheapestCourier = couriers.reduce((lowest, currentItem) => {
       return currentItem.freight_charge < lowest.freight_charge
@@ -57,11 +35,8 @@ const fetchCheapestCourierController = async (orderDetails) => {
       cheapestCourier
     );
   } catch (err) {
-    if (err.response?.status === 401) {
-      await authenticate(); // Retry after re-authentication
-      return getShippingRates(orderDetails);
-    }
-    throw err.message;
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
   }
 };
 

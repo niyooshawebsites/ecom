@@ -46,16 +46,21 @@ const Header = () => {
         <Loading />
       ) : (
         <header className="bg-blue-700 text-white">
-          <nav className="flex justify-between items-center w-8/12 mx-auto min-h-10">
+          <nav className="flex justify-evenly items-center w-8/12 mx-auto min-h-10">
             <Link to="/">
               <h1>ECOM</h1>
             </Link>
-            <input
-              type="text"
-              name=""
-              id=""
-              className="w-5/12 text-gray-800 px-2 rounded-md"
-            />
+
+            {/* search  */}
+            <div className="w-8/12 mx-4">
+              <input
+                type="text"
+                name=""
+                id=""
+                className="w-full text-gray-800 px-2 rounded-md"
+              />
+            </div>
+
             <ul
               className={`flex ${uid ? "justify-end" : "justify-evenly"} ${
                 uid ? "w-fit" : "w-6/12"

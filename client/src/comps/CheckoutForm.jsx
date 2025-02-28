@@ -12,6 +12,7 @@ const CheckoutForm = () => {
   const [cartNetTotal, setCartNetTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [courierCharges, setCourierCharges] = useState(0);
+  const [courier, setCourier] = useState({});
   const [coupon, setCoupon] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -83,6 +84,27 @@ const CheckoutForm = () => {
   const { cartProductList } = useSelector((state) => state.cart_Slice);
   const [netPayable, setNetPayable] = useState(cartNetTotal);
 
+  const orderDetails = {
+    fName: loggedInUserDetails.fName,
+    lName: loggedInUserDetails.lName,
+    email: loggedInUserDetails.email,
+    contactNo: loggedInUserDetails.contactNo,
+    buildingNo: loggedInUserDetails.buildingNo,
+    streetNo: loggedInUserDetails.streetNo,
+    locality: loggedInUserDetails.locality,
+    district: loggedInUserDetails.district,
+    landmark: loggedInUserDetails.landmark,
+    city: loggedInUserDetails.city,
+    state: loggedInUserDetails.state,
+    pincode: loggedInUserDetails.pincode,
+    weight: cartProductList.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.weight,
+      0
+    ),
+    cod: netPayable,
+    order_type: 1,
+  };
+
   const handlCouponCodeChange = (e) => {
     setCouponCode(e.target.value);
   };
@@ -147,6 +169,7 @@ const CheckoutForm = () => {
           password: import.meta.env.VITE_SHIPROCKET_PASSWORD,
         }
       );
+
       console.log(res.data.token);
       const shippingAuthToken = await res.data.token;
 
@@ -179,6 +202,24 @@ const CheckoutForm = () => {
         if (response) {
           setCourierCharges(Math.round(cheapestCourier.freight_charge));
         }
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const fetchShippingRate = async (orderDetails) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/fetch-shipping-rate/`,
+        orderDetails,
+        { withCredentials: true }
+      );
+
+      console.log(res);
+
+      if (res.data.success) {
+        setCourier(res.data.cheapestCourier);
       }
     } catch (err) {
       console.log(err.message);
@@ -671,7 +712,7 @@ const CheckoutForm = () => {
   };
 
   useEffect(() => {
-    shppingAuth();
+    // shppingAuth();
     loadPaymentGatewayScript();
     calcTax();
   }, [cartProductList]);
@@ -949,7 +990,10 @@ const CheckoutForm = () => {
                     name="pincode"
                     id="pincode"
                     value={loggedInUserDetails.pincode}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      handleChange(e);
+                      fetchShippingRate(orderDetails);
+                    }}
                     className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                     placeholder="201301"
                     required
