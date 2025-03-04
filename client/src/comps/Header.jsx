@@ -9,6 +9,8 @@ import { RiLogoutCircleRLine } from "react-icons/ri";
 import Loading from "./Loading";
 
 const Header = () => {
+  const [searchProductText, setSearchProductText] = useState("");
+  const [searchedProducts, setSearchedProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { cartProductList } = useSelector((state) => state.cart_Slice);
   const { uid, isActive, isVerified, username } = useSelector(
@@ -38,6 +40,22 @@ const Header = () => {
     }
   };
 
+  const ajaxProductSearchText = async (e) => {
+    try {
+      setSearchProductText(e.target.value);
+
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/ajax-product-search/${e.target.value}`
+      );
+
+      if (res.data.success) {
+        setSearchedProducts(res.data.data);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   useEffect(() => {}, [cartProductList]);
 
   return (
@@ -52,13 +70,27 @@ const Header = () => {
             </Link>
 
             {/* search  */}
-            <div className="w-8/12 mx-4">
+            <div className="w-8/12 mx-4 relative">
               <input
                 type="text"
-                name=""
-                id=""
+                name="ajaxProductSearch"
+                onChange={ajaxProductSearchText}
                 className="w-full text-gray-800 px-2 rounded-md"
               />
+
+              {searchedProducts.length > 0 && searchProductText ? (
+                <div className="absolute w-full mt-2 bg-yellow-500">
+                  <ul>
+                    {searchedProducts.map((product) => (
+                      <Link to={`product?pid=${product._id}`} key={product._id}>
+                        <li className="hover:bg-cyan-500">{product.name}</li>
+                      </Link>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
 
             <ul

@@ -327,6 +327,25 @@ const deleteProductsController = async (req, res) => {
   }
 };
 
+const ajaxSearchProductsController = async (req, res) => {
+  try {
+    const { ajaxProductSearchText } = req.params;
+    if (!ajaxProductSearchText)
+      response(res, 400, false, "No search text!. No result!");
+
+    const products = await Product.find({
+      name: { $regex: ajaxProductSearchText, $options: "i" },
+    });
+
+    if (!products) return response(res, 404, false, "Products not found");
+
+    return response(res, 200, true, "Products fetched successfully", products);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createProductController,
   updateProductController,
@@ -337,4 +356,5 @@ export {
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
   deleteProductsController,
+  ajaxSearchProductsController,
 };

@@ -10,6 +10,27 @@ const ProductsTable = () => {
   const [categories, setCategories] = useState([]);
   const [productDeleted, setProductDeleted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteProducts, setDeleteProducts] = useState([]);
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+
+    if (name === "selectAll") {
+      const tempProducts = products.map((product) => {
+        return { ...product, isChecked: checked };
+      });
+      setDeleteProducts(tempProducts);
+    } else {
+      const tempProducts = products.map((product) =>
+        product._id === name ? { ...product, isChecked: checked } : product
+      );
+      setDeleteProducts(tempProducts);
+    }
+  };
+
+  const checkEveryCheckbox = (product) => {
+    return product.isChecked == true;
+  };
 
   const fetchAllCategories = async () => {
     setLoading(true);
@@ -180,6 +201,14 @@ const ProductsTable = () => {
               <table className="w-full border">
                 <thead className="bg-blue-600 h-10 m-10 text-white">
                   <tr className="border">
+                    <th>
+                      <input
+                        type="checkbox"
+                        name="selectAll"
+                        onChange={handleCheckboxChange}
+                        checked={products.every(checkEveryCheckbox)}
+                      />
+                    </th>
                     <th className="poppins-light border text-sm">#</th>
                     <th className="poppins-light border text-sm">Product ID</th>
                     <th className="poppins-light border text-sm">
@@ -207,6 +236,15 @@ const ProductsTable = () => {
                         key={product._id}
                         className="odd:bg-white even:bg-gray-300 h-10 text-center"
                       >
+                        <td>
+                          <input
+                            type="checkbox"
+                            name={product._id}
+                            value={product._id}
+                            onChange={handleCheckboxChange}
+                            checked={product.isChecked}
+                          />
+                        </td>
                         <td className="border text-sm p-1">{index + 1}</td>
                         <td className="border text-sm p-1">{product._id}</td>
                         <td className="border text-sm p-1">{product.name}</td>
