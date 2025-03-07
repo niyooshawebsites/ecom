@@ -51,12 +51,6 @@ const ProductsTable = () => {
     if (!confirmation) return;
 
     try {
-      // const res = await axios.delete(
-      //   `http://localhost:8000/api/v1/delete-products`,
-      //   { pids: deleteProducts }, // ✅ Send IDs in request body
-      //   { withCredentials: true }
-      // );
-
       const res = await axios.delete(
         `http://localhost:8000/api/v1/delete-products`,
         {
