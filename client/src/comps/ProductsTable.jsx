@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { SlRefresh } from "react-icons/sl";
 import Loading from "./Loading";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
@@ -16,20 +17,63 @@ const ProductsTable = () => {
     const { name, checked } = e.target;
 
     if (name === "selectAll") {
-      const tempProducts = products.map((product) => {
+      const updatedProducts = products.map((product) => {
         return { ...product, isChecked: checked };
       });
-      setDeleteProducts(tempProducts);
+      setProducts(updatedProducts);
+      setDeleteProducts(checked ? updatedProducts.map((p) => p._id) : []);
     } else {
-      const tempProducts = products.map((product) =>
+      const updatedProducts = products.map((product) =>
         product._id === name ? { ...product, isChecked: checked } : product
       );
-      setDeleteProducts(tempProducts);
+      setProducts(updatedProducts);
+      setDeleteProducts(
+        updatedProducts.filter((p) => p.isChecked).map((p) => p._id)
+      );
     }
   };
 
-  const checkEveryCheckbox = (product) => {
-    return product.isChecked == true;
+  const checkEveryCheckbox = () => {
+    return (
+      products.length > 0 && products.every((product) => product.isChecked)
+    );
+  };
+
+  const deleteMultiple = async () => {
+    if (deleteProducts.length === 0) {
+      toast.warn("No products selected!");
+      return;
+    }
+
+    const confirmation = window.confirm(
+      "Do you really want to delete selected products?"
+    );
+    if (!confirmation) return;
+
+    try {
+      // const res = await axios.delete(
+      //   `http://localhost:8000/api/v1/delete-products`,
+      //   { pids: deleteProducts }, // ✅ Send IDs in request body
+      //   { withCredentials: true }
+      // );
+
+      const res = await axios.delete(
+        `http://localhost:8000/api/v1/delete-products`,
+        {
+          data: { pids: deleteProducts }, // ✅ Send IDs in request body
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        setProducts(products.filter((p) => !deleteProducts.includes(p._id))); // Remove deleted products from state
+        setDeleteProducts([]);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Failed to delete products");
+    }
   };
 
   const fetchAllCategories = async () => {
@@ -200,13 +244,22 @@ const ProductsTable = () => {
 
               <table className="w-full border">
                 <thead className="bg-blue-600 h-10 m-10 text-white">
-                  <tr className="border">
-                    <th>
+                  <tr className="border ">
+                    <th className="h-10 flex justify-evenly items-center">
                       <input
                         type="checkbox"
                         name="selectAll"
                         onChange={handleCheckboxChange}
-                        checked={products.every(checkEveryCheckbox)}
+                        checked={checkEveryCheckbox()}
+                      />
+
+                      <RiDeleteBin6Line
+                        style={{
+                          fontSize: "25px",
+                          color: "gold",
+                          cursor: "pointer",
+                        }}
+                        onClick={deleteMultiple}
                       />
                     </th>
                     <th className="poppins-light border text-sm">#</th>

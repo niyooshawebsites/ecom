@@ -11,7 +11,7 @@ import {
   fetchAllProductsByCategoryController,
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
-  deleteProductsController,
+  deleteMultipleProductsController,
   ajaxSearchProductsController,
 } from "../controllers/product.controller.js";
 
@@ -36,7 +36,11 @@ productRouter.patch(
   updateProductController
 );
 productRouter.delete("/delete-product/:pid", auth, deleteProductController);
-productRouter.delete("/delete-products/:pids", auth, deleteProductsController);
+productRouter.delete(
+  "/delete-products",
+  auth,
+  deleteMultipleProductsController
+);
 productRouter.get("/fetch-all-products/:pageNo", fetchAllProductsController);
 productRouter.get("/fetch-product/:pid", fetchProductController);
 productRouter.get(

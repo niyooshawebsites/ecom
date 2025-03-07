@@ -311,9 +311,9 @@ const fetchAllProductsByPriceRangeController = async (req, res) => {
   }
 };
 
-const deleteProductsController = async (req, res) => {
+const deleteMultipleProductsController = async (req, res) => {
   try {
-    const { pids } = req.params;
+    const { pids } = req.body; // ✅ Get product IDs from request body
 
     if (!pids || !Array.isArray(pids) || pids.length === 0)
       return response(res, 400, false, "No pids. No multiple deletion");
@@ -355,6 +355,6 @@ export {
   fetchAllProductsByCategoryController,
   fetchAllProductsBySlugController,
   fetchAllProductsByPriceRangeController,
-  deleteProductsController,
+  deleteMultipleProductsController,
   ajaxSearchProductsController,
 };

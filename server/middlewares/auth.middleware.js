@@ -4,6 +4,8 @@ import response from "../utils/response.js";
 const auth = async (req, res, next) => {
   try {
     const authToken = req.cookies?.authToken;
+    console.log(req.cookies);
+    console.log("AT", authToken);
 
     if (!authToken) return response(res, 401, false, "No token! No permission");
 
