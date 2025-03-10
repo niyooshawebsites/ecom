@@ -6,6 +6,7 @@ import { SlRefresh } from "react-icons/sl";
 import Pagination from "./Pagination";
 import NoData from "./NoData";
 import Loading from "./Loading";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
@@ -13,6 +14,43 @@ const CategoriesTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [deletedCategories, setDeletedCategories] = useState([]);
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    try {
+      if (name === "selectAll") {
+        const updatedCategories = categories.map((category) => {
+          return {
+            ...category,
+            isChecked: checked,
+          };
+        });
+        setCategories(updatedCategories);
+        setDeletedCategories(checked ? updatedCategories((c) => c._id) : []);
+      } else {
+        const updatedCategories = categories.map((category) => {
+          category._id === name
+            ? { ...category, isChecked: checked }
+            : category;
+        });
+
+        setCategories(updatedCategories);
+        setDeletedCategories(
+          updatedCategories.filter((c) => c.isChecked).map((c) => c._id)
+        );
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const checkEveryCheckbox = () => {
+    return (
+      categories.length > 0 &&
+      categories.every((category) => category.isChecked)
+    );
+  };
 
   const fetchAllCategories = async (pageNo) => {
     setLoading(true);
@@ -89,7 +127,7 @@ const CategoriesTable = () => {
       ) : (
         <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
           {categories.length > 0 ? (
-            <div className="w-5/12">
+            <div className="w-6/12">
               <div className="flex justify-center items-center mt-10">
                 <h1 className="text-4xl text-center py-3 poppins-light bg-gray-200 rounded-md p-3 mb-2">
                   Categories (
@@ -119,7 +157,22 @@ const CategoriesTable = () => {
               </div>
               <table className="w-full border">
                 <thead className="bg-blue-600 h-10 m-10">
-                  <tr className="">
+                  <tr className="border">
+                    <th className="h-10 flex justify-evenly items-center">
+                      <input
+                        type="checkbox"
+                        name="selectAll"
+                        onChange={handleCheckboxChange}
+                        checked={checkEveryCheckbox()}
+                      />
+                      <RiDeleteBin6Line
+                        style={{
+                          fontSize: "25px",
+                          color: "gold",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </th>
                     <th className="poppins-light text-white border text-sm p-1">
                       #
                     </th>
@@ -141,6 +194,15 @@ const CategoriesTable = () => {
                         key={category._id}
                         className="odd:bg-white even:bg-gray-300 h-10"
                       >
+                        <td className="text-center border text-sm p-1">
+                          <input
+                            type="checkbox"
+                            name={category._id}
+                            value={category._id}
+                            onChange={handleCheckboxChange}
+                            checked={category.isChecked}
+                          />
+                        </td>
                         <td className="text-center border text-sm p-1">
                           {index + 1}
                         </td>
