@@ -27,13 +27,13 @@ const CategoriesTable = () => {
           };
         });
         setCategories(updatedCategories);
-        setDeletedCategories(checked ? updatedCategories((c) => c._id) : []);
+        setDeletedCategories(
+          checked ? updatedCategories.map((c) => c._id) : []
+        );
       } else {
-        const updatedCategories = categories.map((category) => {
-          category._id === name
-            ? { ...category, isChecked: checked }
-            : category;
-        });
+        const updatedCategories = categories.map((category) =>
+          category._id === name ? { ...category, isChecked: checked } : category
+        );
 
         setCategories(updatedCategories);
         setDeletedCategories(
@@ -50,6 +50,41 @@ const CategoriesTable = () => {
       categories.length > 0 &&
       categories.every((category) => category.isChecked)
     );
+  };
+
+  const deleteMultiple = async () => {
+    if (deletedCategories.length < 0) {
+      toast.warn("No categories selected!");
+      return;
+    }
+
+    const confirmation = window.confirm(
+      "Do you really want to delete selected categories?"
+    );
+
+    if (!confirmation) return;
+
+    try {
+      const res = await axios.delete(
+        "http://localhost:8000/api/v1/delete-categories",
+        {
+          data: { cids: deletedCategories },
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        // Remove deleted products from state
+        setCategories(
+          categories.filter((c) => !deletedCategories.includes(c._id))
+        );
+        setDeletedCategories([]);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Failed to delete categories");
+    }
   };
 
   const fetchAllCategories = async (pageNo) => {
@@ -171,6 +206,7 @@ const CategoriesTable = () => {
                           color: "gold",
                           cursor: "pointer",
                         }}
+                        onClick={deleteMultiple}
                       />
                     </th>
                     <th className="poppins-light text-white border text-sm p-1">

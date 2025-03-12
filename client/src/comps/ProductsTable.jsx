@@ -48,6 +48,7 @@ const ProductsTable = () => {
     const confirmation = window.confirm(
       "Do you really want to delete selected products?"
     );
+
     if (!confirmation) return;
 
     try {
@@ -61,7 +62,8 @@ const ProductsTable = () => {
 
       if (res.data.success) {
         toast.success(res.data.msg);
-        setProducts(products.filter((p) => !deleteProducts.includes(p._id))); // Remove deleted products from state
+        // Remove deleted products from state
+        setProducts(products.filter((p) => !deleteProducts.includes(p._id)));
         setDeleteProducts([]);
       }
     } catch (err) {

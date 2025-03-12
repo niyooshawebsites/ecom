@@ -15,11 +15,7 @@ const categoryRouter = express.Router();
 categoryRouter.post("/create-category", auth, createCategoryController);
 categoryRouter.patch("/update-category/:cid", auth, updateCategoryController);
 categoryRouter.delete("/delete-category/:cid", auth, deleteCategoryController);
-categoryRouter.delete(
-  "/delete-categories/:cids",
-  auth,
-  deleteCategoriesController
-);
+categoryRouter.delete("/delete-categories", auth, deleteCategoriesController);
 categoryRouter.get(
   "/fetch-all-categories/:pageNo",
   fetchAllCategoriesController

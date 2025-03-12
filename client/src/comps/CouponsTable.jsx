@@ -4,11 +4,52 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { SlRefresh } from "react-icons/sl";
 import Loading from "./Loading";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const CouponsTable = () => {
   const [coupons, setCoupons] = useState([]);
   const [couponDeletion, setCouponDeletion] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteCoupons, setDeleteCoupons] = useState([]);
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+
+    if (name === "selectAll") {
+      const updatedCoupons = coupons.map((coupon) => {
+        return { ...coupon, isChecked: checked };
+      });
+      setCoupons(updatedCoupons);
+      setDeleteCoupons(
+        checked ? updatedCoupons.map((coupon) => coupon._id) : []
+      );
+    } else {
+      const updatedCoupons = coupons.map((coupon) => {
+        coupon._id === name ? { ...coupon, isChecked: checked } : coupon;
+      });
+      setCoupons(updatedCoupons);
+      setDeleteCoupons(
+        updatedCoupons.filter((c) => c.isChecked).map((c) => c._id)
+      );
+    }
+  };
+
+  const checkEveryCheckbox = () => {
+    return coupons.length > 0 && coupons.every((coupon) => coupon.isChecked);
+  };
+
+  const deleteMultiple = async () => {
+    if (deleteCoupons.length === 0) {
+      toast.warn("No products selected!");
+      return;
+    }
+
+    const confirmation = window.confirm(
+      "Do you really want to delete selected products?"
+    );
+
+    if (!confirmation) return;
+  };
 
   const fetchCoupons = async () => {
     setLoading(true);
@@ -115,6 +156,23 @@ const CouponsTable = () => {
           <table className="w-full border">
             <thead className="bg-blue-600 h-10 m-10">
               <tr>
+                <th className="h-10 flex justify-evenly items-center">
+                  <input
+                    type="checkbox"
+                    name="selectAll"
+                    onChange={handleCheckboxChange}
+                    checked={checkEveryCheckbox()}
+                  />
+
+                  <RiDeleteBin6Line
+                    style={{
+                      fontSize: "25px",
+                      color: "gold",
+                      cursor: "pointer",
+                    }}
+                    onClick={deleteMultiple}
+                  />
+                </th>
                 <th className="poppins-light text-white border text-sm p-1">
                   #
                 </th>
@@ -169,6 +227,15 @@ const CouponsTable = () => {
                     key={coupon._id}
                     className="odd:bg-white even:bg-gray-300 h-10"
                   >
+                    <td>
+                      <input
+                        type="checkbox"
+                        name={coupon._id}
+                        value={coupon._id}
+                        onChange={handleCheckboxChange}
+                        checked={coupon.isChecked}
+                      />
+                    </td>
                     <td className="text-center border text-sm p-1">
                       {index + 1}
                     </td>

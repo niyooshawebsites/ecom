@@ -160,7 +160,7 @@ const fetchCategoryController = async (req, res) => {
 
 const deleteCategoriesController = async (req, res) => {
   try {
-    const { cids } = req.params;
+    const { cids } = req.body;
 
     if (!cids || !Array.isArray(cids) || cids.length === 0)
       return response(res, 400, false, "No cids. No multiple deletion");
