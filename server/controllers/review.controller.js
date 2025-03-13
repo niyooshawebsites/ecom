@@ -195,7 +195,7 @@ const fetchReviewsByStatusController = async (req, res) => {
 
 const deleteReiewsController = async (req, res) => {
   try {
-    const { rids } = req.params;
+    const { rids } = req.body;
 
     if (!rids || !Array.isArray(rids) || rids.length === 0)
       return response(res, 400, false, "No rids. No multiple deletion");

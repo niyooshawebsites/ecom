@@ -4,19 +4,89 @@ import { toast } from "react-toastify";
 import { SlRefresh } from "react-icons/sl";
 import NoData from "./NoData";
 import Loading from "./Loading";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { useSelector } from "react-redux";
 
 const UsersTable = () => {
+  const { uid } = useSelector((state) => state.user_Slice);
   const [users, setUsers] = useState([]);
   const [activationToggled, setActivationToggled] = useState(false);
   const [userDeleted, setUserDeleted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteUsers, setDeleteUsers] = useState([]);
+
+  const handleCheckboxChange = (e) => {
+    try {
+      const { name, checked } = e.target;
+
+      if (name === "selectAll") {
+        const updatedUsers = users.map((user) => ({
+          ...user,
+          isChecked: checked, // Ensure every coupon gets updated
+        }));
+
+        setUsers(updatedUsers);
+        setDeleteUsers(checked ? updatedUsers.map((user) => user._id) : []);
+      } else {
+        const updatedUsers = users.map((user) =>
+          user._id === name ? { ...user, isChecked: checked } : user
+        );
+
+        setUsers(updatedUsers);
+        setDeleteUsers(
+          updatedUsers.filter((user) => user.isChecked).map((user) => user._id)
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkEveryCheckbox = () => {
+    return users.length > 0 && users.every((user) => user.isChecked);
+  };
+
+  const deleteMultiple = async () => {
+    if (deleteUsers.length === 0) {
+      toast.warn("No products selected!");
+      return;
+    }
+
+    const confirmation = window.confirm(
+      "Do you really want to delete selected products?"
+    );
+
+    if (!confirmation) return;
+
+    try {
+      const res = await axios.delete(
+        "http://localhost:8000/api/v1/delete-users",
+        {
+          data: {
+            uids: deleteUsers,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        // Remove deleted products from state
+        setUsers(users.filter((user) => !deleteUsers.includes(user._id)));
+        setDeleteUsers([]);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Failed to delete selected coupons");
+    }
+  };
 
   const fetchAllUsers = async () => {
     setLoading(true);
 
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-users`,
+        `http://localhost:8000/api/v1/fetch-all-users/${uid}`,
         {
           withCredentials: true,
         }
@@ -280,6 +350,23 @@ const UsersTable = () => {
               <table className="w-full border">
                 <thead className="bg-blue-600 text-white h-10 m-10">
                   <tr>
+                    <th className="h-10 flex justify-evenly items-center">
+                      <input
+                        type="checkbox"
+                        name="selectAll"
+                        onChange={handleCheckboxChange}
+                        checked={checkEveryCheckbox()}
+                      />
+
+                      <RiDeleteBin6Line
+                        style={{
+                          fontSize: "25px",
+                          color: "gold",
+                          cursor: "pointer",
+                        }}
+                        onClick={deleteMultiple}
+                      />
+                    </th>
                     <th className="poppins-light border text-sm p-1">#</th>
                     <th className="poppins-light border text-sm p-1">
                       User ID
@@ -309,6 +396,15 @@ const UsersTable = () => {
                         key={user._id}
                         className="odd:bg-white even:bg-gray-300 h-10 text-center border"
                       >
+                        <td>
+                          <input
+                            type="checkbox"
+                            name={user._id}
+                            value={user._id}
+                            onChange={handleCheckboxChange}
+                            checked={user.isChecked}
+                          />
+                        </td>
                         <td className="border text-sm p-1">{index + 1}</td>
                         <td className="border text-sm p-1">{user._id}</td>
                         <td className="border text-sm p-1">{user.username}</td>

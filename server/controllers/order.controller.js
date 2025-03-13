@@ -220,7 +220,7 @@ const fetchOrdersByStatusController = async (req, res) => {
 
 const deleteOrdersController = async (req, res) => {
   try {
-    const { oids } = req.params;
+    const { oids } = req.body;
 
     if (!oids || !Array.isArray(oids) || oids.length === 0)
       return response(res, 400, false, "No oids. No multiple deletion");

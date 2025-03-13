@@ -92,7 +92,7 @@ const deleteTaxController = async (req, res) => {
 
 const deleteTaxesController = async (req, res) => {
   try {
-    const { tids } = req.params;
+    const { tids } = req.body;
 
     if (!tids || !Array.isArray(tids) || tids.length === 0)
       return response(res, 400, false, "No tids. No multiple deletion");

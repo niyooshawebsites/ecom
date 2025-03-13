@@ -27,7 +27,7 @@ const userRouter = express.Router();
 userRouter.post("/register", registerController);
 userRouter.post("/auth/login", loginController);
 userRouter.get("/auth/logout", auth, logoutController);
-userRouter.get("/fetch-all-users", auth, fetchAllUsersController);
+userRouter.get("/fetch-all-users/:uid", auth, fetchAllUsersController);
 userRouter.get("/fetch-user/:uid", auth, fetchUserController);
 userRouter.get(
   "/fetch-user-at-order-creation/:username/:email",
@@ -39,7 +39,7 @@ userRouter.patch(
   updateUserPasswordController
 );
 userRouter.delete("/delete-user/:uid", auth, deleteUserController);
-userRouter.delete("/delete-users/:uids", auth, deleteUsersController);
+userRouter.delete("/delete-users", auth, deleteUsersController);
 userRouter.get("/verify-email/:authToken", verifyEmail, verifyUserController);
 userRouter.post("/forgot-password", forgotPasswordController);
 userRouter.patch(

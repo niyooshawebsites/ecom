@@ -216,7 +216,7 @@ const applyCouponController = async (req, res) => {
 
 const deleteCouponsController = async (req, res) => {
   try {
-    const { ccids } = req.params;
+    const { ccids } = req.body;
 
     if (!ccids || !Array.isArray(ccids) || ccids.length === 0)
       return response(res, 400, false, "No cids. No multiple deletion");

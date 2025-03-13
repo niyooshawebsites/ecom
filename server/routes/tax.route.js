@@ -15,7 +15,7 @@ const taxRouter = express.Router();
 
 taxRouter.post("/create-tax", auth, createTaxController);
 taxRouter.delete("/delete-tax/:tid", auth, deleteTaxController);
-taxRouter.delete("/delete-taxes/:tids", auth, deleteTaxesController);
+taxRouter.delete("/delete-taxes", auth, deleteTaxesController);
 taxRouter.get("/fetch-all-taxes/:pageNo", auth, fetchAllTaxesController);
 taxRouter.get("/fetch-tax/:tid", auth, fetchTaxController);
 taxRouter.get("/fetch-tax-by-category/:cid", fetchTaxByCategoryController);

@@ -101,12 +101,15 @@ const logoutController = async (req, res) => {
 
 const fetchAllUsersController = async (req, res) => {
   try {
+    const { uid } = req.params;
     const { pageNo } = req.params;
     const currentPageNo = parseInt(pageNo) || 1;
     const limit = 10;
     const skip = (currentPageNo - 1) * limit;
 
-    const usersPerPage = await User.find().skip(skip).limit(limit);
+    const usersPerPage = await User.find({ _id: { $ne: uid } })
+      .skip(skip)
+      .limit(limit);
 
     if (usersPerPage.length == 0)
       return response(res, 404, false, "No users found");
@@ -540,7 +543,7 @@ const fetchUserByDatesController = async (req, res) => {
 
 const deleteUsersController = async (req, res) => {
   try {
-    const { uids } = req.params;
+    const { uids } = req.body;
 
     if (!uids || !Array.isArray(uids) || uids.length === 0)
       return response(res, 400, false, "No uids. No multiple deletion");

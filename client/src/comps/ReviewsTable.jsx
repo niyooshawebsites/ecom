@@ -4,12 +4,86 @@ import { SlRefresh } from "react-icons/sl";
 import { toast } from "react-toastify";
 import NoData from "./NoData";
 import Loading from "./Loading";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const ReviewsTable = () => {
   const [reviews, setReviews] = useState([]);
   const [reviewStatusUpdation, setReviewStatusUpdation] = useState(false);
   const [reviewDeletion, setReviewDeletion] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteReviews, setDeleteReviews] = useState([]);
+
+  const handleCheckboxChange = (e) => {
+    try {
+      const { name, checked } = e.target;
+
+      if (name === "selectAll") {
+        const updatedReviews = reviews.map((review) => ({
+          ...review,
+          isChecked: checked, // Ensure every coupon gets updated
+        }));
+
+        setReviews(updatedReviews);
+        setDeleteReviews(
+          checked ? updatedReviews.map((review) => review._id) : []
+        );
+      } else {
+        const updatedReviews = reviews.map((review) =>
+          review._id === name ? { ...review, isChecked: checked } : review
+        );
+
+        setReviews(updatedReviews);
+        setDeleteReviews(
+          updatedReviews
+            .filter((review) => review.isChecked)
+            .map((review) => review._id)
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkEveryCheckbox = () => {
+    return reviews.length > 0 && reviews.every((review) => review.isChecked);
+  };
+
+  const deleteMultiple = async () => {
+    if (deleteReviews.length === 0) {
+      toast.warn("No reviews selected!");
+      return;
+    }
+
+    const confirmation = window.confirm(
+      "Do you really want to delete selected reviews?"
+    );
+
+    if (!confirmation) return;
+
+    try {
+      const res = await axios.delete(
+        "http://localhost:8000/api/v1/delete-reviews",
+        {
+          data: {
+            rids: deleteReviews,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        // Remove deleted products from state
+        setReviews(
+          reviews.filter((review) => !deleteReviews.includes(review._id))
+        );
+        setDeleteReviews([]);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Failed to delete selected reviews");
+    }
+  };
 
   const fetchAllReviews = async () => {
     setLoading(true);
@@ -231,6 +305,23 @@ const ReviewsTable = () => {
               <table className="w-full border">
                 <thead className="bg-blue-600 text-white h-10 m-10">
                   <tr>
+                    <th className="h-10 flex justify-evenly items-center">
+                      <input
+                        type="checkbox"
+                        name="selectAll"
+                        onChange={handleCheckboxChange}
+                        checked={checkEveryCheckbox()}
+                      />
+
+                      <RiDeleteBin6Line
+                        style={{
+                          fontSize: "25px",
+                          color: "gold",
+                          cursor: "pointer",
+                        }}
+                        onClick={deleteMultiple}
+                      />
+                    </th>
                     <th className="poppins-light border text-sm p-1">#</th>
                     <th className="poppins-light border text-sm p-1">
                       Product ID
@@ -257,6 +348,15 @@ const ReviewsTable = () => {
                         key={review._id}
                         className="odd:bg-white even:bg-gray-300 h-10 text-center border"
                       >
+                        <td>
+                          <input
+                            type="checkbox"
+                            name={review._id}
+                            value={review._id}
+                            onChange={handleCheckboxChange}
+                            checked={review.isChecked}
+                          />
+                        </td>
                         <td className="border text-sm p-1">{index + 1}</td>
                         <td className="border text-sm p-1">
                           {review.product?._id}

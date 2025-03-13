@@ -22,7 +22,7 @@ couponRouter.get(
 couponRouter.get("/fetch-coupon/:couponCode", auth, fetchCouponController);
 couponRouter.get("/fetch-coupons/:pageNo", auth, fetchAllCouponsController);
 couponRouter.delete("/delete-coupon/:ccid", auth, deleteCouponController);
-couponRouter.delete("/delete-coupons/:ccids", auth, deleteCouponsController);
+couponRouter.delete("/delete-coupons", auth, deleteCouponsController);
 couponRouter.post("/apply-coupon/:cartTotal", applyCouponController);
 
 export default couponRouter;

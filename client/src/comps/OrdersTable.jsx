@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import Pagination from "./Pagination";
 import NoData from "./NoData";
 import Loading from "../comps/Loading";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -16,6 +17,75 @@ const OrdersTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [deleteOrders, setDeleteOrders] = useState([]);
+
+  const handleCheckboxChange = (e) => {
+    try {
+      const { name, checked } = e.target;
+
+      if (name === "selectAll") {
+        const updatedOrders = orders.map((order) => ({
+          ...order,
+          isChecked: checked, // Ensure every coupon gets updated
+        }));
+
+        setOrders(updatedOrders);
+        setDeleteOrders(checked ? updatedOrders.map((order) => order._id) : []);
+      } else {
+        const updatedOrders = orders.map((order) =>
+          order._id === name ? { ...order, isChecked: checked } : order
+        );
+
+        setOrders(updatedOrders);
+        setDeleteOrders(
+          updatedOrders
+            .filter((order) => order.isChecked)
+            .map((order) => order._id)
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkEveryCheckbox = () => {
+    return orders.length > 0 && orders.every((order) => order.isChecked);
+  };
+
+  const deleteMultiple = async () => {
+    if (deleteOrders.length === 0) {
+      toast.warn("No orders selected!");
+      return;
+    }
+
+    const confirmation = window.confirm(
+      "Do you really want to delete selected orders?"
+    );
+
+    if (!confirmation) return;
+
+    try {
+      const res = await axios.delete(
+        "http://localhost:8000/api/v1/delete-orders",
+        {
+          data: {
+            oids: deleteOrders,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+        // Remove deleted products from state
+        setOrders(orders.filter((order) => !deleteOrders.includes(order._id)));
+        setDeleteOrders([]);
+      }
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Failed to delete selected orders");
+    }
+  };
 
   const fetchAllOrders = async (pageNo) => {
     setLoading(true);
@@ -271,11 +341,21 @@ const OrdersTable = () => {
                   <table className="w-full border">
                     <thead className="bg-blue-600 text-white h-10 m-10">
                       <tr>
-                        <th className="poppins-light border text-sm p-1">
+                        <th className="h-10 flex justify-evenly items-center">
                           <input
                             type="checkbox"
                             name="selectAll"
-                            id="selectAll"
+                            onChange={handleCheckboxChange}
+                            checked={checkEveryCheckbox()}
+                          />
+
+                          <RiDeleteBin6Line
+                            style={{
+                              fontSize: "25px",
+                              color: "gold",
+                              cursor: "pointer",
+                            }}
+                            onClick={deleteMultiple}
                           />
                         </th>
                         <th className="poppins-light border text-sm p-1">#</th>
@@ -318,8 +398,14 @@ const OrdersTable = () => {
                             key={order._id}
                             className="odd:bg-white even:bg-gray-300 h-10 text-center border"
                           >
-                            <td className="border text-sm p-1">
-                              <input type="checkbox" name="" id="" />
+                            <td>
+                              <input
+                                type="checkbox"
+                                name={order._id}
+                                value={order._id}
+                                onChange={handleCheckboxChange}
+                                checked={order.isChecked}
+                              />
                             </td>
                             <td className="border text-sm p-1">{index + 1}</td>
                             <td className="border text-sm p-1">{order._id}</td>

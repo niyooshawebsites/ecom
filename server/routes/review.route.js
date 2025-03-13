@@ -16,7 +16,7 @@ const reviewRouter = express.Router();
 
 reviewRouter.post("/create-review/:pid", auth, createReviewController);
 reviewRouter.delete("/delete-review/:rid", auth, deleteReviewController);
-reviewRouter.delete("/delete-reviews/:rids", auth, deleteReiewsController);
+reviewRouter.delete("/delete-reviews", auth, deleteReiewsController);
 reviewRouter.get(
   "/fetch-reviews/:pid/:pageNo",
   fetchReviewsByProductsController
