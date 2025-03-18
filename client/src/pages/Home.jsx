@@ -1,5 +1,11 @@
+import ImageSlider from "../comps/ImageSlider";
+
 const Home = () => {
-  return <div>Home</div>;
+  return (
+    <>
+      <ImageSlider />
+    </>
+  );
 };
 
 export default Home;

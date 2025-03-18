@@ -33,13 +33,15 @@ import Gallery from "./pages/Gallery";
 import PageNotFound from "./pages/PageNotFound";
 import Logo from "./pages/logo";
 import Shipping from "./pages/Shipping";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Shop />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />

@@ -14,7 +14,7 @@ const ImageSlider = () => {
       pagination={{ clickable: true }}
       autoplay={{ delay: 3000, disableOnInteraction: false }}
       loop={true}
-      className="w-full h-[400px]"
+      className="w-full h-[600px]"
     >
       <SwiperSlide>
         <img
