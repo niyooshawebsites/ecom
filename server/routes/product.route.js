@@ -13,6 +13,7 @@ import {
   fetchAllProductsByPriceRangeController,
   deleteMultipleProductsController,
   ajaxSearchProductsController,
+  productsCarouselController,
 } from "../controllers/product.controller.js";
 
 const productRouter = express.Router();
@@ -60,5 +61,7 @@ productRouter.get(
   "/ajax-product-search/:ajaxProductSearchText",
   ajaxSearchProductsController
 );
+
+productRouter.get("/products-carousel", productsCarouselController);
 
 export default productRouter;
