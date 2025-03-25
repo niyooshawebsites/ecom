@@ -31,6 +31,11 @@ const AdminSidebar = () => {
     <aside className="w-2/12 bg-orange-500 my-2">
       {role === "admin" ? (
         <ul>
+          <Link to="/dashboard/homepage">
+            <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
+              Homepage
+            </li>
+          </Link>
           <Link to="/dashboard/orders">
             <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
               Orders

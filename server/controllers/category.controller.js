@@ -130,6 +130,9 @@ const fetchAllCategoriesAtOnceController = async (req, res) => {
   try {
     const categories = await Category.find().sort({ name: 1 });
 
+    if (categories.length === 0)
+      return response(res, 404, false, "No categories found");
+
     return response(
       res,
       200,
