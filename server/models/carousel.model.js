@@ -8,11 +8,9 @@ const carouselSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    pid: {
-      type: String,
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
-      unique: true,
-      trim: true,
     },
   },
   {

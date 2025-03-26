@@ -1,4 +1,5 @@
 import Carousel from "../models/carousel.model.js";
+import Product from "../models/product.model.js";
 import response from "../utils/response.js";
 
 const createProductsCarouselItemController = async (req, res) => {
@@ -23,7 +24,15 @@ const createProductsCarouselItemController = async (req, res) => {
     if (exisitingCarouselItem)
       return response(res, 400, false, "Pid already exists in the carousel");
 
-    const carouselItem = await new Carousel({ pid, carouselType }).save();
+    const product = await Product.findById(pid);
+
+    if (!product) return response(res, 404, false, "No product found");
+
+    const carouselItem = await new Carousel({
+      pid,
+      product,
+      carouselType,
+    }).save();
 
     return response(
       res,
