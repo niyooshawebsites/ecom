@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ImageSlider from "../comps/ImageSlider";
 import ProductsCarousel from "../comps/ProductsCarousel";
 import axios from "axios";
+import Layout from "../comps/Layout";
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -39,13 +40,15 @@ const Home = () => {
 
   return (
     <>
-      <ImageSlider />
-      <h1>Featured products</h1>
-      <ProductsCarousel products={featuredProducts} />
-      <h1>Sale products</h1>
-      <ProductsCarousel products={saleProducts} />
-      <h1>Top sellers</h1>
-      <ProductsCarousel products={topSellerProducts} />
+      <Layout>
+        <ImageSlider />
+        <h1>Featured products</h1>
+        <ProductsCarousel products={featuredProducts} />
+        <h1>Sale products</h1>
+        <ProductsCarousel products={saleProducts} />
+        <h1>Top sellers</h1>
+        <ProductsCarousel products={topSellerProducts} />
+      </Layout>
     </>
   );
 };

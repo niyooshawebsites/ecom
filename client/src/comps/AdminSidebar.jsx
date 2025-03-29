@@ -8,6 +8,7 @@ const AdminSidebar = () => {
   const [showProductMenu, setShowProductMenu] = useState(false);
   const [showCouponMenu, setShowCouponMenu] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [showHomepageMenu, setShowHomepageMenu] = useState(false);
 
   const { role } = useSelector((state) => state.user_Slice);
 
@@ -27,15 +28,14 @@ const AdminSidebar = () => {
     setShowSettingsMenu((prevState) => !prevState);
   };
 
+  const toggleShowHomepageMenu = () => {
+    setShowHomepageMenu((prevState) => !prevState);
+  };
+
   return (
     <aside className="w-2/12 bg-orange-500 my-2">
       {role === "admin" ? (
         <ul>
-          <Link to="/dashboard/homepage">
-            <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
-              Homepage
-            </li>
-          </Link>
           <Link to="/dashboard/orders">
             <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
               Orders
@@ -121,6 +121,11 @@ const AdminSidebar = () => {
           {showSettingsMenu ? (
             <ul>
               <Link to="/dashboard/profile">
+                <Link to="/dashboard/homepage">
+                  <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
+                    Homepage
+                  </li>
+                </Link>
                 <li className="px-3 py-2 text-white hover:bg-blue-600">
                   Profile
                 </li>

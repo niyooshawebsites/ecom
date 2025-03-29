@@ -144,7 +144,7 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Link to="/">
+                  <Link to="/shop">
                     <li>Store</li>
                   </Link>
                   <Link to="/register">

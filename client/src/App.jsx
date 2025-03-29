@@ -34,6 +34,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Logo from "./pages/logo";
 import Shipping from "./pages/Shipping";
 import Home from "./pages/Home";
+import Homepage from "./pages/Homepage";
 
 const App = () => {
   return (
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/order-confirmation" element={<OrderCofirmation />} />
           <Route path="*" element={<PageNotFound />} />
           <Route element={<Protect />}>
+            <Route path="/dashboard/homepage" element={<Homepage />} />
             <Route
               path="/dashboard/create-category"
               element={<CreateCategory />}
