@@ -8,7 +8,7 @@ const AdminSidebar = () => {
   const [showProductMenu, setShowProductMenu] = useState(false);
   const [showCouponMenu, setShowCouponMenu] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-  const [showHomepageMenu, setShowHomepageMenu] = useState(false);
+  const [showHomepageMenu, setShowHomepageMenu] = useState(true);
 
   const { role } = useSelector((state) => state.user_Slice);
 
@@ -28,12 +28,12 @@ const AdminSidebar = () => {
     setShowSettingsMenu((prevState) => !prevState);
   };
 
-  const toggleShowHomepageMenu = () => {
-    setShowHomepageMenu((prevState) => !prevState);
-  };
+  // const toggleShowHomepageMenu = () => {
+  //   setShowHomepageMenu((prevState) => !prevState);
+  // };
 
   return (
-    <aside className="w-2/12 bg-orange-500 my-2">
+    <aside className="w-2/12 px-2 bg-blue-600 m-2 rounded-md">
       {role === "admin" ? (
         <ul>
           <Link to="/dashboard/orders">
@@ -121,10 +121,29 @@ const AdminSidebar = () => {
           {showSettingsMenu ? (
             <ul>
               <Link to="/dashboard/profile">
-                <Link to="/dashboard/homepage">
-                  <li className="px-2 py-2 text-white hover:bg-blue-600 my-2">
-                    Homepage
+                <Link>
+                  <li className="px-2 py-2 text-white hover:bg-blue-800 my-2 flex items-center">
+                    Homepage <IoIosArrowDown />
                   </li>
+                  {showHomepageMenu ? (
+                    <ul className="border rounded-md">
+                      <Link to="/dashboard/homepage">
+                        <li className="px-3 py-2 hover:bg-blue-600 text-gray-900">
+                          Homepage info
+                        </li>
+                      </Link>
+                      <Link to="/dashboard/create-product">
+                        <li className="px-3 py-2 hover:bg-blue-600 text-gray-900">
+                          Image Slider
+                        </li>
+                      </Link>
+                      <Link to="/dashboard/products">
+                        <li className="px-3 py-2 hover:bg-blue-600 text-gray-900">
+                          Products carousel
+                        </li>
+                      </Link>
+                    </ul>
+                  ) : null}
                 </Link>
                 <li className="px-3 py-2 text-white hover:bg-blue-600">
                   Profile
