@@ -132,12 +132,12 @@ const AdminSidebar = () => {
                           Homepage info
                         </li>
                       </Link>
-                      <Link to="/dashboard/create-product">
+                      <Link to="/dashboard/image-slider">
                         <li className="px-3 py-2 hover:bg-blue-600 text-gray-900">
                           Image Slider
                         </li>
                       </Link>
-                      <Link to="/dashboard/products">
+                      <Link to="/dashboard/products-carousel">
                         <li className="px-3 py-2 hover:bg-blue-600 text-gray-900">
                           Products carousel
                         </li>

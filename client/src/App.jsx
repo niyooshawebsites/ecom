@@ -35,6 +35,8 @@ import Logo from "./pages/logo";
 import Shipping from "./pages/Shipping";
 import Home from "./pages/Home";
 import Homepage from "./pages/Homepage";
+import ImageSliderPage from "./pages/ImageSliderPage";
+import ProductCarouselPage from "./pages/ProductCarouselPage";
 
 const App = () => {
   return (
@@ -90,6 +92,14 @@ const App = () => {
             <Route path="/dashboard/tax" element={<Tax />} />
             <Route path="/dashboard/shipping" element={<Shipping />} />
             <Route path="/dashboard/logo" element={<Logo />} />
+            <Route
+              path="/dashboard/image-slider"
+              element={<ImageSliderPage />}
+            />
+            <Route
+              path="/dashboard/products-carousel"
+              element={<ProductCarouselPage />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>
