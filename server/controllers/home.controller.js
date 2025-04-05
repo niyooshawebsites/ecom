@@ -1,6 +1,8 @@
 import Carousel from "../models/carousel.model.js";
+import Slider from "../models/slider.model.js";
 import Product from "../models/product.model.js";
 import response from "../utils/response.js";
+import { getImageURL } from "../utils/s3.js";
 
 const createProductsCarouselItemController = async (req, res) => {
   try {
@@ -95,8 +97,38 @@ const fetchAllProductsCarouselTypeItemsController = async (req, res) => {
   }
 };
 
+const createSliderItemController = async (req, res) => {
+  try {
+    // extract the image url from multer upload - keys are already added my multer s3
+    const imgKey = req.files.img[0].key;
+
+    if (!imgKey) return response(res, 400, false, "No image is selected");
+
+    const newSlide = await new Slider({
+      img: imgKey,
+    }).save();
+
+    return response(res, 201, true, "Slide created successfully", newSlide);
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const deleteSliderItemController = async (req, res) => {
+  try {
+    const { slideId } = req.params;
+    if (!slideId)
+      return response(res, 400, false, "No slide id. No slide deletion");
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createProductsCarouselItemController,
   deleteProductsCarourselItemController,
   fetchAllProductsCarouselTypeItemsController,
+  createSliderItemController,
 };

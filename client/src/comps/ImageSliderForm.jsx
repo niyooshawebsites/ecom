@@ -8,21 +8,46 @@ import { ImCross } from "react-icons/im";
 const ImageSliderForm = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [searchProductText, setSearchProductText] = useState("");
-  const [searchedProducts, setSearchedProducts] = useState([]);
+  const [sliderImage, setSliderImage] = useState(null);
   const [previewImg, setPreviewImg] = useState(null);
 
-  const createSliderItem = async () => {};
-  const handleImgChange = async () => {};
+  // handle image field changes...
+  const handleImgChange = (e) => {
+    const file = e.targe.files[0];
+    setSliderImage((prev) => ({ ...prev, img: file }));
+
+    if (file) setPreviewImg(URL.createObjectURL(file));
+  };
+
+  const createSliderItem = async () => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/create-slide`,
+        {},
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
     <>
       {loading ? (
         <Loading />
       ) : (
         <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
-          <h1 className="text-4xl py-3 poppins-light my-10">Create category</h1>
+          <h1 className="text-4xl py-3 poppins-light my-10">Image Slider</h1>
           <div className="flex flex-col w-5/12 border rounded-lg p-5">
-            <form className="mb-3" action={createSliderItem}>
+            <form
+              className="mb-3"
+              action={createSliderItem}
+              encType="multipart/form-data"
+            >
               <div className="flex flex-col mb-3">
                 <label htmlFor="img" className="mb-2">
                   Slider image
@@ -33,7 +58,6 @@ const ImageSliderForm = () => {
                   id="img"
                   onChange={handleImgChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="Product name"
                 />
                 {previewImg && (
                   <div className="flex my-1">
