@@ -35,8 +35,9 @@ const CarouselForm = () => {
                   required
                 >
                   <option>Select</option>
-                  <option value="percentage">Percentage</option>
-                  <option value="fixed">Fixed</option>
+                  <option value="percentage">Featured</option>
+                  <option value="percentage">Sales</option>
+                  <option value="fixed">Top sellers</option>
                 </select>
                 {errors.discountType && (
                   <p className="text-red-500">
