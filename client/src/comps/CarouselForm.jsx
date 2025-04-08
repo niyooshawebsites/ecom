@@ -51,15 +51,9 @@ const CarouselForm = () => {
                   required
                 >
                   <option>Select</option>
-<<<<<<< HEAD
-                  <option value="percentage">Featured</option>
-                  <option value="percentage">Sales</option>
-                  <option value="fixed">Top sellers</option>
-=======
                   <option value="featured">Featured</option>
                   <option value="sale">Sale</option>
                   <option value="top sellers">Top sellers</option>
->>>>>>> 6c2a6eedf537803adadfa8ede72db43fc86c5223
                 </select>
               </div>
 
