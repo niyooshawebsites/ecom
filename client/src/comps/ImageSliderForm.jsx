@@ -50,7 +50,7 @@ const ImageSliderForm = () => {
             >
               <div className="flex flex-col mb-3">
                 <label htmlFor="img" className="mb-2">
-                  Slider image
+                  Select an image
                 </label>
                 <input
                   type="file"
