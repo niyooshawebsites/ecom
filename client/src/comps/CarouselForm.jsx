@@ -8,8 +8,18 @@ const CarouselForm = () => {
   const [errors, setErrors] = useState({});
   const [searchProductText, setSearchProductText] = useState("");
   const [searchedProducts, setSearchedProducts] = useState([]);
+  const [product, setProduct] = useState("");
+  const [productId, setProductId] = useState("");
+  const [hideAjaxResults, setHideAjaxResults] = useState(false);
+  const [carouselType, setCarouselType] = useState(null);
+
+  const selectProduct = (value) => {
+    setProduct(value);
+  };
 
   const ajaxProductSearchText = async (e) => {
+    setHideAjaxResults(false);
+
     try {
       setSearchProductText(e.target.value);
 
@@ -25,8 +35,30 @@ const CarouselForm = () => {
     }
   };
 
-  const createCarouselItem = async () => {};
-  const handleChange = async () => {};
+  const setVisibilityOfAjaxResults = () => {
+    setHideAjaxResults(true);
+  };
+
+  const handleChange = async (e) => {
+    const carousel = e.target.value;
+    setCarouselType(carousel);
+  };
+
+  const createCarouselItem = async () => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/create-products-carousel`,
+        { carouselType, productId },
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   return (
     <>
@@ -40,12 +72,12 @@ const CarouselForm = () => {
           <div className="flex flex-col w-5/12 border rounded-lg p-5">
             <form className="mb-3" action={createCarouselItem}>
               <div className="flex flex-col mb-3">
-                <label htmlFor="discountType" className="mb-1">
+                <label htmlFor="carouselType" className="mb-1">
                   Carousel Type
                 </label>
                 <select
-                  name="discountType"
-                  id="discountType"
+                  name="carouselType"
+                  id="carouselType"
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   onChange={handleChange}
                   required
@@ -59,31 +91,58 @@ const CarouselForm = () => {
 
               <div className="flex flex-col mb-3">
                 <label htmlFor="name" className="mb-1">
-                  Product
+                  Product selected
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={product}
+                  onChange={setVisibilityOfAjaxResults}
+                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
+                  placeholder="No products selected"
+                  readOnly
+                />
+              </div>
+
+              <div className="flex flex-col mb-3">
+                <label htmlFor="name" className="mb-1">
+                  Search Product
                 </label>
                 <input
                   type="text"
                   name="name"
                   id="name"
                   onChange={ajaxProductSearchText}
+                  value={searchProductText}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter product name"
                   required
                 />
 
-                {searchedProducts.length > 0 && searchProductText ? (
-                  <div className="absolute w-full mt-2 bg-yellow-500">
-                    <ul>
-                      {searchedProducts.map((product) => (
-                        <li className="hover:bg-cyan-500" key={product._id}>
-                          {product.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
-                  ""
-                )}
+                <div className={hideAjaxResults ? `hidden` : ""}>
+                  {searchedProducts.length > 0 && searchProductText ? (
+                    <div className="absolute w-2/6 mt-2 bg-yellow-500">
+                      <ul>
+                        {searchedProducts.map((product) => (
+                          <li
+                            className="hover:bg-cyan-500 cursor-pointer p-2"
+                            key={product._id}
+                            onClick={() => {
+                              selectProduct(product.name);
+                              setHideAjaxResults(true);
+                              setSearchProductText("");
+                            }}
+                          >
+                            {product.name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
 
                 {errors.name && (
                   <p className="text-red-500">{errors.name._errors[0]}</p>
