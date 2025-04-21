@@ -4,11 +4,28 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import NoData from "./NoData";
+import axios from "axios";
 
 const HomepageInfo = () => {
-  const [carouselData, setcarouselData] = useState([]);
+  const [carouselData, setCarouselData] = useState([]);
 
-  const fetchAllCarsoulselData = async () => {};
+  const fetchAllCarsoulselData = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-carousel-products`,
+        { withCredentials: true }
+      );
+
+      console.log(res);
+
+      if (res.data.success) {
+        setCarouselData([res.data.carouselItems]);
+        toast.success(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   const deleteCaouselData = () => {};
 
@@ -18,10 +35,15 @@ const HomepageInfo = () => {
 
   const checkEveryCheckbox = () => {};
 
+  useEffect(() => {
+    fetchAllCarsoulselData();
+  }, []);
+
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
+      {console.log(carouselData)}
       {carouselData.length > 0 ? (
-        <div className="w-6/12">
+        <div className="w-6/12 border">
           <div className="flex justify-center items-center mt-10">
             <h1 className="text-4xl text-center py-3 poppins-light bg-gray-200 rounded-md p-3 mb-2">
               Categories (

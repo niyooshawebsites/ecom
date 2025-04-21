@@ -16,6 +16,7 @@ import invoiceRouter from "./routes/invoice.route.js";
 import taxRouter from "./routes/tax.route.js";
 import galleryRouter from "./routes/gallery.route.js";
 import shippingRouter from "./routes/shipping.route.js";
+import carouselRouter from "./routes/carousel.route.js";
 
 dotenv.config();
 connectDB();
@@ -46,6 +47,7 @@ app.use(BASE_URL, invoiceRouter);
 app.use(BASE_URL, taxRouter);
 app.use(BASE_URL, galleryRouter);
 app.use(BASE_URL, shippingRouter);
+app.use(BASE_URL, carouselRouter);
 
 app.listen(PORT, () =>
   console.log(

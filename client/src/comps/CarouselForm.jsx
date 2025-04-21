@@ -48,12 +48,15 @@ const CarouselForm = () => {
     try {
       const res = await axios.post(
         `http://localhost:8000/api/v1/create-products-carousel`,
-        { carouselType, productId },
+        { carouselType, pid: productId },
         { withCredentials: true }
       );
 
       if (res.data.success) {
         toast.success(res.data.msg);
+        setProduct("");
+        setSearchProductText("");
+        setCarouselType(null);
       }
     } catch (err) {
       console.log(err.message);
@@ -117,7 +120,6 @@ const CarouselForm = () => {
                   value={searchProductText}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                   placeholder="Enter product name"
-                  required
                 />
 
                 <div className={hideAjaxResults ? `hidden` : ""}>
@@ -132,6 +134,7 @@ const CarouselForm = () => {
                               selectProduct(product.name);
                               setHideAjaxResults(true);
                               setSearchProductText("");
+                              setProductId(product._id);
                             }}
                           >
                             {product.name}

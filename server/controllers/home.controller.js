@@ -72,14 +72,11 @@ const deleteProductsCarourselItemController = async (req, res) => {
 
 const fetchAllProductsCarouselTypeItemsController = async (req, res) => {
   try {
-    const { carouselType } = req.params;
-
-    if (!carouselType)
-      return response(res, 400, false, "No carousel type. No carousel items");
-
-    const carouselItems = await Carousel.find({ carouselType }).sort({
-      createdAt: -1,
-    });
+    const carouselItems = await Carousel.find()
+      .sort({
+        createdAt: -1,
+      })
+      .populate("product");
 
     if (carouselItems.length === 0)
       return response(res, 404, false, "No carousel items found");
