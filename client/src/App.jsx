@@ -37,6 +37,7 @@ import Home from "./pages/Home";
 import Homepage from "./pages/Homepage";
 import ImageSliderPage from "./pages/ImageSliderPage";
 import ProductCarouselPage from "./pages/ProductCarouselPage";
+import CarouselInfoPage from "./pages/HPCInfoPage";
 
 const App = () => {
   return (
@@ -100,6 +101,7 @@ const App = () => {
               path="/dashboard/products-carousel"
               element={<ProductCarouselPage />}
             />
+            <Route path="/dashboard" element={<CarouselInfoPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
