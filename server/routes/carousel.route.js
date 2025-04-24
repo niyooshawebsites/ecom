@@ -14,13 +14,13 @@ carouselRouter.post(
 );
 
 carouselRouter.delete(
-  "/delete-carousel-product",
+  "/delete-carousel-product/:cid",
   auth,
   deleteProductsCarourselItemController
 );
 
 carouselRouter.get(
-  "/fetch-carousel-products",
+  "/fetch-carousel-products/:carouselType",
   auth,
   fetchAllProductsCarouselTypeItemsController
 );

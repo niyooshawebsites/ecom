@@ -72,7 +72,9 @@ const deleteProductsCarourselItemController = async (req, res) => {
 
 const fetchAllProductsCarouselTypeItemsController = async (req, res) => {
   try {
-    const carouselItems = await Carousel.find()
+    const { carouselType } = req.params;
+
+    const carouselItems = await Carousel.find({ carouselType })
       .sort({
         createdAt: -1,
       })

@@ -15,7 +15,7 @@ const Home = () => {
         `http://localhost:8000/api/v1/fetch-carousel-products`,
         { withCredentials: true }
       );
-
+      console.log(res);
       if (res.data.success) {
         setFeaturedProducts(
           res.data.carouselItems.map((item) => item.carouselType === "featured")

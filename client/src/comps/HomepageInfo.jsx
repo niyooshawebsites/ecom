@@ -25,7 +25,7 @@ const HomepageInfo = () => {
             <tr className="odd:bg-white even:bg-gray-300 h-10">
               <td className="border text-sm p-1">Featured Carousel</td>
               <td className="text-center border text-sm">
-                <Link to={`/dashboard?hpc=featured-carousel`}>
+                <Link to={`/dashboard?hpc=featured`}>
                   <span className="bg-blue-600 px-1 rounded-md text-white hover:bg-blue-700 mr-2">
                     View
                   </span>
@@ -35,7 +35,7 @@ const HomepageInfo = () => {
             <tr className="odd:bg-white even:bg-gray-300 h-10">
               <td className="border text-sm p-1">Sale Carousel</td>
               <td className="text-center border text-sm">
-                <Link to={`/dashboard?hpc=sale-carousel`}>
+                <Link to={`/dashboard?hpc=sale`}>
                   <span className="bg-blue-600 px-1 rounded-md text-white hover:bg-blue-700 mr-2">
                     View
                   </span>
@@ -45,7 +45,7 @@ const HomepageInfo = () => {
             <tr className="odd:bg-white even:bg-gray-300 h-10">
               <td className="border text-sm p-1">Top seller Carousel</td>
               <td className="text-center border text-sm">
-                <Link to={`/dashboard/?hpc=top_seller-carousel`}>
+                <Link to={`/dashboard/?hpc=top-seller`}>
                   <span className="bg-blue-600 px-1 rounded-md text-white hover:bg-blue-700 mr-2">
                     View
                   </span>
@@ -55,7 +55,7 @@ const HomepageInfo = () => {
             <tr className="odd:bg-white even:bg-gray-300 h-10">
               <td className="border text-sm p-1">Image Slider</td>
               <td className="text-center border text-sm">
-                <Link to={`/dashboard?hpc=image_slider`}>
+                <Link to={`/dashboard?hpc=image-slider`}>
                   <span className="bg-blue-600 px-1 rounded-md text-white hover:bg-blue-700 mr-2">
                     View
                   </span>

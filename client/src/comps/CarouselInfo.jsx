@@ -2,30 +2,65 @@ import { useState, useEffect } from "react";
 import { SlRefresh } from "react-icons/sl";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
 import NoData from "./NoData";
 import axios from "axios";
 
-const CarouselInfo = () => {
+const CarouselInfo = ({ dataType, setDeleteCarouselProduct }) => {
   const [carouselData, setCarouselData] = useState([]);
 
   const fetchAllCarsoulselData = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-carousel-products`,
-        { withCredentials: true }
-      );
+      if (
+        dataType === "featured" ||
+        dataType === "sale" ||
+        dataType === "top-seller"
+      ) {
+        const res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-carousel-products/${dataType}`,
+          { withCredentials: true }
+        );
 
-      if (res.data.success) {
-        setCarouselData(res.data.data);
-        toast.success(res.data.msg);
+        if (res.data.success) {
+          setCarouselData(res.data.data);
+          toast.success(res.data.msg);
+        }
+      }
+
+      if (dataType === "image-slider") {
+        const res = await axios.get(
+          `http://localhost:8000/api/v1/fetch-carousel-products/${dataType}`,
+          { withCredentials: true }
+        );
+
+        if (res.data.success) {
+          setCarouselData(res.data.data);
+          toast.success(res.data.msg);
+        }
       }
     } catch (err) {
       console.log(err.message);
     }
   };
 
-  const deleteCaouselData = () => {};
+  const deleteCarouselData = async (cid) => {
+    try {
+      const confirmDeletion = confirm("Do you want to delete the item?");
+
+      if (confirmDeletion) {
+        const res = await axios.delete(
+          `http://localhost:8000/api/v1/delete-carousel-product/${cid}`,
+          { withCredentials: true }
+        );
+
+        if (res.data.success) {
+          toast.success(res.data.msg);
+          setDeleteCarouselProduct((prev) => !prev);
+        }
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   const handleCheckboxChange = () => {};
 
@@ -39,12 +74,11 @@ const CarouselInfo = () => {
 
   return (
     <div className="w-10/12 flex flex-col justify-start items-center min-h-screen">
-      {console.log(carouselData)}
       {carouselData.length > 0 ? (
         <div className="w-6/12 border">
           <div className="flex justify-center items-center mt-10">
             <h1 className="text-4xl text-center py-3 poppins-light bg-gray-200 rounded-md p-3 mb-2">
-              Featured Carousel (
+              {dataType[0].toUpperCase() + dataType.slice(1)} Carousel (
               {carouselData.length < 10
                 ? `0${carouselData.length}`
                 : carouselData.length}
@@ -90,6 +124,7 @@ const CarouselInfo = () => {
             </thead>
             <tbody>
               {carouselData.map((carousel, index) => {
+                console.log(carousel);
                 return (
                   <tr
                     key={carousel._id}
@@ -114,14 +149,9 @@ const CarouselInfo = () => {
                       {carousel.product.name}
                     </td>
                     <td className="text-center border text-sm">
-                      <Link to={`/dashboard/update-category/${carousel._id}`}>
-                        <span className="bg-green-600 px-1 rounded-md text-white hover:bg-green-700 mr-2">
-                          Edit
-                        </span>
-                      </Link>{" "}
                       <button
                         onClick={() => {
-                          deleteCaouselData(carousel._id);
+                          deleteCarouselData(carousel._id);
                         }}
                         className="bg-red-600 px-1 rounded-md text-white hover:bg-red-700"
                       >
@@ -135,7 +165,7 @@ const CarouselInfo = () => {
           </table>
         </div>
       ) : (
-        <NoData data={"Home page info"} />
+        <NoData data={"Carousel info"} />
       )}
     </div>
   );
