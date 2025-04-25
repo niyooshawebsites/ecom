@@ -4,6 +4,7 @@ import {
   createProductsCarouselItemController,
   deleteProductsCarourselItemController,
   fetchAllProductsCarouselTypeItemsController,
+  fetchAllCarouselProductsController,
 } from "../controllers/home.controller.js";
 const carouselRouter = express.Router();
 
@@ -23,6 +24,11 @@ carouselRouter.get(
   "/fetch-carousel-products/:carouselType",
   auth,
   fetchAllProductsCarouselTypeItemsController
+);
+
+carouselRouter.get(
+  "/fetch-all-carousel-products",
+  fetchAllCarouselProductsController
 );
 
 export default carouselRouter;

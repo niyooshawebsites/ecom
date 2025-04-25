@@ -78,17 +78,62 @@ const fetchAllProductsCarouselTypeItemsController = async (req, res) => {
       .sort({
         createdAt: -1,
       })
-      .populate("product");
+      .populate("product")
+      .lean();
 
     if (carouselItems.length === 0)
       return response(res, 404, false, "No carousel items found");
+
+    const carouselItemssWithProductImgURLs = carouselItems.map(async (item) => {
+      console.log(item);
+      const imgURL = await getImageURL(item.product.img);
+
+      return {
+        ...item,
+        [item.product.img]: imgURL,
+      };
+    });
 
     return response(
       res,
       200,
       true,
       "Carousel items fected successfully",
-      carouselItems
+      carouselItemssWithProductImgURLs
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
+const fetchAllCarouselProductsController = async (req, res) => {
+  try {
+    const carouselItems = await Carousel.find()
+      .sort({
+        createdAt: -1,
+      })
+      .populate("product");
+
+    if (carouselItems.length === 0)
+      return response(res, 404, false, "No carousel items found");
+
+    const carouselItemssWithProductImgURLs = carouselItems.map(async (item) => {
+      console.log(item);
+      const imgURL = await getImageURL(item.product.img);
+
+      return {
+        ...item,
+        [item.product.img]: imgURL,
+      };
+    });
+
+    return response(
+      res,
+      200,
+      true,
+      "Carousel items fected successfully",
+      carouselItemssWithProductImgURLs
     );
   } catch (err) {
     console.error(err.message);
@@ -129,5 +174,7 @@ export {
   createProductsCarouselItemController,
   deleteProductsCarourselItemController,
   fetchAllProductsCarouselTypeItemsController,
+  fetchAllCarouselProductsController,
   createSliderItemController,
+  deleteSliderItemController,
 };
