@@ -109,7 +109,7 @@ const fetchAllProductsCarouselTypeItemsController = async (req, res) => {
 
 const fetchAllCarouselProductsController = async (req, res) => {
   try {
-    const carouselItems = await Carousel.find()
+    const carouselItems = await Carousel.find({})
       .sort({
         createdAt: -1,
       })
@@ -118,22 +118,36 @@ const fetchAllCarouselProductsController = async (req, res) => {
     if (carouselItems.length === 0)
       return response(res, 404, false, "No carousel items found");
 
-    const carouselItemssWithProductImgURLs = carouselItems.map(async (item) => {
-      console.log(item);
-      const imgURL = await getImageURL(item.product.img);
+    // const carouselItemssWithProductImgURLs = carouselItems.map(async (item) => {
+    //   const imgURL = await getImageURL(item.product.img);
 
-      return {
-        ...item,
-        [item.product.img]: imgURL,
-      };
-    });
+    //   console.log({ ...item.toObject(), [item.product.img]: imgURL });
+
+    //   return {
+    //     ...item,
+    //     [item.product.img]: imgURL,
+    //   };
+    // });
+
+    const carouselItemsWithProductImgURLs = await Promise.all(
+      carouselItems.map(async (item) => {
+        const img = await getImageURL(item.product.img);
+        return {
+          ...item.toObject(), // Convert Mongoose doc to plain object
+          product: {
+            ...item.product.toObject(),
+            img, // Attach the URL inside the product field
+          },
+        };
+      })
+    );
 
     return response(
       res,
       200,
       true,
       "Carousel items fected successfully",
-      carouselItemssWithProductImgURLs
+      carouselItemsWithProductImgURLs
     );
   } catch (err) {
     console.error(err.message);

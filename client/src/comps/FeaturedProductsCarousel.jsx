@@ -27,7 +27,7 @@ const FeaturedProductsCarousel = ({ featuredProducts }) => {
               <img
                 src={fp.product.img}
                 alt={fp.product.name}
-                className="w-full h-40 object-cover rounded-md"
+                className="w-full h-80 object-cover rounded-md"
               />
               <h3 className="text-center mt-2">{fp.product.name}</h3>
               <p className="text-center font-semibold text-red-500">

@@ -18,7 +18,9 @@ const Home = () => {
         { withCredentials: true }
       );
 
+      console.log("API being called");
       console.log(res);
+      console.log(res.data.data);
 
       if (res.data.success) {
         setFeaturedProducts(
