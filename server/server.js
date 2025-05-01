@@ -17,6 +17,7 @@ import taxRouter from "./routes/tax.route.js";
 import galleryRouter from "./routes/gallery.route.js";
 import shippingRouter from "./routes/shipping.route.js";
 import carouselRouter from "./routes/carousel.route.js";
+import sliderRouter from "./routes/slider.route.js";
 
 dotenv.config();
 connectDB();
@@ -48,6 +49,7 @@ app.use(BASE_URL, taxRouter);
 app.use(BASE_URL, galleryRouter);
 app.use(BASE_URL, shippingRouter);
 app.use(BASE_URL, carouselRouter);
+app.use(BASE_URL, sliderRouter);
 
 app.listen(PORT, () =>
   console.log(

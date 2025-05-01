@@ -9,7 +9,7 @@ const FeaturedProductsCarousel = ({ featuredProducts }) => {
     <Swiper
       modules={[Navigation, Autoplay]}
       spaceBetween={20}
-      slidesPerView={4}
+      slidesPerView={5}
       navigation
       autoplay={{ delay: 2500 }}
       loop={true}
@@ -23,15 +23,15 @@ const FeaturedProductsCarousel = ({ featuredProducts }) => {
       {featuredProducts.map((fp) => (
         <SwiperSlide key={fp.product._id} className="p-4">
           <Link to={`product?pid=${fp.product._id}`}>
-            <div className="border rounded-lg p-2 shadow-lg">
+            <div className="border rounded-lg p-2 shadow-lg h-96 m-auto flex flex-col items-center">
               <img
                 src={fp.product.img}
                 alt={fp.product.name}
-                className="w-full h-80 object-cover rounded-md"
+                className="inline-block h-72 rounded-md"
               />
               <h3 className="text-center mt-2">{fp.product.name}</h3>
               <p className="text-center font-semibold text-red-500">
-                ${fp.product.price}
+                Rs {fp.product.price}
               </p>
             </div>
           </Link>

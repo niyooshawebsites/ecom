@@ -5,7 +5,6 @@ const carouselSchema = new mongoose.Schema(
     carouselType: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
     product: {

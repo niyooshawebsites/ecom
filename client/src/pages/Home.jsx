@@ -30,7 +30,7 @@ const Home = () => {
           res.data.data.filter((item) => item.carouselType === "sale")
         );
         setTopSellerProducts(
-          res.data.data.filter((item) => item.carouselType === "top-seller")
+          res.data.data.filter((item) => item.carouselType === "top sellers")
         );
       }
     } catch (err) {
@@ -48,11 +48,11 @@ const Home = () => {
     <>
       <Layout>
         <ImageSlider />
-        <h1 className="text-center text-2xl py-3">Featured products</h1>
+        <h1 className="text-center text-3xl py-10">FEATURED</h1>
         <FeaturedProductsCarousel featuredProducts={featuredProducts} />
-        <h1 className="text-center text-2xl py-3">Sale products</h1>
+        <h1 className="text-center text-3xl py-10">SALE</h1>
         <SaleProductsCarousel saleProducts={saleProducts} />
-        <h1 className="text-center text-2xl py-3">Top sellers</h1>
+        <h1 className="text-center text-3xl py-10">TOP SELLERS</h1>
         <TopSellerProductsCarousel topSellerProducts={topSellerProducts} />
       </Layout>
     </>

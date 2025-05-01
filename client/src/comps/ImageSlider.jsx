@@ -3,8 +3,30 @@ import "swiper/css"; // core swiper slides
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const ImageSlider = () => {
+  const [slides, setSlides] = useState([]);
+
+  const fetchAllImageSlides = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-all-image-slides`
+      );
+
+      if (res.data.success) {
+        setSlides(res.data.sliderItemsWithImageURLs);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllImageSlides();
+  }, []);
+
   return (
     <Swiper
       modules={[Navigation, Pagination, Autoplay]}
@@ -16,27 +38,17 @@ const ImageSlider = () => {
       loop={true}
       className="w-full h-[600px]"
     >
-      <SwiperSlide>
-        <img
-          src="/images/banner1.jpg"
-          alt="Banner 1"
-          className="w-full h-full object-cover"
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <img
-          src="/images/banner2.jpg"
-          alt="Banner 2"
-          className="w-full h-full object-cover"
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <img
-          src="/images/banner3.jpg"
-          alt="Banner 3"
-          className="w-full h-full object-cover"
-        />
-      </SwiperSlide>
+      {slides.map((slide) => {
+        return (
+          <SwiperSlide key={slide._id}>
+            <img
+              src={slide.img}
+              alt={slide.img}
+              className="w-full h-full object-cover"
+            />
+          </SwiperSlide>
+        );
+      })}
     </Swiper>
   );
 };

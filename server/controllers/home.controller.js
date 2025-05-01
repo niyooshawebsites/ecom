@@ -118,17 +118,6 @@ const fetchAllCarouselProductsController = async (req, res) => {
     if (carouselItems.length === 0)
       return response(res, 404, false, "No carousel items found");
 
-    // const carouselItemssWithProductImgURLs = carouselItems.map(async (item) => {
-    //   const imgURL = await getImageURL(item.product.img);
-
-    //   console.log({ ...item.toObject(), [item.product.img]: imgURL });
-
-    //   return {
-    //     ...item,
-    //     [item.product.img]: imgURL,
-    //   };
-    // });
-
     const carouselItemsWithProductImgURLs = await Promise.all(
       carouselItems.map(async (item) => {
         const img = await getImageURL(item.product.img);
@@ -184,6 +173,37 @@ const deleteSliderItemController = async (req, res) => {
   }
 };
 
+const fetchAllImageSlidesController = async (req, res) => {
+  try {
+    const slides = await Slider.find({});
+
+    if (slides.length == 0)
+      return response(res, 404, false, "No carousel items found");
+
+    const sliderItemsWithImageURLs = await Promise.all(
+      slides.map(async (slide) => {
+        const img = await getImageURL(slide.img);
+
+        return {
+          ...slide.toObject(), // Convert Mongoose doc to plain object
+          img, // Attach the AWS URLs
+        };
+      })
+    );
+
+    return response(
+      res,
+      200,
+      true,
+      "Image slides fected successfully",
+      sliderItemsWithImageURLs
+    );
+  } catch (err) {
+    console.error(err.message);
+    return response(res, 500, false, "Internal server error");
+  }
+};
+
 export {
   createProductsCarouselItemController,
   deleteProductsCarourselItemController,
@@ -191,4 +211,5 @@ export {
   fetchAllCarouselProductsController,
   createSliderItemController,
   deleteSliderItemController,
+  fetchAllImageSlidesController,
 };
