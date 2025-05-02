@@ -33,7 +33,7 @@ const AdminSidebar = () => {
   // };
 
   return (
-    <aside className="w-2/12 px-2 bg-blue-600 m-2 rounded-md">
+    <aside className="w-2/12 px-2 bg-gray-600 m-2 rounded-md">
       {role === "admin" ? (
         <ul>
           <Link to="/dashboard/orders">

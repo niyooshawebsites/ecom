@@ -5,6 +5,7 @@ import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const ImageSlider = () => {
   const [slides, setSlides] = useState([]);
@@ -15,8 +16,10 @@ const ImageSlider = () => {
         `http://localhost:8000/api/v1/fetch-all-image-slides`
       );
 
+      console.log(res);
+
       if (res.data.success) {
-        setSlides(res.data.sliderItemsWithImageURLs);
+        setSlides(res.data.data);
       }
     } catch (err) {
       console.log(err.message);
@@ -36,7 +39,7 @@ const ImageSlider = () => {
       pagination={{ clickable: true }}
       autoplay={{ delay: 3000, disableOnInteraction: false }}
       loop={true}
-      className="w-full h-[600px]"
+      className="w-full h-[800px]"
     >
       {slides.map((slide) => {
         return (
@@ -46,6 +49,18 @@ const ImageSlider = () => {
               alt={slide.img}
               className="w-full h-full object-cover"
             />
+            <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-center text-white px-4">
+              <h2 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
+                {slide.title}
+              </h2>
+              <p className="text-lg md:text-2xl mb-6">{slide.desc}</p>
+              <Link
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-lg"
+                to={slide.btnLink}
+              >
+                {slide.btnText}
+              </Link>
+            </div>
           </SwiperSlide>
         );
       })}

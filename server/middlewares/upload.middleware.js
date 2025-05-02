@@ -40,6 +40,18 @@ const storageLogo = multerS3({
   },
 });
 
+// configure multer-s3 storage
+const storageSlides = multerS3({
+  s3,
+  bucket: process.env.AWS_BUCKET_NAME,
+  metadata: (req, file, cb) => {
+    cb(null, { fieldName: file.fieldname });
+  },
+  key: (req, file, cb) => {
+    cb(null, `gallery/${Date.now()}_${file.originalname}`);
+  },
+});
+
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
     "image/jpeg",
@@ -74,4 +86,10 @@ const uploadLogo = multer({
   fileFilter,
 });
 
-export { uploadProductImgs, uploadGalleryImgs, uploadLogo };
+const uploadSlides = multer({
+  storage: storageSlides,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5mb limit
+  fileFilter,
+});
+
+export { uploadProductImgs, uploadGalleryImgs, uploadLogo, uploadSlides };

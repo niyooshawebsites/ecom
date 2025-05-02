@@ -7,6 +7,22 @@ const sliderSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    title: {
+      type: String,
+      required: true,
+    },
+    desc: {
+      type: String,
+      required: true,
+    },
+    btnText: {
+      type: String,
+      required: true,
+    },
+    btnLink: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

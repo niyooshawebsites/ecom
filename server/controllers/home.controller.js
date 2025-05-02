@@ -148,11 +148,19 @@ const createSliderItemController = async (req, res) => {
   try {
     // extract the image url from multer upload - keys are already added my multer s3
     const imgKey = req.files.img[0].key;
+    const { title, desc, btnText, btnLink } = req.body;
 
     if (!imgKey) return response(res, 400, false, "No image is selected");
 
+    if (!title || !desc || !btnText || !btnLink)
+      return response(res, 400, false, "Please fill out all the details");
+
     const newSlide = await new Slider({
       img: imgKey,
+      title,
+      desc,
+      btnText,
+      btnLink,
     }).save();
 
     return response(res, 201, true, "Slide created successfully", newSlide);
