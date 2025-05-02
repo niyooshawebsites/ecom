@@ -146,8 +146,9 @@ const fetchAllCarouselProductsController = async (req, res) => {
 
 const createSliderItemController = async (req, res) => {
   try {
+    console.log(req.body);
     // extract the image url from multer upload - keys are already added my multer s3
-    const imgKey = req.files.img[0].key;
+    const imgKey = req.files?.img[0]?.key;
     const { title, desc, btnText, btnLink } = req.body;
 
     if (!imgKey) return response(res, 400, false, "No image is selected");

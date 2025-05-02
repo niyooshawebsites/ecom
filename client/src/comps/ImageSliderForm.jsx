@@ -25,6 +25,16 @@ const ImageSliderForm = () => {
     if (file) setPreviewImg(URL.createObjectURL(file));
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSliderImage((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
   const createSliderItem = async (e) => {
     e.preventDefault(); // prevent default form submit behavior
 
@@ -112,7 +122,7 @@ const ImageSliderForm = () => {
                   type="text"
                   name="title"
                   id="title"
-                  onChange={handleImgChange}
+                  onChange={handleChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                 />
                 {errors.img && (
@@ -127,7 +137,7 @@ const ImageSliderForm = () => {
                   type="text"
                   name="desc"
                   id="desc"
-                  onChange={handleImgChange}
+                  onChange={handleChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                 />
                 {errors.img && (
@@ -142,7 +152,7 @@ const ImageSliderForm = () => {
                   type="text"
                   name="btnText"
                   id="btnText"
-                  onChange={handleImgChange}
+                  onChange={handleChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                 />
                 {errors.img && (
@@ -157,7 +167,7 @@ const ImageSliderForm = () => {
                   type="text"
                   name="btnLink"
                   id="btnLink"
-                  onChange={handleImgChange}
+                  onChange={handleChange}
                   className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
                 />
                 {errors.img && (
