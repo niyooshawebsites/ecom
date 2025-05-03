@@ -8,7 +8,7 @@ const SaleProductsCarousel = ({ saleProducts }) => {
   return (
     <Swiper
       modules={[Navigation, Autoplay]}
-      spaceBetween={20}
+      spaceBetween={10}
       slidesPerView={5}
       navigation
       autoplay={{ delay: 2500 }}
@@ -16,18 +16,18 @@ const SaleProductsCarousel = ({ saleProducts }) => {
       breakpoints={{
         320: { slidesPerView: 1 }, // Mobile
         768: { slidesPerView: 2 }, // Tablet
-        1024: { slidesPerView: 4 }, // Desktop
+        1024: { slidesPerView: 5 }, // Desktop
       }}
       className="w-full"
     >
       {saleProducts.map((sp) => (
         <SwiperSlide key={sp.product._id} className="p-4">
           <Link to={`product?pid=${sp.product._id}`}>
-            <div className="border rounded-lg p-2 shadow-lg h-96 m-auto flex flex-col items-center">
+            <div className="border rounded-lg p-2 shadow-lg w-80 h-80 m-auto flex flex-col items-center">
               <img
                 src={sp.product.img}
                 alt={sp.product.name}
-                className="inline-block h-72 rounded-md"
+                className="inline-block h-64 rounded-md"
               />
               <h3 className="text-center mt-2">{sp.product.name}</h3>
               <p className="text-center font-semibold text-red-500">

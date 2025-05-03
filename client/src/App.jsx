@@ -38,6 +38,7 @@ import Homepage from "./pages/Homepage";
 import ImageSliderPage from "./pages/ImageSliderPage";
 import ProductCarouselPage from "./pages/ProductCarouselPage";
 import CarouselInfoPage from "./pages/HPCInfoPage";
+import CategoryStore from "./pages/CategoryStore";
 
 const App = () => {
   return (
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="checkout" element={<Checkout />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/order-confirmation" element={<OrderCofirmation />} />
+          <Route path="/category" element={<CategoryStore />} />
           <Route path="*" element={<PageNotFound />} />
           <Route element={<Protect />}>
             <Route path="/dashboard/homepage" element={<Homepage />} />

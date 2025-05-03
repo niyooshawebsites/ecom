@@ -20,6 +20,8 @@ const CarouselInfo = ({ dataType, setDeleteCarouselProduct }) => {
           { withCredentials: true }
         );
 
+        console.log(res);
+
         if (res.data.success) {
           setCarouselData(res.data.data);
           toast.success(res.data.msg);
@@ -31,6 +33,8 @@ const CarouselInfo = ({ dataType, setDeleteCarouselProduct }) => {
           `http://localhost:8000/api/v1/fetch-carousel-products/${dataType}`,
           { withCredentials: true }
         );
+
+        console.log(res);
 
         if (res.data.success) {
           setCarouselData(res.data.data);

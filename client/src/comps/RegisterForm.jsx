@@ -8,6 +8,7 @@ import registrationSchema from "../utils/validation/registrationSchema";
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegsitration = async (formData) => {
     try {
@@ -91,14 +92,23 @@ const RegisterForm = () => {
               </div>
               <div className="flex flex-col mb-3">
                 <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600"
-                  placeholder="*********"
-                  required
-                />
+                <div className="flex gap-1">
+                  <input
+                    type={showPassword ? `text` : `password`}
+                    name="password"
+                    id="password"
+                    className="border rounded-lg py-2 px-2 outline-none focus:border-blue-600 w-full"
+                    placeholder="*********"
+                    required
+                  />
+                  <Link
+                    className="border py-2 px-2 rounded-lg"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? `Hide` : `Show`}
+                  </Link>
+                </div>
+
                 {errors.password && (
                   <p className="text-red-500">{errors.password._errors[0]}</p>
                 )}

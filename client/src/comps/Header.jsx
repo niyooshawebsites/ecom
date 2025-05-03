@@ -64,13 +64,13 @@ const Header = () => {
         <Loading />
       ) : (
         <header className="bg-blue-700 text-white">
-          <nav className="flex justify-evenly items-center w-8/12 mx-auto min-h-10">
+          <nav className="flex justify-evenly items-center w-8/12 mx-auto min-h-20">
             <Link to="/">
-              <h1>ECOM</h1>
+              <h1 className="text-4xl">ECOM</h1>
             </Link>
 
             {/* search  */}
-            <div className="w-8/12 mx-4 relative">
+            <div className="w-9/12 mx-4 relative">
               <input
                 type="text"
                 name="ajaxProductSearch"
