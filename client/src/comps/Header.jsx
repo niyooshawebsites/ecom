@@ -64,18 +64,19 @@ const Header = () => {
         <Loading />
       ) : (
         <header className="bg-blue-700 text-white">
-          <nav className="flex justify-evenly items-center w-8/12 mx-auto min-h-20">
-            <Link to="/">
+          <nav className="flex justify-evenly items-center w-9/12 mx-auto min-h-20">
+            <Link to="/" className="hover:text-gray-900 hover:font-semibold">
               <h1 className="text-4xl">ECOM</h1>
             </Link>
 
             {/* search  */}
-            <div className="w-9/12 mx-4 relative">
+            <div className="w-6/12 mx-4 relative">
               <input
                 type="text"
                 name="ajaxProductSearch"
                 onChange={ajaxProductSearchText}
                 className="w-full text-gray-800 px-2 rounded-md"
+                placeholder="Search products"
               />
 
               {searchedProducts.length > 0 && searchProductText ? (
@@ -144,16 +145,28 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Link to="/shop">
+                  <Link
+                    to="/shop"
+                    className="hover:text-gray-900 hover:font-semibold"
+                  >
                     <li>Store</li>
                   </Link>
-                  <Link to="/register">
+                  <Link
+                    to="/register"
+                    className="hover:text-gray-900 hover:font-semibold"
+                  >
                     <li>Register</li>
                   </Link>
-                  <Link to="/login">
+                  <Link
+                    to="/login"
+                    className="hover:text-gray-900 hover:font-semibold"
+                  >
                     <li>Login</li>
                   </Link>
-                  <Link to="/cart">
+                  <Link
+                    to="/cart"
+                    className="hover:text-gray-900 hover:font-semibold"
+                  >
                     <li className="flex">
                       <CiShoppingCart className="text-2xl mr-1" />
                       <span className="bg-orange-500 px-1 rounded border">

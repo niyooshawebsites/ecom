@@ -259,7 +259,30 @@ const fetchAllProductsByCategoryController = async (req, res) => {
     if (products.length === 0)
       return response(res, 404, false, "No products in this category");
 
-    return response(res, 200, true, "Products found successfully", products);
+    const productsWithImgURLs = await Promise.all(
+      products.map(async (product) => {
+        const imgURL = await getImageURL(product.img);
+        const galleryURLs = await Promise.all(
+          product.gallery.map((key) => getImageURL(key))
+        );
+
+        return {
+          ...product.toObject(),
+          img: imgURL,
+          gallery: galleryURLs,
+        };
+      })
+    );
+
+    console.log(productsWithImgURLs);
+
+    return response(
+      res,
+      200,
+      true,
+      "Products founded successfully",
+      productsWithImgURLs
+    );
   } catch (err) {
     console.error(err.message);
     return response(res, 500, false, "Internal sever error");

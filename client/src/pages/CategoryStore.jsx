@@ -28,24 +28,6 @@ const CategoryStore = () => {
     filteredProductSlug,
   } = useSelector((state) => state.filter_Slice);
 
-  const fetchProductsByCatetory = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/fetch-all-products-by-category/${cid}`,
-        { withCredentials: true }
-      );
-
-      if (res.data.success) {
-        setProductsData(res.data.data);
-        setLoading(false);
-      }
-    } catch (err) {
-      console.log(err.message);
-      setLoading(false);
-    }
-  };
-
   const fetchProductsData = async () => {
     setLoading(true);
     try {
@@ -105,6 +87,7 @@ const CategoryStore = () => {
       }
 
       if (res.data.success) {
+        console.log(res);
         setProductsData(res.data.data);
         setLoading(false);
       }
@@ -142,7 +125,6 @@ const CategoryStore = () => {
   };
 
   useEffect(() => {
-    fetchProductsByCatetory();
     fetchProductsData();
   }, [
     activeFilterId,

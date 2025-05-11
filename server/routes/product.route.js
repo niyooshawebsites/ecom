@@ -35,6 +35,7 @@ productRouter.patch(
   ]),
   updateProductController
 );
+
 productRouter.delete("/delete-product/:pid", auth, deleteProductController);
 
 productRouter.delete(
@@ -42,6 +43,7 @@ productRouter.delete(
   auth,
   deleteMultipleProductsController
 );
+
 productRouter.get("/fetch-all-products/:pageNo", fetchAllProductsController);
 
 productRouter.get("/fetch-product/:pid", fetchProductController);

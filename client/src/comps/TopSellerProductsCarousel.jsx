@@ -31,7 +31,7 @@ const TopSellerProductsCarousel = ({ topSellerProducts }) => {
               />
               <h3 className="text-center mt-2">{tsp.product.name}</h3>
               <p className="text-center font-semibold text-red-500">
-                ${tsp.product.price}
+                Rs {tsp.product.price}
               </p>
             </div>
           </Link>

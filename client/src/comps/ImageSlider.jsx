@@ -6,8 +6,12 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { sortSliceActions } from "../store/slices/sortSlice";
+import { filterSliceActions } from "../store/slices/filterSlice";
 
 const ImageSlider = () => {
+  const dispatch = useDispatch();
   const [slides, setSlides] = useState([]);
 
   const fetchAllImageSlides = async () => {
@@ -21,6 +25,30 @@ const ImageSlider = () => {
       if (res.data.success) {
         setSlides(res.data.data);
       }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const fiterByCategory = (cid, cName) => {
+    try {
+      dispatch(
+        sortSliceActions.populateSortBasis({
+          sortBasis: null,
+        })
+      );
+
+      dispatch(
+        filterSliceActions.populateActiveFilterId({
+          activeFilterId: cid,
+        })
+      );
+
+      dispatch(
+        filterSliceActions.populateFilteredCategory({
+          filteredCategory: cName,
+        })
+      );
     } catch (err) {
       console.log(err.message);
     }
@@ -57,6 +85,7 @@ const ImageSlider = () => {
               <Link
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-lg"
                 to={slide.btnLink}
+                onClick={() => fiterByCategory(category._id, category.name)}
               >
                 {slide.btnText}
               </Link>

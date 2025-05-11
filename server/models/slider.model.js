@@ -7,6 +7,18 @@ const sliderSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "category",
+      required: true,
+      default: null,
+    },
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "product",
+      required: true,
+      default: null,
+    },
     title: {
       type: String,
       required: true,
@@ -16,10 +28,6 @@ const sliderSchema = new mongoose.Schema(
       required: true,
     },
     btnText: {
-      type: String,
-      required: true,
-    },
-    btnLink: {
       type: String,
       required: true,
     },
