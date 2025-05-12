@@ -39,6 +39,8 @@ import ImageSliderPage from "./pages/ImageSliderPage";
 import ProductCarouselPage from "./pages/ProductCarouselPage";
 import CarouselInfoPage from "./pages/HPCInfoPage";
 import CategoryStore from "./pages/CategoryStore";
+import CustomHeader from "./pages/CustomHeader";
+import CustomFooter from "./pages/CustomFooter";
 
 const App = () => {
   return (
@@ -104,6 +106,8 @@ const App = () => {
               element={<ProductCarouselPage />}
             />
             <Route path="/dashboard" element={<CarouselInfoPage />} />
+            <Route path="/dashboard/custom-header" element={<CustomHeader />} />
+            <Route path="/dashboard/custom-footer" element={<CustomFooter />} />
           </Route>
         </Routes>
       </BrowserRouter>

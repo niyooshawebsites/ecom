@@ -9,6 +9,9 @@ import { RiLogoutCircleRLine } from "react-icons/ri";
 import Loading from "./Loading";
 
 const Header = () => {
+  const [headerColor, setHeaderColor] = useState("");
+  const [headerFontColor, setHeaderFontColor] = useState("");
+  const [headerBtnColor, setHeaderBtnColor] = useState("");
   const [searchProductText, setSearchProductText] = useState("");
   const [searchedProducts, setSearchedProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,6 +19,9 @@ const Header = () => {
   const { uid, isActive, isVerified, username } = useSelector(
     (state) => state.user_Slice
   );
+
+  const { customized } = useSelector((state) => state.customization_Slice);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -56,6 +62,26 @@ const Header = () => {
     }
   };
 
+  const fetchCustomization = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/fetch-customization`
+      );
+
+      console.log(res.data.data[0]);
+
+      setHeaderColor(res.data.data[0].headerColor);
+      setHeaderFontColor(res.data.data[0].headerFontColor);
+      setHeaderBtnColor(res.data.data[0].btnColor);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomization();
+  }, [customized]);
+
   useEffect(() => {}, [cartProductList]);
 
   return (
@@ -63,7 +89,9 @@ const Header = () => {
       {loading ? (
         <Loading />
       ) : (
-        <header className="bg-blue-700 text-white">
+        <header
+          style={{ backgroundColor: headerColor, color: headerFontColor }}
+        >
           <nav className="flex justify-evenly items-center w-9/12 mx-auto min-h-20">
             <Link to="/" className="hover:text-gray-900 hover:font-semibold">
               <h1 className="text-4xl">ECOM</h1>
@@ -105,7 +133,8 @@ const Header = () => {
                   {location.pathname.split("/")[1] === "dashboard" ? (
                     <Link
                       to="/"
-                      className="mr-5 font-bold bg-orange-600 rounded px-2"
+                      className="mr-5 font-bold rounded px-2"
+                      style={{ backgroundColor: headerBtnColor }}
                     >
                       <li>SHOP</li>
                     </Link>
@@ -113,20 +142,25 @@ const Header = () => {
                     <>
                       <Link
                         to="/dashboard/orders"
-                        className="mr-5 font-bold bg-orange-600 rounded px-2"
+                        className="mr-5 font-bold rounded px-2"
+                        style={{ backgroundColor: headerBtnColor }}
                       >
                         <li>DASHBOARD</li>
                       </Link>
                       <Link
                         to="/"
-                        className="mr-5 font-bold bg-orange-600 rounded px-2"
+                        className="mr-5 font-bold rounded px-2"
+                        style={{ backgroundColor: headerBtnColor }}
                       >
                         <li>SHOP</li>
                       </Link>
                       <Link to="/cart">
                         <li className="flex">
                           <CiShoppingCart className="text-2xl mr-1" />
-                          <span className="bg-orange-500 px-1 rounded border mr-5">
+                          <span
+                            className="px-1 rounded border mr-5"
+                            style={{ backgroundColor: headerBtnColor }}
+                          >
                             {cartProductList.length > 0
                               ? `0${cartProductList.length}`
                               : 0}
@@ -169,7 +203,10 @@ const Header = () => {
                   >
                     <li className="flex">
                       <CiShoppingCart className="text-2xl mr-1" />
-                      <span className="bg-orange-500 px-1 rounded border">
+                      <span
+                        className="px-1 rounded border"
+                        style={{ backgroundColor: headerBtnColor }}
+                      >
                         {cartProductList.length > 0
                           ? `0${cartProductList.length}`
                           : 0}
